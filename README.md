@@ -94,3 +94,7 @@ docker run -d \
     autoheal
 ```
 -->
+
+## Credits
+
+- [willfarrell](https://github.com/willfarrell)
