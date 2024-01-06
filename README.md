@@ -9,7 +9,7 @@ The `docker-autoheal` binary may be executed via a native OS or via a Docker con
 | Variable                          | Default  | Description                                                                                                                       |
 |:---------------------------------:|:--------:|:---------------------------------------------------------------------------------------------------------------------------------:|
 | **AUTOHEAL_CONTAINER_LABEL**      | autoheal |This is the label (set to `true`) that `docker-autoheal` will monitor and remediate - or set to `all` to simply monitor all containers on the host|
-| **AUTOHEAL_DEFAULT_STOP_TIMEOUT** | 10       | Docker waits `n` seconds for a container to stop before killing it during restarts (container overridable via label, see below) |
+| **AUTOHEAL_DEFAULT_STOP_TIMEOUT** | 10       | Docker waits `n` seconds for a container to stop before killing it during restarts (overridable via label; see below) |
 | **AUTOHEAL_INTERVAL**             | 5        | Check container health every`n` seconds**                                                                                       |
 | **AUTOHEAL_START_PERIOD**         | 0        | Wait `n` seconds before first health check                                                                                      |
 <!-- |WEBHOOK_URL|    |Post messages to the webhook following actions on unhealthy container| -->
@@ -18,7 +18,7 @@ The `docker-autoheal` binary may be executed via a native OS or via a Docker con
 
 | Label                             | Value    | Description                                                                                                                       |
 |:---------------------------------:|:--------:|:---------------------------------------------------------------------------------------------------------------------------------:|
-| **autoheal.stop.timeout**         | 20       | Per containers override for stop timeout seconds during restart                                                                              |
+| **autoheal.stop.timeout**         | 20       | Per container override of the stop timeout seconds during restart                                                                 |
 
 ## How to use
 
