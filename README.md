@@ -16,7 +16,7 @@ This the `docker-autoheal` binary may be executed via a native OS or via a Docke
 
 ### Optional Container Labels
 
-| Variable                          | Value    | Description                                                                                                                       |
+| Label                             | Value    | Description                                                                                                                       |
 |:---------------------------------:|:--------:|:---------------------------------------------------------------------------------------------------------------------------------:|
 | **autoheal.stop.timeout**         | 20       | Per containers override for stop timeout seconds during restart                                                                              |
 
