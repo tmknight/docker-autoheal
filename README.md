@@ -82,6 +82,7 @@ If you need the `docker-autoheal` container timezone to match the local machine,
 
 docker run ... -v /etc/localtime:/etc/localtime:ro
 
+<!--
 ## Testing
 
 ```bash
@@ -92,3 +93,4 @@ docker run -d \
     -v /var/run/docker.sock:/var/run/docker.sock \
     autoheal
 ```
+-->
