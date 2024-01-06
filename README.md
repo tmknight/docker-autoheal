@@ -56,7 +56,7 @@ docker run -d \
     tmknight/docker-autoheal
 ```
 
-### Other info
+## Other info
 
 a) Apply the label `autoheal=true` to your container to have it watched
 
