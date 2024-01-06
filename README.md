@@ -30,7 +30,7 @@ The `docker-autoheal` binary may be executed via a native OS or via a Docker con
 
 ```bash
 export AUTOHEAL_CONTAINER_LABEL=all
-/usr/local/bin/docker-autoheal > /var/log/docker-autoheal.log
+/usr/local/bin/docker-autoheal > /var/log/docker-autoheal.log &
 ```
 
 ### Socket
