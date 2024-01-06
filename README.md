@@ -2,7 +2,7 @@
 
 Monitor for and remediation of unhealthy Docker containers
 
-This the `docker-autoheal` binary may be executed via a native OS or via a Docker container
+The `docker-autoheal` binary may be executed via a native OS or via a Docker container
 
 ## ENV Defaults
 
