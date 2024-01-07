@@ -15,8 +15,8 @@ async fn log_message(msg: &str) {
 // Return environment variable
 fn get_env(key: &str, default: &str) -> String {
     match std::env::var(key) {
-        Ok(val) => return val,
-        Err(e) => return default.to_string(),
+        Ok(val) => return val.to_lowercase(),
+        Err(e) => return default.to_string().to_lowercase(),
     }
 }
 
@@ -78,7 +78,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Build container assessment criteria
         let mut filters = HashMap::new();
         filters.insert("health", vec!["unhealthy"]);
-        if autoheal_container_label != "ALL" {
+        if autoheal_container_label != "all" {
             filters.insert("label", vec![&autoheal_container_label]);
         }
 
@@ -112,12 +112,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                         // Report what is transpiring
                         let msg0 = format!("Container '{}' ({}) unhealthy", name, id);
-                        // todo
-                        // let msg1 = format!(
-                        //     "Restarting '{}' with {}s timeout",
-                        //     name, autoheal_default_stop_timeout
-                        // );
-                        let msg1 = format!("Restarting '{}' now", name);
+                        let msg1 = format!(
+                            "Restarting '{}' with {}s timeout",
+                            name, autoheal_default_stop_timeout
+                        );
                         log_message(&msg0).await;
                         log_message(&msg1).await;
 
