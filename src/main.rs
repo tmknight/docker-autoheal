@@ -5,12 +5,14 @@ use std::collections::HashMap;
 use std::io::{stdout, Write};
 use std::time::Duration;
 
+// Logging
 async fn log_message(msg: &str) {
     let date = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
     let mut lock = stdout().lock();
     writeln!(lock, "{} {}", date, msg).unwrap();
 }
 
+// Return environment variable
 fn get_env(key: &str, default: &str) -> String {
     match std::env::var(key) {
         Ok(val) => return val,
@@ -35,7 +37,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // let webhook_json_key = "text";
     // let apprise_url = "";
 
-    // Determine connection type & Connect to docker
+    // Determine connection type & connect to docker per type
     let mut docker_tmp: Option<Docker> = None;
     match autoheal_connection_type.as_str() {
         "socket" => {
@@ -72,16 +74,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Establish loop interval
     let mut interval = tokio::time::interval(Duration::from_secs(autoheal_interval));
-
     loop {
-        // Loop interval
-        interval.tick().await;
         // Build container assessment criteria
         let mut filters = HashMap::new();
         filters.insert("health", vec!["unhealthy"]);
         if autoheal_container_label != "ALL" {
             filters.insert("label", vec![&autoheal_container_label]);
         }
+
         // Gather all containers that are unhealthy
         let container_options = Some(ListContainersOptions {
             all: true,
@@ -89,7 +89,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             ..Default::default()
         });
         let containers = docker.list_containers(container_options).await?;
-
         for container in containers {
             // Execute concurrently
             let docker_clone = docker.clone();
@@ -97,8 +96,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 // Get name of container
                 let name0 = &container.names.unwrap()[0];
                 let name = name0.trim_matches('/').trim();
+
                 // Get id of container
                 let id: String = container.id.unwrap().chars().take(12).collect();
+
                 // Determine if state is readable
                 if let Some(state) = container.state {
                     // Determine if matches restart criteria
@@ -108,6 +109,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             t: autoheal_default_stop_timeout,
                             ..Default::default()
                         });
+
                         // Report what is transpiring
                         let msg0 = format!("Container '{}' ({}) unhealthy", name, id);
                         // todo
@@ -116,9 +118,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         //     name, autoheal_default_stop_timeout
                         // );
                         let msg1 = format!("Restarting '{}' now", name);
-
                         log_message(&msg0).await;
                         log_message(&msg1).await;
+
                         // Restart unhealthy container
                         let rslt = docker_clone.restart_container(&id, restart_options).await;
                         match rslt {
@@ -139,5 +141,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             });
             join.await?;
         }
+        // Loop interval
+        interval.tick().await;
     }
 }
