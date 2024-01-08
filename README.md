@@ -73,6 +73,8 @@ docker run -d \
 
 ## Other info
 
+### Docker labels
+
 a) Apply the label `autoheal=true` to your container to have it watched
 
 b) Set ENV `AUTOHEAL_CONTAINER_LABEL` to the label name that has the value `true` (e.g. `AUTOHEAL_CONTAINER_LABEL=autoheal`)
@@ -91,7 +93,7 @@ The certificates and keys need these names:
 - client-key.pem
 -->
 
-### Change Timezone
+### Docker timezone
 
 If you need the `docker-autoheal` container timezone to match the local machine, you can map `/etc/localtime`
 
