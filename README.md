@@ -73,11 +73,11 @@ docker run -d \
 
 a) Apply the label `autoheal=true` to your container to have it watched
 
-b) Set ENV `AUTOHEAL_CONTAINER_LABEL=all` to watch all running containers
+b) Set ENV `AUTOHEAL_CONTAINER_LABEL` to existing label name that has the value `true`
 
 OR
 
-c) Set ENV `AUTOHEAL_CONTAINER_LABEL` to existing label name that has the value `true`
+c) Set ENV `AUTOHEAL_CONTAINER_LABEL=all` to watch all running containers
 
 <!--
 See <https://docs.docker.com/engine/security/https/> for how to configure TCP with mTLS
