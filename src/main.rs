@@ -31,13 +31,16 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Autoheal tcp variables
     let autoheal_tcp_host: String = get_env("AUTOHEAL_TCP_HOST", "localhost");
     let autoheal_tcp_port: u64 = get_env("AUTOHEAL_TCP_PORT", "2375").parse().unwrap();
-    let autoheal_tcp_address: String = autoheal_tcp_host + ":" + &autoheal_tcp_port.to_string();
+    let autoheal_tcp_address: String = format!("{}:{}", autoheal_tcp_host, autoheal_tcp_port);
     let autoheal_tcp_timeout: u64 = get_env("AUTOHEAL_TCP_TIMEOUT", "10").parse().unwrap();
-    let autoheal_key_path: String =
-        get_env("AUTOHEAL_KEY_PATH", "/opt/docker-autoheal/tls/key.pem");
-    let autoheal_cert_path: String =
-        get_env("AUTOHEAL_CERT_PATH", "/opt/docker-autoheal/tls/cert.pem");
-    let autoheal_ca_path: String = get_env("AUTOHEAL_CA_PATH", "/opt/docker-autoheal/tls/ca.pem");
+
+    // todo
+    // Autoheal ssl variables
+    // let autoheal_key_path: String =
+    //     get_env("AUTOHEAL_KEY_PATH", "/opt/docker-autoheal/tls/key.pem");
+    // let autoheal_cert_path: String =
+    //     get_env("AUTOHEAL_CERT_PATH", "/opt/docker-autoheal/tls/cert.pem");
+    // let autoheal_ca_path: String = get_env("AUTOHEAL_CA_PATH", "/opt/docker-autoheal/tls/ca.pem");
 
     // todo
     // Webhook variables
