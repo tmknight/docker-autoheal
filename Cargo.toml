@@ -1,6 +1,6 @@
 [package]
 name = "docker-autoheal"
-version = "0.2.1"
+version = "0.2.3"
 authors = ["Travis M Knight <travis.knight@tmknight.net>"]
 license = "MIT"
 description = "Monitor and restart unhealthy docker containers"
@@ -11,11 +11,12 @@ rust-version = "1.74.1"
 
 [dependencies]
 bollard = "*"
-chrono = "*"
-futures = "*"
-tokio = { version = "*", features = ["full"] }
+chrono = "0.4.*"
+futures = "0.3.*"
+rustls = "0.22.*"
+tokio = { version = "1.*", features = ["full"] }
 
 [[bin]]
 name = "docker-autoheal"
-bench = false
-test = false
+bench = true
+test = true
