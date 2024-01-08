@@ -50,6 +50,7 @@ export AUTOHEAL_CONTAINER_LABEL=all
 docker run -d \
     --name autoheal \
     --restart=always \
+    -e AUTOHEAL_CONNECTON_TYPE=socket
     -e AUTOHEAL_CONTAINER_LABEL=all \
     -v /var/run/docker.sock:/var/run/docker.sock \
     tmknight/docker-autoheal
@@ -61,6 +62,7 @@ docker run -d \
 docker run -d \
     --name autoheal \
     --restart=always \
+    -e AUTOHEAL_CONNECTON_TYPE=socket
     -e AUTOHEAL_CONTAINER_LABEL=all \
     -e DOCKER_SOCK=tcp://HOST:PORT \
     -v /path/to/certs/:/certs/:ro \
