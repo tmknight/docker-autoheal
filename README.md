@@ -73,7 +73,7 @@ docker run -d \
 
 a) Apply the label `autoheal=true` to your container to have it watched
 
-b) Set ENV `AUTOHEAL_CONTAINER_LABEL` to existing label name that has the value `true`
+b) Set ENV `AUTOHEAL_CONTAINER_LABEL` to the label name that has the value `true` (e.g. `AUTOHEAL_CONTAINER_LABEL=autoheal`)
 
 OR
 
