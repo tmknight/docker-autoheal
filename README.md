@@ -11,7 +11,7 @@ The `docker-autoheal` binary may be executed via a native OS or via a Docker con
 | Variable                     | Default               | Description                                                                                                                                        |
 |:----------------------------:|:---------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|
 | **AUTOHEAL_CONNECTON_TYPE**  | local                 | This determines how `docker-autheal` connects to Docker (One of: local, socket, http                                                               |
-| **AUTOHEAL_CONTAINER_LABEL** | not set              | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host |
+| **AUTOHEAL_CONTAINER_LABEL** | autoheal              | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host |
 | **AUTOHEAL_STOP_TIMEOUT**    | 10                    | Docker waits `n` seconds for a container to stop before killing it during restarts <!-- (overridable via label; see below) -->                     |
 | **AUTOHEAL_INTERVAL**        | 5                     | Check container health every`n` seconds**                                                                                                          |
 | **AUTOHEAL_START_DELAY**     | 0                     | Wait `n` seconds before first health check                                                                                                         |
