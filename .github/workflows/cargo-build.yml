@@ -4,13 +4,13 @@ on:
   push:
     paths-ignore:
       - '.github/**'
+      - 'examples/**'
+      - 'docker/**'
+      - 'test/**'
       - '*.md'
       - '.*'
       - '*.lock'
       - '.LICENSE'
-      - 'examples'
-      - 'test'
-      - 'docker'
     branches: [ "main", "develop" ]
 #  pull_request:
 #    branches: [ "main" ]
