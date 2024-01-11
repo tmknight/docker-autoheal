@@ -10,6 +10,7 @@ on:
       - '.LICENSE'
       - 'examples'
       - 'test'
+      - 'docker'
     branches: [ "main", "develop" ]
 #  pull_request:
 #    branches: [ "main" ]
