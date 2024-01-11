@@ -18,7 +18,6 @@ The `docker-autoheal` binary may be executed via a native OS or via a Docker con
 | **AUTOHEAL_TCP_HOST**        | localhost             | Address of Docker host                                                                                                                             |
 | **AUTOHEAL_TCP_PORT**        | 2375                  | Port on which to connect to the Docker host                                                                                                        |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                    | Time in `n` seconds before failing connection attempt                                                                                              |
-|
 <!-- | **AUTOHEAL_KEY_PATH** | /opt/docker-autoheal/tls/key.pem                                                                                                                   | Fully qualified path to key.pem |
 <!-- | **AUTOHEAL_KEY_PATH**        | /opt/docker-autoheal/tls/key.pem  | Fully qualified path to key.pem                                                                                                                    |
 | **AUTOHEAL_CERT_PATH**       | /opt/docker-autoheal/tls/cert.pem | Fully qualified path to cert.pem                                                                                                                   |
