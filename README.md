@@ -11,14 +11,14 @@ The `docker-autoheal` binary may be executed via a native OS or via a Docker con
 | Variable                     | Default               | Description                                                                                                                                        |
 |:----------------------------:|:---------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|
 | **AUTOHEAL_CONNECTON_TYPE**  | local                 | This determines how `docker-autheal` connects to Docker (One of: local, socket, http                                                               |
-| **AUTOHEAL_CONTAINER_LABEL** | autoheal              | This is the label (set to `true`) that `docker-autoheal` will monitor and remediate - or set to `all` to simply monitor all containers on the host |
+| **AUTOHEAL_CONTAINER_LABEL** | not set              | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host |
 | **AUTOHEAL_STOP_TIMEOUT**    | 10                    | Docker waits `n` seconds for a container to stop before killing it during restarts <!-- (overridable via label; see below) -->                     |
 | **AUTOHEAL_INTERVAL**        | 5                     | Check container health every`n` seconds**                                                                                                          |
 | **AUTOHEAL_START_DELAY**     | 0                     | Wait `n` seconds before first health check                                                                                                         |
 | **AUTOHEAL_TCP_HOST**        | localhost             | Address of Docker host                                                                                                                             |
 | **AUTOHEAL_TCP_PORT**        | 2375                  | Port on which to connect to the Docker host                                                                                                        |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                    | Time in `n` seconds before failing connection attempt                                                                                              |
-
+|
 <!-- | **AUTOHEAL_KEY_PATH** | /opt/docker-autoheal/tls/key.pem                                                                                                                   | Fully qualified path to key.pem |
 <!-- | **AUTOHEAL_KEY_PATH**        | /opt/docker-autoheal/tls/key.pem  | Fully qualified path to key.pem                                                                                                                    |
 | **AUTOHEAL_CERT_PATH**       | /opt/docker-autoheal/tls/cert.pem | Fully qualified path to cert.pem                                                                                                                   |
@@ -53,7 +53,7 @@ docker run -d \
     --name autoheal \
     --restart=always \
     -e AUTOHEAL_CONNECTON_TYPE=socket
-    -e AUTOHEAL_CONTAINER_LABEL=all \
+    -e AUTOHEAL_CONTAINER_LABEL=autoheal \
     -v /var/run/docker.sock:/var/run/docker.sock \
     tmknight/docker-autoheal
 ```
@@ -65,7 +65,7 @@ docker run -d \
     --name autoheal \
     --restart=always \
     -e AUTOHEAL_CONNECTON_TYPE=socket
-    -e AUTOHEAL_CONTAINER_LABEL=all \
+    -e AUTOHEAL_CONTAINER_LABEL=watch-me \
     -e DOCKER_SOCK=tcp://HOST:PORT \
     -v /path/to/certs/:/certs/:ro \
     tmknight/docker-autoheal
@@ -75,9 +75,9 @@ docker run -d \
 
 ### Docker labels
 
-a) Apply the label `autoheal=true` to your container to have it watched
+a) Apply the label `autoheal=true` to your container to have it watched (only the label name is assessed, the value is not currently used)
 
-b) Set ENV `AUTOHEAL_CONTAINER_LABEL` to the label name that has the value `true` (e.g. `AUTOHEAL_CONTAINER_LABEL=autoheal`)
+b) Set ENV `AUTOHEAL_CONTAINER_LABEL` to that label name (e.g. `AUTOHEAL_CONTAINER_LABEL=autoheal`)
 
 OR
 
