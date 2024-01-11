@@ -15,8 +15,8 @@ async fn log_message(msg: &str) {
 // Return environment variable
 fn get_env(key: &str, default: &str) -> String {
     match std::env::var(key) {
-        Ok(val) => return val.to_lowercase(),
-        Err(_e) => return default.to_string().to_lowercase(),
+        Ok(val) => val.to_lowercase(),
+        Err(_e) => default.to_string().to_lowercase(),
     }
 }
 
@@ -83,13 +83,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
     // Unwrap final connection paramaters
-    let msg0 = format!("Monitoring Docker via {}", autoheal_connection_type);
+    let msg0 = format!("[INFO] Monitoring Docker via {}", autoheal_connection_type);
     log_message(&msg0).await;
+    if autoheal_connection_type == "http" {
+        let msg1 = format!(
+            "[INFO] Connecting to {}:{}",
+            autoheal_tcp_host, autoheal_tcp_port
+        );
+        log_message(&msg1).await;
+    }
     let docker = docker_tmp.unwrap();
 
     // Delay start of loop if specified
     if autoheal_start_delay > 0 {
-        let msg0 = format!("Delaying evaluation {}s on request", autoheal_start_delay);
+        let msg0 = format!(
+            "[INFO] Delaying evaluation {}s on request",
+            autoheal_start_delay
+        );
         log_message(&msg0).await;
         std::thread::sleep(Duration::from_secs(autoheal_start_delay));
     }
@@ -100,6 +110,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Build container assessment criteria
         let mut filters = HashMap::new();
         filters.insert("health", vec!["unhealthy"]);
+        filters.insert("status", vec!["running", "exited", "dead"]);
         if autoheal_container_label != "all" {
             filters.insert("label", vec![&autoheal_container_label]);
         }
@@ -116,46 +127,64 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let docker_clone = docker.clone();
             let join = tokio::task::spawn(async move {
                 // Get name of container
-                let name0 = &container.names.unwrap()[0];
-                let name = name0.trim_matches('/').trim();
+                let name_tmp = match &container.names {
+                    Some(names) => &names[0],
+                    None => {
+                        let msg0 = format!("[ERROR] Could not reliably determine container name");
+                        log_message(&msg0).await;
+                        ""
+                    }
+                };
+                let name = name_tmp.trim_matches('/').trim();
 
                 // Get id of container
-                let id: String = container.id.unwrap().chars().take(12).collect();
-
-                // Determine if state is readable
-                if let Some(state) = container.state {
-                    // Determine if matches restart criteria
-                    if !matches!(state.as_str(), "paused" | "restarting") {
-                        // Build restart options
-                        let restart_options = Some(RestartContainerOptions {
-                            t: autoheal_stop_timeout,
-                            ..Default::default()
-                        });
-
-                        // Report what is transpiring
-                        let msg0 = format!("Container '{}' ({}) unhealthy", name, id);
-                        let msg1 = format!(
-                            "Restarting '{}' with {}s timeout",
-                            name, autoheal_stop_timeout
-                        );
+                let id: String = match container.id {
+                    Some(id) => id.chars().take(12).collect(),
+                    None => {
+                        let msg0 = format!("[ERROR] Could not reliably determine container id");
                         log_message(&msg0).await;
-                        log_message(&msg1).await;
+                        "".to_string()
+                    }
+                };
 
-                        // Restart unhealthy container
-                        let rslt = docker_clone.restart_container(&id, restart_options).await;
-                        match rslt {
-                            Ok(()) => {
-                                let msg0 = format!("Restart of '{}' was successful", name);
-                                log_message(&msg0).await;
-                            }
-                            Err(e) => {
-                                let msg0 = format!("Restart of '{}' failed: {}", name, e);
-                                log_message(&msg0).await;
-                            }
+                if !(name.is_empty() && id.is_empty()) {
+                    // Report unhealthy container
+                    let msg0 = format!("[WARNING] [{}] Container ({}) unhealthy", name, id);
+                    log_message(&msg0).await;
+
+                    // Build restart options
+                    let restart_options = Some(RestartContainerOptions {
+                        t: autoheal_stop_timeout,
+                        ..Default::default()
+                    });
+
+                    // Report container restart
+                    let msg1 = format!(
+                        "[WARNING] [{}] Restarting container ({}) with {}s timeout",
+                        name, id, autoheal_stop_timeout
+                    );
+                    log_message(&msg1).await;
+
+                    // Restart unhealthy container
+                    let rslt = docker_clone.restart_container(&id, restart_options).await;
+                    match rslt {
+                        Ok(()) => {
+                            let msg0 = format!(
+                                "[INFO]    [{}] Restart of container ({}) was successful",
+                                name, id
+                            );
+                            log_message(&msg0).await;
+                        }
+                        Err(e) => {
+                            let msg0 = format!(
+                                "[ERROR]   [{}] Restart of container ({}) failed: {}",
+                                name, id, e
+                            );
+                            log_message(&msg0).await;
                         }
                     }
                 } else {
-                    let msg0 = format!("Could not determine state of {}", name);
+                    let msg0 = format!("[ERROR] Could not reliably identify the container");
                     log_message(&msg0).await;
                 }
             });
