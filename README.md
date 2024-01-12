@@ -1,6 +1,6 @@
 # Docker Autoheal
 
-Monitor for and remediation of unhealthy Docker containers
+Monitor for and remediate unhealthy Docker containers
 
 Designed to be OS agnostic, flexible, and performant in large environments via multi-threading and concurrency
 
