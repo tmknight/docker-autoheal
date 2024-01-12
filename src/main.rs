@@ -7,7 +7,7 @@ use std::time::Duration;
 
 // Logging
 async fn log_message(msg: &str) {
-    let date = Local::now().format("%Y-%m-%d %H:%M:%S").to_string();
+    let date = Local::now().format("%Y-%m-%d %H:%M:%S%z").to_string();
     let mut lock = stdout().lock();
     writeln!(lock, "{} {}", date, msg).unwrap();
 }
