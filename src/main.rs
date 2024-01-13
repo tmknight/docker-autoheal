@@ -130,7 +130,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let name_tmp = match &container.names {
                     Some(names) => &names[0],
                     None => {
-                        let msg0 = format!("[ERROR]   Could not reliably determine container name");
+                        let msg0 = String::from("[ERROR]   Could not reliably determine container name");
                         log_message(&msg0).await;
                         ""
                     }
@@ -141,7 +141,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let id: String = match container.id {
                     Some(id) => id.chars().take(12).collect(),
                     None => {
-                        let msg0 = format!("[ERROR]   Could not reliably determine container id");
+                        let msg0 = String::from("[ERROR]   Could not reliably determine container id");
                         log_message(&msg0).await;
                         "".to_string()
                     }
@@ -154,8 +154,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
                     // Build restart options
                     let restart_options = Some(RestartContainerOptions {
-                        t: autoheal_stop_timeout,
-                        ..Default::default()
+                        t: autoheal_stop_timeout
                     });
 
                     // Report container restart
@@ -184,7 +183,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         }
                     }
                 } else {
-                    let msg0 = format!("[ERROR]   Could not reliably identify the container");
+                    let msg0 = String::from("[ERROR]   Could not reliably identify the container");
                     log_message(&msg0).await;
                 }
             });
