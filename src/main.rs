@@ -83,11 +83,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     }
     // Unwrap final connection paramaters
-    let msg0 = format!("[INFO] Monitoring Docker via {}", autoheal_connection_type);
+    let msg0 = format!("[INFO]    Monitoring Docker via {}", autoheal_connection_type);
     log_message(&msg0).await;
     if autoheal_connection_type == "http" {
         let msg1 = format!(
-            "[INFO] Connecting to {}:{}",
+            "[INFO]    Connecting to {}:{}",
             autoheal_tcp_host, autoheal_tcp_port
         );
         log_message(&msg1).await;
@@ -97,7 +97,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Delay start of loop if specified
     if autoheal_start_delay > 0 {
         let msg0 = format!(
-            "[INFO] Delaying evaluation {}s on request",
+            "[INFO]    Delaying evaluation {}s on request",
             autoheal_start_delay
         );
         log_message(&msg0).await;
@@ -130,7 +130,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let name_tmp = match &container.names {
                     Some(names) => &names[0],
                     None => {
-                        let msg0 = format!("[ERROR] Could not reliably determine container name");
+                        let msg0 = format!("[ERROR]   Could not reliably determine container name");
                         log_message(&msg0).await;
                         ""
                     }
@@ -141,7 +141,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let id: String = match container.id {
                     Some(id) => id.chars().take(12).collect(),
                     None => {
-                        let msg0 = format!("[ERROR] Could not reliably determine container id");
+                        let msg0 = format!("[ERROR]   Could not reliably determine container id");
                         log_message(&msg0).await;
                         "".to_string()
                     }
@@ -184,7 +184,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         }
                     }
                 } else {
-                    let msg0 = format!("[ERROR] Could not reliably identify the container");
+                    let msg0 = format!("[ERROR]   Could not reliably identify the container");
                     log_message(&msg0).await;
                 }
             });
