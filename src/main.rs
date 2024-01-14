@@ -1,46 +1,150 @@
-use bollard::container::{ListContainersOptions, RestartContainerOptions};
+// use bollard::container::{ListContainersOptions, RestartContainerOptions};
 use bollard::{Docker, API_DEFAULT_VERSION};
-use chrono::prelude::*;
-use std::collections::HashMap;
-use std::io::{stdout, Write};
+use getopts::Options;
 use std::time::Duration;
 
-// Logging
-async fn log_message(msg: &str) {
-    let date = Local::now().format("%Y-%m-%d %H:%M:%S%z").to_string();
-    let mut lock = stdout().lock();
-    writeln!(lock, "{} {}", date, msg).unwrap();
-}
+mod environment;
+mod logging;
+mod looper;
 
-// Return environment variable
-fn get_env(key: &str, default: &str) -> String {
-    match std::env::var(key) {
-        Ok(val) => val.to_lowercase(),
-        Err(_e) => default.to_string().to_lowercase(),
-    }
-}
+use environment::get_env;
+use logging::{log_message, print_version};
+use looper::start_loop;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Autoheal core variables
-    let autoheal_connection_type: String = get_env("AUTOHEAL_CONNECTION_TYPE", "local");
-    let autoheal_container_label: String = get_env("AUTOHEAL_CONTAINER_LABEL", "autoheal");
-    let autoheal_stop_timeout: isize = get_env("AUTOHEAL_STOP_TIMEOUT", "10").parse().unwrap();
-    let autoheal_interval: u64 = get_env("AUTOHEAL_INTERVAL", "5").parse().unwrap();
-    let autoheal_start_delay: u64 = get_env("AUTOHEAL_START_DELAY", "0").parse().unwrap();
-    // Autoheal tcp variables
-    let autoheal_tcp_host: String = get_env("AUTOHEAL_TCP_HOST", "localhost");
-    let autoheal_tcp_port: u64 = get_env("AUTOHEAL_TCP_PORT", "2375").parse().unwrap();
-    let autoheal_tcp_address: String = format!("{}:{}", autoheal_tcp_host, autoheal_tcp_port);
-    let autoheal_tcp_timeout: u64 = get_env("AUTOHEAL_TCP_TIMEOUT", "10").parse().unwrap();
+    // Collect binary arguments
+    let args: Vec<String> = std::env::args().collect();
+    let program = args[0].clone();
 
-    // todo
+    // Establish usable arguments
+    let mut opts = Options::new();
+    opts.optflag("v", "version", "Print version information");
+    opts.optopt(
+        "c",
+        "connection-type",
+        "One of local, socket, http, or ssl",
+        "<CONNECTION_TYPE>",
+    );
+    opts.optopt(
+        "l",
+        "container-label",
+        "Container label to monitor (e.g. autoheal)",
+        "<CONTAINER_LABEL>",
+    );
+    opts.optopt(
+        "t",
+        "stop-timeout",
+        "Time in seconds to wait for action to complete",
+        "<STOP_TIMEOUT>",
+    );
+    opts.optopt(
+        "i",
+        "interval",
+        "Time in seconds to check health",
+        "<INTERVAL>",
+    );
+    opts.optopt(
+        "d",
+        "start-delay",
+        "Time in seconds to wait for first check",
+        "<START_DELAY>",
+    );
+    opts.optopt(
+        "n",
+        "tcp-host",
+        "The hostname or IP address of the Docker host (when -c http or ssl)",
+        "<TCP_HOST>",
+    );
+    opts.optopt(
+        "p",
+        "tcp-port",
+        "The tcp port number of the Docker host (when -c http or ssl)",
+        "<TCP_PORT>",
+    );
+    opts.optopt(
+        "k",
+        "cert-path",
+        "The fully qualified path to requisite ssl PEM files",
+        "<CERT_PATH>",
+    );
+    opts.optflag("h", "help", "Print help");
+
+    let matches = match opts.parse(&args[1..]) {
+        Ok(m) => m,
+        Err(f) => {
+            println!("{}", f.to_string());
+            println!("{}", opts.usage(&program));
+            std::process::exit(1);
+        }
+    };
+
+    // Process matching arguments
+    if matches.opt_present("v") {
+        print_version();
+        return Ok(());
+    } else if matches.opt_present("h") {
+        println!("{}", opts.usage(&program));
+        return Ok(());
+    }
+    let connection_type = matches.opt_str("c").unwrap_or_default();
+    let container_label = matches.opt_str("l").unwrap_or_default();
+    let stop_timeout = matches.opt_str("t").unwrap_or_default();
+    let interval = matches.opt_str("i").unwrap_or_default();
+    let start_delay = matches.opt_str("d").unwrap_or_default();
+    let tcp_host = matches.opt_str("n").unwrap_or_default();
+    let tcp_port = matches.opt_str("p").unwrap_or_default();
+    let cert_path = matches.opt_str("k").unwrap_or_default();
+
+    // Autoheal core variables
+    // Determine if we have valid arguments, need to check env, or use defaults
+    let autoheal_connection_type: String = match connection_type.is_empty() {
+        true => get_env("AUTOHEAL_CONNECTION_TYPE", "local").to_string(),
+        false => connection_type,
+    };
+    let autoheal_container_label: String = match container_label.is_empty() {
+        true => get_env("AUTOHEAL_CONTAINER_LABEL", "autoheal").to_string(),
+        false => container_label,
+    };
+    let autoheal_stop_timeout: isize = match stop_timeout.is_empty() {
+        true => get_env("AUTOHEAL_STOP_TIMEOUT", "10").parse().unwrap(),
+        false => stop_timeout.parse().unwrap(),
+    };
+    let autoheal_interval: u64 = match interval.is_empty() {
+        true => get_env("AUTOHEAL_INTERVAL", "5").parse().unwrap(),
+        false => interval.parse().unwrap(),
+    };
+    let autoheal_start_delay: u64 = match start_delay.is_empty() {
+        true => get_env("AUTOHEAL_START_DELAY", "0").parse().unwrap(),
+        false => start_delay.parse().unwrap(),
+    };
+
+    // Autoheal tcp variables
+    let autoheal_tcp_host: String = match tcp_host.is_empty() {
+        true => get_env("AUTOHEAL_TCP_HOST", "localhost"),
+        false => tcp_host.parse().unwrap(),
+    };
+    let autoheal_tcp_port: u64 = match autoheal_connection_type.as_str() {
+        "ssl" => match tcp_port.is_empty() {
+            true => get_env("AUTOHEAL_TCP_PORT", "2376").parse().unwrap(),
+            false => tcp_port.parse().unwrap(),
+        },
+        &_ => get_env("AUTOHEAL_TCP_PORT", "2375").parse().unwrap(),
+    };
+    let autoheal_tcp_address: String = format!("{}:{}", autoheal_tcp_host, autoheal_tcp_port);
+    let autoheal_tcp_timeout: u64 = match stop_timeout.is_empty() {
+        true => get_env("AUTOHEAL_TCP_TIMEOUT", "10").parse().unwrap(),
+        false => stop_timeout.parse().unwrap(),
+    };
+
     // Autoheal ssl variables
-    // let autoheal_key_path: String =
-    //     get_env("AUTOHEAL_KEY_PATH", "/opt/docker-autoheal/tls/key.pem");
-    // let autoheal_cert_path: String =
-    //     get_env("AUTOHEAL_CERT_PATH", "/opt/docker-autoheal/tls/cert.pem");
-    // let autoheal_ca_path: String = get_env("AUTOHEAL_CA_PATH", "/opt/docker-autoheal/tls/ca.pem");
+    let autoheal_cert_path = match cert_path.is_empty() {
+        true => get_env("AUTOHEAL_KEY_PATH", "/opt/docker-autoheal/tls"),
+        false => cert_path.parse().unwrap(),
+    };
+    let autoheal_key_path: String = format!("{}/key.pem", autoheal_cert_path);
+    let autoheal_cert_path: String = format!("{}/cert.pem", autoheal_cert_path);
+    let autoheal_ca_path: String = format!("{}/ca.pem", autoheal_cert_path);
 
     // todo
     // Webhook variables
@@ -49,50 +153,48 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // let apprise_url = "";
 
     // Determine connection type & connect to docker per type
-    let mut docker_tmp: Option<Docker> = None;
-    match autoheal_connection_type.as_str() {
-        "socket" => {
-            docker_tmp = Some(
-                // #[cfg(unix)]
-                Docker::connect_with_socket_defaults()?,
-            );
-        }
-        "http" => {
-            docker_tmp = Some(Docker::connect_with_http(
-                &autoheal_tcp_address,
-                autoheal_tcp_timeout,
-                API_DEFAULT_VERSION,
-            )?);
-        }
-        // todo
-        // "ssl" => {
-        //     docker_tmp = Some(
-        //         #[cfg(feature = "ssl")]
-        //         Docker::connect_with_ssl(
-        //             autoheal_tcp_address,
-        //             autoheal_tcp_timeout,
-        //             Path::new(autoheal_key_path),
-        //             Path::new(autoheal_cert_path),
-        //             Path::new(autoheal_ca_path),
-        //             API_DEFAULT_VERSION
-        //         )?,
-        //     );
-        // }
-        &_ => {
-            docker_tmp = Some(Docker::connect_with_local_defaults()?);
-        }
-    }
-    // Unwrap final connection paramaters
-    let msg0 = format!("[INFO]    Monitoring Docker via {}", autoheal_connection_type);
+    let docker = match autoheal_connection_type.as_str() {
+        "http" => Docker::connect_with_http(
+            &autoheal_tcp_address,
+            autoheal_tcp_timeout,
+            API_DEFAULT_VERSION,
+        )?,
+        #[cfg(unix)]
+        "socket" => Docker::connect_with_socket_defaults()?,
+        #[cfg(feature = "ssl")]
+        "ssl" => Docker::connect_with_ssl(
+            &autoheal_tcp_address,
+            autoheal_tcp_timeout,
+            Path::new(autoheal_key_path),
+            Path::new(autoheal_cert_path),
+            Path::new(autoheal_ca_path),
+            API_DEFAULT_VERSION,
+        )?,
+        &_ => Docker::connect_with_local_defaults()?,
+    };
+
+    // Log final connection paramaters
+    let msg0 = format!(
+        "[INFO]    Monitoring Docker via {}",
+        autoheal_connection_type
+    );
     log_message(&msg0).await;
-    if autoheal_connection_type == "http" {
-        let msg1 = format!(
-            "[INFO]    Connecting to {}:{}",
-            autoheal_tcp_host, autoheal_tcp_port
-        );
-        log_message(&msg1).await;
+    match autoheal_connection_type.as_str() {
+        "http" => {
+            let msg1 = format!("[INFO]    Connecting to {}", autoheal_tcp_address);
+            log_message(&msg1).await;
+        }
+        "ssl" => {
+            let msg1 = format!("[INFO]    Connecting to {}", autoheal_tcp_address);
+            log_message(&msg1).await;
+            let msg2 = format!(
+                "[INFO]    Certificate information: {}, {}, {}",
+                autoheal_key_path, autoheal_cert_path, autoheal_ca_path
+            );
+            log_message(&msg2).await;
+        }
+        &_ => {}
     }
-    let docker = docker_tmp.unwrap();
 
     // Delay start of loop if specified
     if autoheal_start_delay > 0 {
@@ -104,93 +206,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         std::thread::sleep(Duration::from_secs(autoheal_start_delay));
     }
 
-    // Establish loop interval
-    let mut interval = tokio::time::interval(Duration::from_secs(autoheal_interval));
-    loop {
-        // Build container assessment criteria
-        let mut filters = HashMap::new();
-        filters.insert("health", vec!["unhealthy"]);
-        filters.insert("status", vec!["running", "exited", "dead"]);
-        if autoheal_container_label != "all" {
-            filters.insert("label", vec![&autoheal_container_label]);
-        }
-
-        // Gather all containers that are unhealthy
-        let container_options = Some(ListContainersOptions {
-            all: true,
-            filters,
-            ..Default::default()
-        });
-        let containers = docker.list_containers(container_options).await?;
-        for container in containers {
-            // Execute concurrently
-            let docker_clone = docker.clone();
-            let join = tokio::task::spawn(async move {
-                // Get name of container
-                let name_tmp = match &container.names {
-                    Some(names) => &names[0],
-                    None => {
-                        let msg0 = format!("[ERROR]   Could not reliably determine container name");
-                        log_message(&msg0).await;
-                        ""
-                    }
-                };
-                let name = name_tmp.trim_matches('/').trim();
-
-                // Get id of container
-                let id: String = match container.id {
-                    Some(id) => id.chars().take(12).collect(),
-                    None => {
-                        let msg0 = format!("[ERROR]   Could not reliably determine container id");
-                        log_message(&msg0).await;
-                        "".to_string()
-                    }
-                };
-
-                if !(name.is_empty() && id.is_empty()) {
-                    // Report unhealthy container
-                    let msg0 = format!("[WARNING] [{}] Container ({}) unhealthy", name, id);
-                    log_message(&msg0).await;
-
-                    // Build restart options
-                    let restart_options = Some(RestartContainerOptions {
-                        t: autoheal_stop_timeout,
-                        ..Default::default()
-                    });
-
-                    // Report container restart
-                    let msg1 = format!(
-                        "[WARNING] [{}] Restarting container ({}) with {}s timeout",
-                        name, id, autoheal_stop_timeout
-                    );
-                    log_message(&msg1).await;
-
-                    // Restart unhealthy container
-                    let rslt = docker_clone.restart_container(&id, restart_options).await;
-                    match rslt {
-                        Ok(()) => {
-                            let msg0 = format!(
-                                "[INFO]    [{}] Restart of container ({}) was successful",
-                                name, id
-                            );
-                            log_message(&msg0).await;
-                        }
-                        Err(e) => {
-                            let msg0 = format!(
-                                "[ERROR]   [{}] Restart of container ({}) failed: {}",
-                                name, id, e
-                            );
-                            log_message(&msg0).await;
-                        }
-                    }
-                } else {
-                    let msg0 = format!("[ERROR]   Could not reliably identify the container");
-                    log_message(&msg0).await;
-                }
-            });
-            join.await?;
-        }
-        // Loop interval
-        interval.tick().await;
-    }
+    start_loop(
+        autoheal_interval,
+        autoheal_container_label,
+        autoheal_stop_timeout,
+        docker,
+    )
+    .await
 }
