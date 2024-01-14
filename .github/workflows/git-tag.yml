@@ -1,0 +1,40 @@
+name: "Git Tag"
+
+on:
+  # push:
+  #   paths-ignore:
+  #     - '.github/**'
+  #     - 'examples/**'
+  #     - 'docker/**'
+  #     - 'test/**'
+  #     - '*.md'
+  #     - '.*'
+  #     - '*.lock'
+  #     - '.LICENSE'
+  #   branches: [ "main", "develop" ]
+ pull_request:
+   branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  create-tag:
+    name: "Create tag"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Get tag"
+        id: "get-tag"
+        shell: "bash"
+        run: |
+          echo PKG_VERSION=$(awk -F ' = ' '$1 ~ /version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml) >> $GITHUB_OUTPUT
+
+      - name: "Set Tag"
+        shell: "bash"
+        run: |
+          git tag v${{ steps.get-tag.outputs.PKG_VERSION }} && git push --tags
