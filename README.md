@@ -37,11 +37,34 @@ The `docker-autoheal` binary may be executed via a native OS or via a Docker con
 
 - See <https://docs.docker.com/engine/reference/builder/#healthcheck> for details
 
+```bash
+Options:
+    -c, --connection-type <CONNECTION_TYPE>
+                        One of local, socket, http, or ssl
+    -l, --container-label <CONTAINER_LABEL>
+                        Container label to monitor (e.g. autoheal)
+    -t, --stop-timeout <STOP_TIMEOUT>
+                        Time in seconds to wait for action to complete
+    -i, --interval <INTERVAL>
+                        Time in seconds to check health
+    -d, --start-delay <START_DELAY>
+                        Time in seconds to wait for first check
+    -n, --tcp-host <TCP_HOST>
+                        The hostname or IP address of the Docker host (when -c
+                        http or ssl)
+    -p, --tcp-port <TCP_PORT>
+                        The tcp port number of the Docker host (when -c http
+                        or ssl)
+    -k, --cert-path <CERT_PATH>
+                        The fully qualified path to requisite ssl PEM files
+    -h, --help          Print help
+    -v, --version       Print version information
+```
+
 ### Local
 
 ```bash
-export AUTOHEAL_CONTAINER_LABEL=all
-/usr/local/bin/docker-autoheal > /var/log/docker-autoheal.log &
+/usr/local/bin/docker-autoheal --container-label all > /var/log/docker-autoheal.log &
 ```
 
 Will connect to the local Docker host and monitor all containers
