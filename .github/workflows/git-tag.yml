@@ -1,6 +1,7 @@
 name: "Git Tag"
 
 on:
+  workflow_dispatch:
   # push:
   #   paths-ignore:
   #     - '.github/**'
@@ -12,8 +13,8 @@ on:
   #     - '*.lock'
   #     - '.LICENSE'
   #   branches: [ "main", "develop" ]
- pull_request:
-   branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
