@@ -19,7 +19,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Establish usable arguments
     let mut opts = Options::new();
-    opts.optflag("v", "version", "Print version information");
     opts.optopt(
         "c",
         "connection-type",
@@ -69,6 +68,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "<CERT_PATH>",
     );
     opts.optflag("h", "help", "Print help");
+    opts.optflag("v", "version", "Print version information");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
