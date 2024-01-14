@@ -62,6 +62,8 @@ jobs:
             os: "ubuntu-latest"
           - target: "aarch64-unknown-linux-musl"
             os: "ubuntu-latest"
+          - target: "aarch64-unknown-openbsd"
+            os: "ubuntu-latest"
     runs-on: ${{ matrix.os }}
     steps:
       - name: "Check out the repo"
