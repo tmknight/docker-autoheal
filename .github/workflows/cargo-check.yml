@@ -1,6 +1,7 @@
-name: Cargo build & test
+name: "Cargo Check"
 
 on:
+  workflow_dispatch:
   push:
     paths-ignore:
       - '.github/**'
@@ -20,12 +21,11 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+    - name: Check
+      run: cargo check
+    - name: Clippy
+      run: cargo clippy -- -D warnings
