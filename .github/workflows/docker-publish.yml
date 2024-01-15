@@ -23,6 +23,7 @@ env:
 
 jobs:
   get-version:
+    name: Get package version
     runs-on: ubuntu-latest
     outputs:
       pkg-version: ${{ steps.pkg-version.outputs.PKG_VERSION }}
@@ -39,6 +40,9 @@ jobs:
           echo PKG_VERSION=$(awk -F ' = ' '$1 ~ /^version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml) >> $GITHUB_OUTPUT
 
   build:
+    name: Build and push Docker image
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: get-version
     runs-on: ubuntu-latest
     permissions:
       contents: read
