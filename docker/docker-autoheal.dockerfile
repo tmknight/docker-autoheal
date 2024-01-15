@@ -1,8 +1,17 @@
-FROM cgr.dev/chainguard/wolfi-base:latest
+FROM alpine:latest as build
 
-ARG BIN_VER
+WORKDIR /
 
-COPY ./bin/docker-autoheal-musl_${BIN_VER} /docker-autoheal
+ARG TARGETARCH
+
+RUN [ "${TARGETARCH}" == "amd64" ] && ARCH=x86_64 || ARCH=aarch64 \
+  && curl -sLO https://github.com/tmknight/docker-autoheal/releases/latest/download/docker-autoheal-${ARCH}-unknown-linux-musl.tar.gz \
+  && tar -xvf docker-autoheal-${ARCH}-unknown-linux-musl.tar.gz \
+  && chmod +x docker-autoheal
+
+FROM alpine:latest
+
+COPY --from=builder /docker-autoheal /docker-autoheal
 
 HEALTHCHECK --interval=5s \
     CMD pgrep -f docker-autoheal || exit 1
