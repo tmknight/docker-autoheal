@@ -91,7 +91,7 @@ docker run -d \
     --name autoheal \
     --restart=always \
     --read-only \
-    -e AUTOHEAL_CONNECTON_TYPE=socket \
+    -e AUTOHEAL_CONNECTON_TYPE=http \
     -e AUTOHEAL_CONTAINER_LABEL=watch-me \
     -e DOCKER_SOCK=MYHOST:2375 \
     -v /path/to/certs/:/certs/:ro \
