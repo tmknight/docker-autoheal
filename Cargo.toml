@@ -1,6 +1,6 @@
 [package]
 name = "docker-autoheal"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Travis M Knight <travis.knight@tmknight.net>"]
 license = "MIT"
 description = "Monitor and restart unhealthy docker containers"

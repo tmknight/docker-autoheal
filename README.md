@@ -18,7 +18,7 @@ The `docker-autoheal` binary may be executed via a native OS or via a Docker con
 | **AUTOHEAL_TCP_HOST**        | localhost             | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)      | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                    | Time in `n` seconds before failing connection attempt |
-| **AUTOHEAL_CERT_PATH**       | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`                                  |
+| **AUTOHEAL_PEM_PATH**       | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`                                  |
 <!--
 |**WEBHOOK_URL**               |                       |Post messages to the webhook following actions on unhealthy container                                                                              |
 -->
@@ -55,7 +55,7 @@ Options:
     -p, --tcp-port <TCP_PORT>
                         The tcp port number of the Docker host (when -c http
                         or ssl)
-    -k, --cert-path <CERT_PATH>
+    -k, --key-path <KEY_PATH>
                         The fully qualified path to requisite ssl PEM files
     -h, --help          Print help
     -v, --version       Print version information
@@ -76,7 +76,7 @@ docker run -d \
     --name docker-autoheal \
     --restart=always \
     --read-only \
-    --env="AUTOHEAL_CONNECTON_TYPE=socket" \
+    --env="AUTOHEAL_CONNECTION_TYPE=socket" \
     --env="AUTOHEAL_CONTAINER_LABEL=autoheal" \
     --volume=/var/run/docker.sock:/var/run/docker.sock \
     ghcr.io/tmknight/docker-autoheal:latest
@@ -91,7 +91,7 @@ docker run -d \
     --name docker-autoheal \
     --restart=always \
     --read-only \
-    --env="AUTOHEAL_CONNECTON_TYPE=http" \
+    --env="AUTOHEAL_CONNECTION_TYPE=http" \
     --env="AUTOHEAL_CONTAINER_LABEL=watch-me" \
     --env="AUTOHEAL_TCP_HOST=MYHOST" \
     --env="AUTOHEAL_TCP_PORT=2375" \
