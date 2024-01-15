@@ -11,7 +11,7 @@ RUN [ "${TARGETARCH}" == "amd64" ] && ARCH=x86_64 || ARCH=aarch64 \
 
 FROM alpine:latest
 
-COPY --from=builder /docker-autoheal /docker-autoheal
+COPY --from=build /docker-autoheal /docker-autoheal
 
 HEALTHCHECK --interval=5s \
     CMD pgrep -f docker-autoheal || exit 1
