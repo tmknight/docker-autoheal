@@ -76,9 +76,9 @@ docker run -d \
     --name docker-autoheal \
     --restart=always \
     --read-only \
-    -e AUTOHEAL_CONNECTON_TYPE=socket \
-    -e AUTOHEAL_CONTAINER_LABEL=autoheal \
-    -v /var/run/docker.sock:/var/run/docker.sock \
+    --env="AUTOHEAL_CONNECTON_TYPE=socket" \
+    --env="AUTOHEAL_CONTAINER_LABEL=autoheal" \
+    --volume=/var/run/docker.sock:/var/run/docker.sock \
     ghcr.io/tmknight/docker-autoheal:latest
 ```
 
@@ -91,10 +91,10 @@ docker run -d \
     --name docker-autoheal \
     --restart=always \
     --read-only \
-    -e AUTOHEAL_CONNECTON_TYPE=http \
-    -e AUTOHEAL_CONTAINER_LABEL=watch-me \
-    -e AUTOHEAL_TCP_HOST=MYHOST \
-    -E AUTOHEAL_TCP_PORT=2375 \
+    --env="AUTOHEAL_CONNECTON_TYPE=http" \
+    --env="AUTOHEAL_CONTAINER_LABEL=watch-me" \
+    --env="AUTOHEAL_TCP_HOST=MYHOST" \
+    --env="AUTOHEAL_TCP_PORT=2375" \
     ghcr.io/tmknight/docker-autoheal:latest
 ```
 
