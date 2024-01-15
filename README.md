@@ -73,7 +73,7 @@ Will connect to the local Docker host and monitor all containers
 
 ```bash
 docker run -d \
-    --name autoheal \
+    --name docker-autoheal \
     --restart=always \
     --read-only \
     -e AUTOHEAL_CONNECTON_TYPE=socket \
@@ -88,13 +88,13 @@ Will connect to the Docker host via unix socket location /var/run/docker.sock or
 
 ```bash
 docker run -d \
-    --name autoheal \
+    --name docker-autoheal \
     --restart=always \
     --read-only \
     -e AUTOHEAL_CONNECTON_TYPE=http \
     -e AUTOHEAL_CONTAINER_LABEL=watch-me \
-    -e DOCKER_SOCK=MYHOST:2375 \
-    -v /path/to/certs/:/certs/:ro \
+    -e AUTOHEAL_TCP_HOST=MYHOST \
+    -E AUTOHEAL_TCP_PORT=2375 \
     ghcr.io/tmknight/docker-autoheal:latest
 ```
 
