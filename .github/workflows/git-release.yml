@@ -21,7 +21,7 @@ env:
   CONTEXT: .
   DISTRO: alpine
   RELEASE: stable
-    
+
 jobs:
   get-tag:
     name: "Get Tag From Package Version"
@@ -75,8 +75,8 @@ jobs:
             os: "ubuntu-latest"
           - target: "aarch64-unknown-linux-musl"
             os: "ubuntu-latest"
-          - target: "aarch64-unknown-openbsd"
-            os: "ubuntu-latest"
+          # - target: "aarch64-unknown-openbsd"
+          #   os: "ubuntu-latest"
     runs-on: ${{ matrix.os }}
     steps:
       - name: "Check out the repo"
@@ -92,7 +92,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   push-to-registry:
-    name: "Push Docker image to Docker Hub"
+    name: "Publish Docker image"
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     needs:
       - "get-tag"
@@ -150,8 +150,8 @@ jobs:
             # type=raw,enable=${{ github.event_name == 'schedule' }},value=latest
             type=raw,enable=true,value=latest
             type=raw,enable=true,value=v${{ needs.get-tag.outputs.pkg-version }}
-            type=raw,enable=true,value=${{ env.DISTRO }}-${{ env.RELEASE }}
-            type=raw,enable=true,value=${{ env.DISTRO }}
+            # type=raw,enable=true,value=${{ env.DISTRO }}-${{ env.RELEASE }}
+            # type=raw,enable=true,value=${{ env.DISTRO }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
