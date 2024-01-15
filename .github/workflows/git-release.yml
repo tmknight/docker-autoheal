@@ -149,7 +149,7 @@ jobs:
             type=ref,event=tag
             # type=raw,enable=${{ github.event_name == 'schedule' }},value=latest
             type=raw,enable=true,value=latest
-            type=raw,enable=true,value=v${{ needs.get-tag.outputs.pkg-version }}
+            type=raw,enable=true,priority=1000,value=v${{ needs.get-tag.outputs.pkg-version }}
             # type=raw,enable=true,value=${{ env.DISTRO }}-${{ env.RELEASE }}
             # type=raw,enable=true,value=${{ env.DISTRO }}
 
