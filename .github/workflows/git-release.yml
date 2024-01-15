@@ -162,7 +162,7 @@ jobs:
           context: ${{ env.CONTEXT }}
           platforms: linux/amd64,linux/arm64
           file: docker/${{ env.DISTRO }}/${{ env.RELEASE }}/${{ env.IMAGE }}.dockerfile
-          build-args: ${{ env.BUILD_ARGS }}
+          # build-args: ${{ env.BUILD_ARGS }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
