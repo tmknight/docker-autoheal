@@ -79,7 +79,7 @@ docker run -d \
     -e AUTOHEAL_CONNECTON_TYPE=socket \
     -e AUTOHEAL_CONTAINER_LABEL=autoheal \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    tmknight/docker-autoheal
+    ghcr.io/tmknight/docker-autoheal:latest
 ```
 
 Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal`
@@ -95,7 +95,7 @@ docker run -d \
     -e AUTOHEAL_CONTAINER_LABEL=watch-me \
     -e DOCKER_SOCK=MYHOST:2375 \
     -v /path/to/certs/:/certs/:ro \
-    tmknight/docker-autoheal
+    ghcr.io/tmknight/docker-autoheal:latest
 ```
 
 Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me`
