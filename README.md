@@ -75,7 +75,8 @@ Will connect to the local Docker host and monitor all containers
 docker run -d \
     --name autoheal \
     --restart=always \
-    -e AUTOHEAL_CONNECTON_TYPE=socket
+    --read-only \
+    -e AUTOHEAL_CONNECTON_TYPE=socket \
     -e AUTOHEAL_CONTAINER_LABEL=autoheal \
     -v /var/run/docker.sock:/var/run/docker.sock \
     tmknight/docker-autoheal
@@ -89,7 +90,8 @@ Will connect to the Docker host via unix socket location /var/run/docker.sock or
 docker run -d \
     --name autoheal \
     --restart=always \
-    -e AUTOHEAL_CONNECTON_TYPE=socket
+    --read-only \
+    -e AUTOHEAL_CONNECTON_TYPE=socket \
     -e AUTOHEAL_CONTAINER_LABEL=watch-me \
     -e DOCKER_SOCK=MYHOST:2375 \
     -v /path/to/certs/:/certs/:ro \
