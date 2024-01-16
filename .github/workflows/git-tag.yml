@@ -38,4 +38,4 @@ jobs:
       - name: "Set Tag"
         shell: "bash"
         run: |
-          git tag v${{ steps.get-tag.outputs.PKG_VERSION }} && git push --tags
+          git tag ${{ steps.get-tag.outputs.PKG_VERSION }} && git push --tags
