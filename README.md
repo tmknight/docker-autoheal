@@ -1,7 +1,14 @@
 # Docker Autoheal
 
+[![GitHubRelease][GitHubReleaseBadge]][GitHubReleaseLink]
+[![DockerPublishing][DockerPublishingBadge]][DockerLink]
+[![DockerSize][DockerSizeBadge]][DockerLink]
+[![DockerPulls][DockerPullsBadge]][DockerLink]
+
+<!--
 [![Git Release](https://github.com/tmknight/docker-autoheal/actions/workflows/git-release.yml/badge.svg)](https://github.com/tmknight/docker-autoheal/actions/workflows/git-release.yml)
 [![Docker Publish](https://github.com/tmknight/docker-autoheal/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/tmknight/docker-autoheal/actions/workflows/docker-publish.yml)
+-->
 
 Monitor and remediate unhealthy Docker containers
 
@@ -147,3 +154,10 @@ docker run -d \
 ## Credits
 
 - [willfarrell](https://github.com/willfarrell)
+
+[GitHubReleaseBadge]: https://github.com/tmknight/docker-autoheal/actions/workflows/git-release.yml/badge.svg
+[GitHubReleaseLink]: https://github.com/tmknight/docker-autoheal/releases
+[DockerPublishingBadge]: https://github.com/tmknight/docker-autoheal/actions/workflows/docker-publish.yml/badge.svg
+[DockerPullsBadge]: https://badgen.net/docker/pulls/tmknight88/docker-autoheal?icon=docker&label=Docker+Pulls&labelColor=black&color=green
+[DockerSizeBadge]: https://badgen.net/docker/size/tmknight88/docker-autoheal?icon=docker&label=Docker+Size&labelColor=black&color=green
+[DockerLink]: https://hub.docker.com/r/tmknight88/docker-autoheal
