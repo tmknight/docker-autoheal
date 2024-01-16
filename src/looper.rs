@@ -28,11 +28,12 @@ pub async fn start_loop(
             filters,
             ..Default::default()
         });
+        let mut handles = vec![];
         let containers = docker.list_containers(container_options).await?;
         for container in containers {
             // Execute concurrently
             let docker_clone = docker.clone();
-            let join = tokio::task::spawn(async move {
+            let handle = tokio::task::spawn(async move {
                 // Get name of container
                 let name_tmp = match &container.names {
                     Some(names) => &names[0],
@@ -96,6 +97,10 @@ pub async fn start_loop(
                     log_message(&msg0).await;
                 }
             });
+            handles.push(handle);
+        }
+
+        for join in handles {
             join.await?;
         }
         // Loop interval
