@@ -13,14 +13,15 @@ on:
       - '*.lock'
       - '.LICENSE'
     branches: [ "main", "develop" ]
-#  pull_request:
-#    branches: [ "main" ]
+  pull_request:
+   branches: [ "main", "develop" ]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
+    name: Cargo Check
     runs-on: ubuntu-latest
 
     steps:
@@ -29,3 +30,4 @@ jobs:
       run: cargo check
     - name: Clippy
       run: cargo clippy -- -D warnings
+      
