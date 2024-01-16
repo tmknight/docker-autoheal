@@ -57,19 +57,45 @@ pub async fn start_loop(
                     }
                 };
 
-                let container_inspect = &docker_clone.inspect_container(&id, None).await.unwrap();
-                let failing_streak = &container_inspect.state.as_ref().unwrap().health.as_ref().unwrap().failing_streak.unwrap();
+                // Determine failing streak of the unhealthy container
+                // Attempt to inspect the container
+                let container_inspect = match docker_clone.inspect_container(&id, None).await {
+                    Ok(container) => container,
+                    Err(_) => {
+                        // Log that we had an error
+                        let msg0 = String::from(
+                            "[ERROR]   Could not reliably determine container information from inspection",
+                        );
+                        log_message(&msg0).await;
+                        // Return container default if err so we can carry on
+                        Default::default()
+                    }
+                };
+                // Get failing streak from state:health
+                let failing_streak = match container_inspect
+                    .state
+                    .as_ref()
+                    .and_then(|s| s.health.as_ref().and_then(|h| h.failing_streak))
+                {
+                    Some(streak) => streak,
+                    None => {
+                        // Log that we had an error
+                        let msg0 = String::from(
+                            "[ERROR]   Could not reliably determine container failing streak; default to 0",
+                        );
+                        log_message(&msg0).await;
+                        // If health information is not available, set failing_streak to 0
+                        let x: i64 = 0;
+                        x
+                    }
+                };
+                // Failing streak not 0 should be considered for remediation
                 let failing = match failing_streak {
-                   0 => false,
-                    _ => true
+                    0 => false,
+                    _ => true,
                 };
 
-                // if let Some(health) = &container_inspect.state.health {
-                //     if health.failing_streak != 0 {
-                //         println!("Container {} is failing", name);
-                //     }
-                // }
-
+                // Have all tests passed for unhealthy container to be remediated
                 if !(name.is_empty() && id.is_empty() && failing) {
                     // Report unhealthy container
                     let msg0 = format!("[WARNING] [{}] Container ({}) unhealthy", name, id);
@@ -106,7 +132,10 @@ pub async fn start_loop(
                         }
                     }
                 } else {
-                    let msg0 = String::from("[ERROR]   Could not reliably identify the container");
+                    let msg0 = format!(
+                        "[ERROR]   Could not reliably identify the container and/or state: name={}, id={}, failing_streak={}",
+                        name, id, failing_streak
+                    );
                     log_message(&msg0).await;
                 }
             });
