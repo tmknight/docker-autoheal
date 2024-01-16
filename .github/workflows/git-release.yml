@@ -27,7 +27,7 @@ jobs:
     name: "Get package version"
     runs-on: "ubuntu-latest"
     outputs:
-      pkg-version: ${{ steps.get-version.outputs.PKG_VERSION }}
+      pkg-version: ${{ steps.pkg-version.outputs.PKG_VERSION }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v3
@@ -35,7 +35,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Get version"
-        id: "get-version"
+        id: "pkg-version"
         shell: "bash"
         run: |
           echo PKG_VERSION=$(awk -F ' = ' '$1 ~ /^version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml) >> $GITHUB_OUTPUT
