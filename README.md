@@ -4,7 +4,7 @@ Monitor and remediate unhealthy Docker containers
 
 Designed to be OS agnostic, flexible, and performant in large environments via multi-threading and concurrency
 
-The `docker-autoheal` binary may be executed via a native OS or via a Docker container
+The `docker-autoheal` binary may be executed via a native OS or from a Docker container
 
 ## ENV Defaults
 

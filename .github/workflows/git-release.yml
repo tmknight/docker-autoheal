@@ -23,8 +23,8 @@ env:
   RELEASE: stable
 
 jobs:
-  get-tag:
-    name: "Get Tag From Package Version"
+  get-version:
+    name: "Get package version"
     runs-on: "ubuntu-latest"
     outputs:
       pkg-version: ${{ steps.pkg-version.outputs.PKG_VERSION }}
@@ -34,7 +34,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Get tag"
+      - name: "Get version"
         id: "pkg-version"
         shell: "bash"
         run: |
@@ -43,7 +43,7 @@ jobs:
   create-release:
     name: "Create release"
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    needs: "get-tag"
+    needs: "get-version"
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
@@ -55,14 +55,14 @@ jobs:
           # (optional) Path to changelog.
           # changelog: CHANGELOG.md
           branch: "main"
-          ref: refs/tags/v${{ needs.get-tag.outputs.pkg-version }}
+          ref: refs/tags/${{ needs.get-version.outputs.pkg-version }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
   upload-assets:
     name: "Upload assets to Github releases"
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     needs:
-     - "get-tag"
+     - "get-version"
      - "create-release"
     strategy:
       matrix:
@@ -88,14 +88,14 @@ jobs:
           bin: ${{ env.IMAGE }}
           target: ${{ matrix.target }}
           archive: $bin-${{ matrix.target }}
-          ref: refs/tags/v${{ needs.get-tag.outputs.pkg-version }}
+          ref: refs/tags/${{ needs.get-version.outputs.pkg-version }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
   push-to-registry:
     name: "Publish Docker image"
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     needs:
-      - "get-tag"
+      - "get-version"
       - "upload-assets"
     runs-on: ubuntu-latest
     permissions:
@@ -149,7 +149,7 @@ jobs:
             type=ref,event=tag
             # type=raw,enable=${{ github.event_name == 'schedule' }},value=latest
             type=raw,enable=true,value=latest
-            type=raw,enable=true,priority=1000,value=v${{ needs.get-tag.outputs.pkg-version }}
+            type=raw,enable=true,priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
             # type=raw,enable=true,value=${{ env.DISTRO }}-${{ env.RELEASE }}
             # type=raw,enable=true,value=${{ env.DISTRO }}
 
