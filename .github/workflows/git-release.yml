@@ -29,7 +29,7 @@ jobs:
     outputs:
       pkg-version: ${{ steps.pkg-version.outputs.PKG_VERSION }}
     steps:
-      - name: "Check out the repo"
+      - name: "Checkout repository"
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -46,7 +46,7 @@ jobs:
     needs: "get-version"
     runs-on: "ubuntu-latest"
     steps:
-      - name: "Check out the repo"
+      - name: "Checkout repository"
         uses: actions/checkout@v3
 
       - name: "Create release"
@@ -59,7 +59,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
   upload-assets:
-    name: "Upload assets to Github releases"
+    name: "Upload assets"
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     needs:
      - "get-version"
@@ -79,10 +79,10 @@ jobs:
           #   os: "ubuntu-latest"
     runs-on: ${{ matrix.os }}
     steps:
-      - name: "Check out the repo"
+      - name: "Checkout repository"
         uses: actions/checkout@v3
 
-      - name: "Upload Binaries"
+      - name: "Upload assets"
         uses: "taiki-e/upload-rust-binary-action@v1"
         with:
           bin: ${{ env.IMAGE }}

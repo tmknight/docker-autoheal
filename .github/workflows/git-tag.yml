@@ -29,8 +29,8 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Get tag"
-        id: "get-tag"
+      - name: "Get version"
+        id: "get-version"
         shell: "bash"
         run: |
           echo PKG_VERSION=$(awk -F ' = ' '$1 ~ /^version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml) >> $GITHUB_OUTPUT
@@ -38,4 +38,4 @@ jobs:
       - name: "Set Tag"
         shell: "bash"
         run: |
-          git tag ${{ steps.get-tag.outputs.PKG_VERSION }} && git push --tags
+          git tag ${{ steps.get-version.outputs.PKG_VERSION }} && git push --tags
