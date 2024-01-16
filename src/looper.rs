@@ -97,9 +97,10 @@ pub async fn start_loop(
                     log_message(&msg0).await;
                 }
             });
+            // Push handles for latter consumption
             handles.push(handle);
         }
-
+        // Return joinhandle results as they arrive
         for join in handles {
             join.await?;
         }
