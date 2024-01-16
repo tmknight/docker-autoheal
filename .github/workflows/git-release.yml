@@ -55,7 +55,7 @@ jobs:
           # (optional) Path to changelog.
           # changelog: CHANGELOG.md
           branch: "main"
-          ref: refs/tags/v${{ needs.get-tag.outputs.pkg-version }}
+          ref: refs/tags/${{ needs.get-version.outputs.pkg-version }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
   upload-assets:
@@ -88,7 +88,7 @@ jobs:
           bin: ${{ env.IMAGE }}
           target: ${{ matrix.target }}
           archive: $bin-${{ matrix.target }}
-          ref: refs/tags/v${{ needs.get-tag.outputs.pkg-version }}
+          ref: refs/tags/${{ needs.get-version.outputs.pkg-version }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
   push-to-registry:
@@ -149,7 +149,7 @@ jobs:
             type=ref,event=tag
             # type=raw,enable=${{ github.event_name == 'schedule' }},value=latest
             type=raw,enable=true,value=latest
-            type=raw,enable=true,priority=1000,value=v${{ needs.get-tag.outputs.pkg-version }}
+            type=raw,enable=true,priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
             # type=raw,enable=true,value=${{ env.DISTRO }}-${{ env.RELEASE }}
             # type=raw,enable=true,value=${{ env.DISTRO }}
 
