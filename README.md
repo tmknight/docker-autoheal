@@ -5,11 +5,6 @@
 [![DockerSize][DockerSizeBadge]][DockerLink]
 [![DockerPulls][DockerPullsBadge]][DockerLink]
 
-<!--
-[![Git Release](https://github.com/tmknight/docker-autoheal/actions/workflows/git-release.yml/badge.svg)](https://github.com/tmknight/docker-autoheal/actions/workflows/git-release.yml)
-[![Docker Publish](https://github.com/tmknight/docker-autoheal/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/tmknight/docker-autoheal/actions/workflows/docker-publish.yml)
--->
-
 Monitor and remediate unhealthy Docker containers
 
 Designed to be OS agnostic, flexible, and performant in large environments via multi-threading and concurrency
