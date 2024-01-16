@@ -39,3 +39,4 @@ jobs:
         shell: "bash"
         run: |
           git tag ${{ steps.get-version.outputs.PKG_VERSION }} && git push --tags
+          
