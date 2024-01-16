@@ -1,4 +1,4 @@
-use bollard::container::{ListContainersOptions, RestartContainerOptions};
+use bollard::container::{ListContainersOptions, InspectContainerOptions, RestartContainerOptions};
 use bollard::Docker;
 use std::collections::HashMap;
 use std::time::Duration;
@@ -57,7 +57,24 @@ pub async fn start_loop(
                     }
                 };
 
-                if !(name.is_empty() && id.is_empty()) {
+                let container_inspect = &docker.inspect_container(&container.id, None).await.unwrap();
+                let failing_streak: i64 = match container_inspect.state.health {
+                    Some(health) => health.failing_streak,
+                    None => {
+                        let msg0 =
+                            String::from("[ERROR]   Could not reliably determine container health");
+                        log_message(&msg0).await;
+                        -1;
+                    }
+                };
+
+                // if let Some(health) = &container_inspect.state.health {
+                //     if health.failing_streak != 0 {
+                //         println!("Container {} is failing", name);
+                //     }
+                // }
+
+                if !(name.is_empty() && id.is_empty() && failing_streak > 0) {
                     // Report unhealthy container
                     let msg0 = format!("[WARNING] [{}] Container ({}) unhealthy", name, id);
                     log_message(&msg0).await;
