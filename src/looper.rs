@@ -5,6 +5,8 @@ use std::time::Duration;
 
 use crate::logging::log_message;
 
+const ZERO64: i64 = 0;
+
 pub async fn start_loop(
     autoheal_interval: u64,
     autoheal_container_label: String,
@@ -63,8 +65,9 @@ pub async fn start_loop(
                     Ok(container) => container,
                     Err(_) => {
                         // Log that we had an error
-                        let msg0 = String::from(
-                            "[ERROR]   Could not reliably determine container information from inspection",
+                        let msg0 = format!(
+                            "[ERROR]   [{}] Could not reliably determine container ({}) information from inspection",
+                            name, id
                         );
                         log_message(&msg0).await;
                         // Return container default if err so we can carry on
@@ -80,22 +83,31 @@ pub async fn start_loop(
                     Some(streak) => streak,
                     None => {
                         // Log that we had an error
-                        let msg0 = String::from(
-                            "[ERROR]   Could not reliably determine container failing streak; default to 0",
+                        let msg0 = format!(
+                            "[ERROR]   [{}] Could not reliably determine container ({}) failing streak; default to 0",
+                            name, id
                         );
                         log_message(&msg0).await;
                         // Health information is not available, set failing_streak to 0
-                        let x: i64 = 0;
-                        x
+                        ZERO64
                     }
                 };
                 // Failing streak not 0 should be considered for remediation
-                let failing = !matches!(failing_streak, 0);
+                let failing = !matches!(failing_streak, ZERO64);
 
                 // Have all tests passed for unhealthy container to be remediated
-                if !(name.is_empty() && id.is_empty() && failing) {
+                if name.is_empty() && id.is_empty() {
+                    let msg0 = format!(
+                        "[ERROR]   Could not reliably identify the container: name={}, id={}",
+                        name, id
+                    );
+                    log_message(&msg0).await;
+                } else if failing {
                     // Report unhealthy container
-                    let msg0 = format!("[WARNING] [{}] Container ({}) unhealthy", name, id);
+                    let msg0 = format!(
+                        "[WARNING] [{}] Container ({}) is unhealthy with {} failures",
+                        name, id, failing_streak
+                    );
                     log_message(&msg0).await;
 
                     // Build restart options
@@ -128,12 +140,6 @@ pub async fn start_loop(
                             log_message(&msg0).await;
                         }
                     }
-                } else {
-                    let msg0 = format!(
-                        "[ERROR]   Could not reliably identify the container and/or state: name={}, id={}, failing_streak={}",
-                        name, id, failing_streak
-                    );
-                    log_message(&msg0).await;
                 }
             });
             // Push handles for latter consumption
