@@ -84,16 +84,13 @@ pub async fn start_loop(
                             "[ERROR]   Could not reliably determine container failing streak; default to 0",
                         );
                         log_message(&msg0).await;
-                        // If health information is not available, set failing_streak to 0
+                        // Health information is not available, set failing_streak to 0
                         let x: i64 = 0;
                         x
                     }
                 };
                 // Failing streak not 0 should be considered for remediation
-                let failing = match failing_streak {
-                    0 => false,
-                    _ => true,
-                };
+                let failing = !matches!(failing_streak, 0);
 
                 // Have all tests passed for unhealthy container to be remediated
                 if !(name.is_empty() && id.is_empty() && failing) {
