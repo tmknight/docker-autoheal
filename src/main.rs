@@ -1,14 +1,22 @@
-// use bollard::container::{ListContainersOptions, RestartContainerOptions};
-use bollard::{Docker, API_DEFAULT_VERSION};
 use getopts::Options;
 use std::time::Duration;
 
-mod environment;
-mod logging;
+mod action {
+    pub mod connect;
+    pub mod logging;
+}
+mod check {
+    pub mod environment;
+    pub mod inspect;
+    pub mod list;
+}
 mod looper;
 
-use environment::get_env;
-use logging::{log_message, print_version};
+use action::{
+    connect::connect_docker,
+    logging::{log_message, print_version},
+};
+use check::environment::get_env;
 use looper::start_loop;
 
 #[tokio::main]
@@ -153,48 +161,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // let apprise_url = "";
 
     // Determine connection type & connect to docker per type
-    let docker = match autoheal_connection_type.as_str() {
-        "http" => Docker::connect_with_http(
-            &autoheal_tcp_address,
-            autoheal_tcp_timeout,
-            API_DEFAULT_VERSION,
-        )?,
-        #[cfg(unix)]
-        "socket" => Docker::connect_with_socket_defaults()?,
-        #[cfg(feature = "ssl")]
-        "ssl" => Docker::connect_with_ssl(
-            &autoheal_tcp_address,
-            autoheal_tcp_timeout,
-            Path::new(autoheal_key_path),
-            Path::new(autoheal_cert_path),
-            Path::new(autoheal_ca_path),
-            API_DEFAULT_VERSION,
-        )?,
-        &_ => Docker::connect_with_local_defaults()?,
-    };
-
-    // Log final connection paramaters
-    let msg0 = format!(
-        "[INFO]    Monitoring Docker via {}",
-        autoheal_connection_type
-    );
-    log_message(&msg0).await;
-    match autoheal_connection_type.as_str() {
-        "http" => {
-            let msg1 = format!("[INFO]    Connecting to {}", autoheal_tcp_address);
-            log_message(&msg1).await;
-        }
-        "ssl" => {
-            let msg1 = format!("[INFO]    Connecting to {}", autoheal_tcp_address);
-            log_message(&msg1).await;
-            let msg2 = format!(
-                "[INFO]    Certificate information: {}, {}, {}",
-                autoheal_key_path, autoheal_cert_path, autoheal_ca_path
-            );
-            log_message(&msg2).await;
-        }
-        &_ => {}
-    }
+    let docker = connect_docker(
+        autoheal_connection_type,
+        autoheal_tcp_address,
+        autoheal_tcp_timeout,
+        autoheal_key_path,
+        autoheal_cert_path,
+        autoheal_ca_path,
+    )
+    .await;
 
     // Delay start of loop if specified
     if autoheal_start_delay > 0 {
@@ -206,6 +181,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         std::thread::sleep(Duration::from_secs(autoheal_start_delay));
     }
 
+    // Begin work
     start_loop(
         autoheal_interval,
         autoheal_container_label,
