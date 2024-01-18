@@ -1,7 +1,7 @@
 use chrono::Local;
 use std::io::{stdout, Write};
 
-// Return binary information
+// Return information about the binary
 pub const NAME: &str = env!("CARGO_PKG_NAME");
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
