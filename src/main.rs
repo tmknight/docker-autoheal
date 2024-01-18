@@ -1,23 +1,22 @@
 use getopts::Options;
 use std::time::Duration;
 
-mod action {
+mod execute {
     pub mod connect;
-    pub mod logging;
+    pub mod looper;
 }
-mod check {
+mod inquire {
     pub mod environment;
     pub mod inspect;
     pub mod list;
 }
-mod looper;
+mod report {
+    pub mod logging;
+}
 
-use action::{
-    connect::connect_docker,
-    logging::{log_message, print_version},
-};
-use check::environment::get_env;
-use looper::start_loop;
+use execute::{connect::connect_docker, looper::start_loop};
+use inquire::environment::get_env;
+use report::logging::{log_message, print_version};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

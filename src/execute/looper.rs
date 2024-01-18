@@ -2,9 +2,9 @@ use bollard::container::RestartContainerOptions;
 use bollard::Docker;
 use std::time::Duration;
 
-use crate::action::logging::log_message;
-use crate::check::inspect::inspect_container;
-use crate::check::list::containers_list;
+use crate::inquire::inspect::inspect_container;
+use crate::inquire::list::containers_list;
+use crate::report::logging::log_message;
 
 pub async fn start_loop(
     autoheal_interval: u64,
