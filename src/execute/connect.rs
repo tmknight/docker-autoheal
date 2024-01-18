@@ -31,6 +31,7 @@ pub async fn connect_docker(
         }
         &_ => {}
     }
+    // Connect to Docker as specified
     let docker = match autoheal_connection_type.as_str() {
         "http" => Docker::connect_with_http(
             &autoheal_tcp_address,

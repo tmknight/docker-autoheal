@@ -11,7 +11,7 @@ pub struct Result {
 pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
     // Attempt to inspect the container
     let container_inspect = match docker.inspect_container(id, None).await {
-        Ok(container) => container,
+        Ok(repsonse) => repsonse,
         Err(_) => {
             // Log that we had an error
             let msg0 = format!(
