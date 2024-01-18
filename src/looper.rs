@@ -15,8 +15,11 @@ pub async fn start_loop(
     // Establish loop interval
     let mut interval = tokio::time::interval(Duration::from_secs(autoheal_interval));
     loop {
+        // Gather all unhealthy containers
         let containers = containers_list(&autoheal_container_label, docker.clone()).await;
+        // Prepare for concurrent execution
         let mut handles = vec![];
+        // Iterate through suspected unhealthy
         for container in containers {
             // Execute concurrently
             let docker_clone = docker.clone();
@@ -94,7 +97,7 @@ pub async fn start_loop(
                     }
                 }
             });
-            // Push handles for latter consumption
+            // Push handles for later consumption
             handles.push(handle);
         }
         // Return joinhandle results as they arrive
