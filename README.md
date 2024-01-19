@@ -150,7 +150,7 @@ docker run -d \
 
 - [willfarrell](https://github.com/willfarrell)
 
-[GitHubReleaseBadge]: https://github.com/tmknight/docker-autoheal/actions/workflows/git-release.yml/badge.svg
+[GitHubReleaseBadge]: https://github.com/tmknight/docker-autoheal/actions/workflows/github-release.yml/badge.svg
 [GitHubReleaseLink]: https://github.com/tmknight/docker-autoheal/releases
 [DockerPublishingBadge]: https://github.com/tmknight/docker-autoheal/actions/workflows/docker-publish.yml/badge.svg
 [DockerPullsBadge]: https://badgen.net/docker/pulls/tmknight88/docker-autoheal?icon=docker&label=Docker+Pulls&labelColor=black&color=green
