@@ -6,7 +6,7 @@ permissions:
 on:
   workflow_dispatch:
   workflow_run:
-    workflows: ["Git Release"]
+    workflows: ["Github Release"]
     types:
       - "completed"
   schedule:
