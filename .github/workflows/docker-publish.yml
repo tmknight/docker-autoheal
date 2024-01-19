@@ -33,7 +33,7 @@ jobs:
 
   push-to-registry:
     name: "Publish Docker image"
-    if: (${{ github.event.workflow_run.conclusion == 'success' }} || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    if: ${{ github.event.workflow_run.conclusion == 'success'  || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
     needs:
       - "get-version"
     runs-on: ubuntu-latest
@@ -122,7 +122,7 @@ jobs:
       # transparency data even for private images, pass --force to cosign below.
       # https://github.com/sigstore/cosign
       - name: Sign the published Docker image
-        if: ${{ github.event_name != 'pull_request' }} && !startsWith(steps.meta.outputs.tags, 'tmknight88')
+        if: ${{ github.event_name != 'pull_request' && !startsWith(steps.meta.outputs.tags, 'tmknight88') }}
         env:
           # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
           TAGS: ${{ steps.meta.outputs.tags }}
