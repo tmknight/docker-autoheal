@@ -19,7 +19,13 @@ FROM alpine:latest
 
 COPY --from=build /docker-autoheal /docker-autoheal
 
+RUN apk update \
+  && apk upgrade --no-cache --no-progress --purge \
+  && rm -rf \
+  /tmp/* \
+  /var/tmp/*
+
 HEALTHCHECK --interval=5s \
-    CMD pgrep -f docker-autoheal || exit 1
+  CMD pgrep -f docker-autoheal || exit 1
 
 ENTRYPOINT ["/docker-autoheal"]

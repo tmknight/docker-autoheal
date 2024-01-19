@@ -1,0 +1,30 @@
+name: "Package Version"
+
+permissions:
+  contents: "read"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    outputs:
+        pkg-version:
+            description: "Package Version"
+            value: ${{ jobs.get-version.outputs.pkg-version }}
+
+jobs:
+  get-version:
+    name: "Get package version"
+    runs-on: "ubuntu-latest"
+    outputs:
+      pkg-version: ${{ steps.pkg-version.outputs.PKG_VERSION }}
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Get version"
+        id: "pkg-version"
+        shell: "bash"
+        run: |
+          echo PKG_VERSION=$(awk -F ' = ' '$1 ~ /^version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml) >> $GITHUB_OUTPUT
