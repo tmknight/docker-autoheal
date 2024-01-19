@@ -5,20 +5,21 @@ permissions:
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Github Release"]
-    types:
-      - "completed"
-  schedule:
-    - cron: '45 05 * * *'
+  # workflow_run:
+  #   workflows: ["Github Release"]
+  #   types:
+  #     - "completed"
+  # schedule:
+  #   - cron: '45 05 * * *'
 
 env:
   # Use docker.io for Docker Hub if empty
-  REGISTRY: docker.io
+  REGISTRY: ghcr.io
+  DOCKER_REGISTRY: tmknight88
   # name of image
   IMAGE: docker-autoheal
   # github.repository as <account>/<repo>
-  IMAGE_NAME: tmknight88/docker-autoheal
+  IMAGE_NAME: tmknight/docker-autoheal
   # Build args
   CONTEXT: .
   DISTRO: alpine
@@ -30,7 +31,7 @@ jobs:
 
   build:
     name: Build and push Docker image
-    if: (${{ github.event.workflow_run.conclusion == 'success' }} || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    # if: (${{ github.event.workflow_run.conclusion == 'success' }} || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
     needs: get-version
     runs-on: ubuntu-latest
     permissions:
@@ -56,13 +57,20 @@ jobs:
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
+      - name: Log into Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
@@ -70,7 +78,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: |
+            ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
             type=ref,event=tag
             type=raw,enable=true,value=latest
