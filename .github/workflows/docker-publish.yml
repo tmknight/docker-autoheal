@@ -1,16 +1,16 @@
-name: "Docker Publish"
+name: "Publish Docker image"
 
 permissions:
   contents: "write"
 
 on:
   workflow_dispatch:
-  # workflow_run:
-  #   workflows: ["Github Release"]
-  #   types:
-  #     - "completed"
-  # schedule:
-  #   - cron: '45 05 * * *'
+  workflow_run:
+    workflows: ["Github Release"]
+    types:
+      - "completed"
+  schedule:
+    - cron: '40 05 * * *'
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -20,6 +20,8 @@ env:
   IMAGE: docker-autoheal
   # github.repository as <account>/<repo>
   IMAGE_NAME: tmknight/docker-autoheal
+  # cosign version
+  COSIGN_VER: 'v2.1.1'
   # Build args
   CONTEXT: .
   DISTRO: alpine
@@ -29,10 +31,11 @@ jobs:
   get-version:
     uses: ./.github/workflows/get-version.yml
 
-  build:
-    name: Build and push Docker image
-    # if: (${{ github.event.workflow_run.conclusion == 'success' }} || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
-    needs: get-version
+  push-to-registry:
+    name: "Publish Docker image"
+    if: (${{ github.event.workflow_run.conclusion == 'success' }} || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+    needs:
+      - "get-version"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -44,6 +47,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      # Install the cosign tool except on PR
+      # https://github.com/sigstore/cosign-installer
+      - name: Install cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@v3 #v3.1.1
+        with:
+          cosign-release: ${{ env.COSIGN_VER }}
 
       # Setup QEMU for multi-arch
       - name: Set up QEMU
@@ -57,14 +68,8 @@ jobs:
 
       # Login against a Docker registry except on PR
       # https://github.com/docker/login-action
-      - name: Log into Docker Hub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Log into registry ${{ env.REGISTRY }}
+        id: container-registry
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
         with:
@@ -72,19 +77,28 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Extract metadata (tags, labels) for Docker
+      - name: Log into Docker Hub
+        id: docker-hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+            # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: |
             ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=ref,event=branch,enable=${{ github.ref_name != 'main' }}
             type=ref,event=tag
             type=raw,enable=true,value=latest
-            type=raw,enable=${{ github.event_name != 'schedule' && !contains(github.ref_name, 'dev') }},priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
+            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev') }},priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -101,3 +115,18 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           # cache-from: type=gha
           # cache-to: type=gha,mode=max
+
+      # Sign the resulting Docker image digest except on PRs.
+      # This will only write to the public Rekor transparency log when the Docker
+      # repository is public to avoid leaking data.  If you would like to publish
+      # transparency data even for private images, pass --force to cosign below.
+      # https://github.com/sigstore/cosign
+      - name: Sign the published Docker image
+        if: ${{ github.event_name != 'pull_request' }} && !startsWith(steps.meta.outputs.tags, 'tmknight88')
+        env:
+          # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.build-and-push.outputs.digest }}
+        # This step uses the identity token to provision an ephemeral certificate
+        # against the sigstore community Fulcio instance.
+        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
