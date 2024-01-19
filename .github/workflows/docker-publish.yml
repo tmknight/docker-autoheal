@@ -9,6 +9,9 @@ on:
     workflows: ["Git Release"]
     types:
       - "completed"
+  schedule:
+    - cron: '45 05 * * *'
+
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: docker.io
@@ -23,25 +26,11 @@ env:
 
 jobs:
   get-version:
-    name: Get package version
-    runs-on: ubuntu-latest
-    outputs:
-      pkg-version: ${{ steps.pkg-version.outputs.PKG_VERSION }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: "Get version"
-        id: "pkg-version"
-        shell: "bash"
-        run: |
-          echo PKG_VERSION=$(awk -F ' = ' '$1 ~ /^version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml) >> $GITHUB_OUTPUT
+    uses: ./.github/workflows/get-version.yml
 
   build:
     name: Build and push Docker image
-    if: (${{ github.event.workflow_run.conclusion == 'success' }} || github.event_name == 'workflow_dispatch')
+    if: (${{ github.event.workflow_run.conclusion == 'success' }} || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
     needs: get-version
     runs-on: ubuntu-latest
     permissions:
@@ -85,7 +74,7 @@ jobs:
           tags: |
             type=ref,event=tag
             type=raw,enable=true,value=latest
-            type=raw,enable=true,value=${{ needs.get-version.outputs.pkg-version }}
+            type=raw,enable=${{ github.event_name != 'schedule' && startsWith(github.ref_name, 'dev') }},priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action

@@ -20,22 +20,20 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  get-version:
+    uses: ./.github/workflows/get-version.yml
+
   create-tag:
     name: "Create tag"
     runs-on: "ubuntu-latest"
+    needs: get-version
     steps:
       - name: "Check out the repo"
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Get version"
-        id: "get-version"
-        shell: "bash"
-        run: |
-          echo PKG_VERSION=$(awk -F ' = ' '$1 ~ /^version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml) >> $GITHUB_OUTPUT
-
       - name: "Set Tag"
         shell: "bash"
         run: |
-          git tag ${{ steps.get-version.outputs.PKG_VERSION }} && git push --tags
+          git tag ${{ needs.get-version.outputs.pkg-version }} && git push --tags
