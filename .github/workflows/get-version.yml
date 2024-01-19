@@ -1,4 +1,4 @@
-name: "Package Version"
+name: "Release Version"
 
 permissions:
   contents: "read"
@@ -8,12 +8,12 @@ on:
   workflow_call:
     outputs:
         pkg-version:
-            description: "Get package version"
+            description: "Get release version"
             value: ${{ jobs.get-version.outputs.pkg-version }}
 
 jobs:
   get-version:
-    name: "Get package version"
+    name: "Get release version"
     runs-on: "ubuntu-latest"
     outputs:
       pkg-version: ${{ steps.pkg-version.outputs.PKG_VERSION }}
