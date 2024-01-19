@@ -46,14 +46,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Install the cosign tool except on PR
-      # https://github.com/sigstore/cosign-installer
-      - name: Install cosign
-        if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@v3 #v3.1.1
-        with:
-          cosign-release: ${{ env.COSIGN_VER }}
-
       # Setup QEMU for multi-arch
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
