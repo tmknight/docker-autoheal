@@ -1,4 +1,4 @@
-name: "Git Release"
+name: "Github Release"
 
 permissions:
   contents: "write"
