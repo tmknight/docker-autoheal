@@ -1,10 +1,10 @@
-use bollard::container::RestartContainerOptions;
-use bollard::Docker;
+use bollard::{Docker, container::RestartContainerOptions};
 use std::time::Duration;
 
-use crate::inquire::inspect::inspect_container;
-use crate::inquire::list::containers_list;
-use crate::report::logging::log_message;
+use crate::{
+    inquire::inspect::inspect_container, inquire::list::containers_list,
+    report::logging::log_message, ERROR, INFO, WARNING,
+};
 
 pub async fn start_loop(
     autoheal_interval: u64,
@@ -28,9 +28,8 @@ pub async fn start_loop(
                 let name_tmp = match &container.names {
                     Some(names) => &names[0],
                     None => {
-                        let msg0 =
-                            String::from("[ERROR]   Could not reliably determine container name");
-                        log_message(&msg0).await;
+                        let msg0 = String::from("Could not reliably determine container name");
+                        log_message(&msg0, ERROR).await;
                         ""
                     }
                 };
@@ -40,9 +39,8 @@ pub async fn start_loop(
                 let id: String = match container.id {
                     Some(id) => id.chars().take(12).collect(),
                     None => {
-                        let msg0 =
-                            String::from("[ERROR]   Could not reliably determine container id");
-                        log_message(&msg0).await;
+                        let msg0 = String::from("Could not reliably determine container id");
+                        log_message(&msg0, ERROR).await;
                         "".to_string()
                     }
                 };
@@ -50,20 +48,20 @@ pub async fn start_loop(
                 // Have all tests passed for unhealthy container to be remediated
                 if name.is_empty() && id.is_empty() {
                     let msg0 = format!(
-                        "[ERROR]   Could not reliably identify the container: name={}, id={}",
+                        "Could not reliably identify the container: name={}, id={}",
                         name, id
                     );
-                    log_message(&msg0).await;
+                    log_message(&msg0, ERROR).await;
                 } else {
                     // Determine failing streak of the unhealthy container
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
                     if inspection.failed {
                         // Report unhealthy container
                         let msg0 = format!(
-                            "[WARNING] [{}] Container ({}) is unhealthy with {} failures",
+                            "[{}] Container ({}) is unhealthy with {} failures",
                             name, id, inspection.failing_streak
                         );
-                        log_message(&msg0).await;
+                        log_message(&msg0, WARNING).await;
 
                         // Build restart options
                         let restart_options = Some(RestartContainerOptions {
@@ -72,26 +70,26 @@ pub async fn start_loop(
 
                         // Report container restart
                         let msg1 = format!(
-                            "[WARNING] [{}] Restarting container ({}) with {}s timeout",
+                            "[{}] Restarting container ({}) with {}s timeout",
                             name, id, autoheal_stop_timeout
                         );
-                        log_message(&msg1).await;
+                        log_message(&msg1, WARNING).await;
 
                         // Restart unhealthy container
                         match &docker_clone.restart_container(&id, restart_options).await {
                             Ok(()) => {
                                 let msg0 = format!(
-                                    "[INFO]    [{}] Restart of container ({}) was successful",
+                                    "[{}] Restart of container ({}) was successful",
                                     name, id
                                 );
-                                log_message(&msg0).await;
+                                log_message(&msg0, INFO).await;
                             }
                             Err(e) => {
                                 let msg0 = format!(
-                                    "[ERROR]   [{}] Restart of container ({}) failed: {}",
+                                    "[{}] Restart of container ({}) failed: {}",
                                     name, id, e
                                 );
-                                log_message(&msg0).await;
+                                log_message(&msg0, ERROR).await;
                             }
                         }
                     }

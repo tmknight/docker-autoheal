@@ -1,4 +1,4 @@
-use crate::report::logging::log_message;
+use crate::{report::logging::log_message, ERROR};
 use bollard::Docker;
 
 const ZERO64: i64 = 0;
@@ -15,10 +15,10 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
         Err(_) => {
             // Log that we had an error
             let msg0 = format!(
-                            "[ERROR]   [{}] Could not reliably determine container ({}) information from inspection",
-                            name, id
-                        );
-            log_message(&msg0).await;
+                "[{}] Could not reliably determine container ({}) information from inspection",
+                name, id
+            );
+            log_message(&msg0, ERROR).await;
             // Return container default if err so we can carry on
             Default::default()
         }
@@ -33,10 +33,10 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
         None => {
             // Log that we had an error
             let msg0 = format!(
-                            "[ERROR]   [{}] Could not reliably determine container ({}) failing streak; default to 0",
-                            name, id
-                        );
-            log_message(&msg0).await;
+                "[{}] Could not reliably determine container ({}) failing streak; default to 0",
+                name, id
+            );
+            log_message(&msg0, ERROR).await;
             // Health information is not available, set failing_streak to 0
             ZERO64
         }

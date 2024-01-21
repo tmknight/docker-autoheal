@@ -1,7 +1,5 @@
-use crate::report::logging::log_message;
-use bollard::container::ListContainersOptions;
-use bollard::models::ContainerSummary;
-use bollard::Docker;
+use crate::{report::logging::log_message, ERROR};
+use bollard::{container::ListContainersOptions, models::ContainerSummary, Docker};
 use std::collections::HashMap;
 
 pub async fn containers_list(
@@ -25,8 +23,8 @@ pub async fn containers_list(
     match docker.list_containers(container_options).await {
         Ok(list) => list,
         Err(e) => {
-            let msg0 = String::from("[ERROR]   Could not reliably determine containers to assess");
-            log_message(&msg0).await;
+            let msg0 = String::from("Could not reliably determine containers to assess");
+            log_message(&msg0, ERROR).await;
             panic!("{e}")
         }
     }
