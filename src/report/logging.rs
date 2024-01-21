@@ -22,7 +22,7 @@ pub fn print_version() {
 }
 
 // Logging
-pub async fn log_message(msg: &str, lvl: i64) {
+pub async fn log_message(msg: &str, lvl: i8) {
     let date = Local::now().format("%Y-%m-%d %H:%M:%S%z").to_string();
     let level = match lvl {
         1 => "[WARNING]",
