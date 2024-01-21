@@ -27,7 +27,7 @@ pub async fn log_message(msg: &str, lvl: u64) {
     let level = match lvl {
         1 => "[WARNING]",
         2 => "[  ERROR]",
-        &_ => "[   INFO]",
+        _ => "[   INFO]",
     };
     let mut lock = stdout().lock();
     writeln!(lock, "{} {} {}", date, level, msg).unwrap();
