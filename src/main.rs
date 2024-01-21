@@ -18,6 +18,10 @@ use execute::{connect::connect_docker, looper::start_loop};
 use inquire::environment::get_env;
 use report::logging::{log_message, print_version};
 
+pub const INFO: i8 = 0;
+pub const WARNING: i8 = 1;
+pub const ERROR: i8 = 2;
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Collect binary arguments
@@ -173,7 +177,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Delay start of loop if specified
     if autoheal_start_delay > 0 {
         let msg0 = format!("Delaying evaluation {}s on request", autoheal_start_delay);
-        log_message(&msg0, 0).await;
+        log_message(&msg0, INFO).await;
         std::thread::sleep(Duration::from_secs(autoheal_start_delay));
     }
 

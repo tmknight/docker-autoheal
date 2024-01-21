@@ -1,10 +1,10 @@
-use bollard::container::RestartContainerOptions;
-use bollard::Docker;
+use bollard::{bollard::Docker, container::RestartContainerOptions};
 use std::time::Duration;
 
-use crate::inquire::inspect::inspect_container;
-use crate::inquire::list::containers_list;
-use crate::report::logging::log_message;
+use crate::{
+    inquire::inspect::inspect_container, inquire::list::containers_list,
+    report::logging::log_message, ERROR, INFO, WARNING,
+};
 
 pub async fn start_loop(
     autoheal_interval: u64,
@@ -29,7 +29,7 @@ pub async fn start_loop(
                     Some(names) => &names[0],
                     None => {
                         let msg0 = String::from("Could not reliably determine container name");
-                        log_message(&msg0, 2).await;
+                        log_message(&msg0, ERROR).await;
                         ""
                     }
                 };
@@ -40,7 +40,7 @@ pub async fn start_loop(
                     Some(id) => id.chars().take(12).collect(),
                     None => {
                         let msg0 = String::from("Could not reliably determine container id");
-                        log_message(&msg0, 2).await;
+                        log_message(&msg0, ERROR).await;
                         "".to_string()
                     }
                 };
@@ -51,7 +51,7 @@ pub async fn start_loop(
                         "Could not reliably identify the container: name={}, id={}",
                         name, id
                     );
-                    log_message(&msg0, 2).await;
+                    log_message(&msg0, ERROR).await;
                 } else {
                     // Determine failing streak of the unhealthy container
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
@@ -61,7 +61,7 @@ pub async fn start_loop(
                             "[{}] Container ({}) is unhealthy with {} failures",
                             name, id, inspection.failing_streak
                         );
-                        log_message(&msg0, 1).await;
+                        log_message(&msg0, WARNING).await;
 
                         // Build restart options
                         let restart_options = Some(RestartContainerOptions {
@@ -73,7 +73,7 @@ pub async fn start_loop(
                             "[{}] Restarting container ({}) with {}s timeout",
                             name, id, autoheal_stop_timeout
                         );
-                        log_message(&msg1, 1).await;
+                        log_message(&msg1, WARNING).await;
 
                         // Restart unhealthy container
                         match &docker_clone.restart_container(&id, restart_options).await {
@@ -82,14 +82,14 @@ pub async fn start_loop(
                                     "[{}] Restart of container ({}) was successful",
                                     name, id
                                 );
-                                log_message(&msg0, 0).await;
+                                log_message(&msg0, INFO).await;
                             }
                             Err(e) => {
                                 let msg0 = format!(
                                     "[{}] Restart of container ({}) failed: {}",
                                     name, id, e
                                 );
-                                log_message(&msg0, 2).await;
+                                log_message(&msg0, ERROR).await;
                             }
                         }
                     }

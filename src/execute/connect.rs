@@ -1,4 +1,4 @@
-use crate::report::logging::log_message;
+use crate::{report::logging::log_message, ERROR, INFO, WARNING};
 use bollard::{Docker, API_DEFAULT_VERSION};
 
 pub async fn connect_docker(
@@ -11,20 +11,20 @@ pub async fn connect_docker(
 ) -> Docker {
     // Log final connection paramaters
     let msg0 = format!("Monitoring Docker via {}", autoheal_connection_type);
-    log_message(&msg0, 0).await;
+    log_message(&msg0, INFO).await;
     match autoheal_connection_type.as_str() {
         "http" => {
             let msg1 = format!("Connecting to {}", autoheal_tcp_address);
-            log_message(&msg1, 0).await;
+            log_message(&msg1, INFO).await;
         }
         "ssl" => {
             let msg1 = format!("Connecting to {}", autoheal_tcp_address);
-            log_message(&msg1, 0).await;
+            log_message(&msg1, INFO).await;
             let msg2 = format!(
                 "Certificate information: {}, {}, {}",
                 autoheal_key_path, autoheal_cert_path, autoheal_ca_path
             );
-            log_message(&msg2, 0).await;
+            log_message(&msg2, INFO).await;
         }
         &_ => {}
     }
@@ -52,7 +52,7 @@ pub async fn connect_docker(
         Ok(docker) => docker,
         Err(e) => {
             let msg0 = String::from("Could not reliably connect to Docker host");
-            log_message(&msg0, 2).await;
+            log_message(&msg0, ERROR).await;
             panic!("{e}")
         }
     }
