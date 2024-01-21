@@ -1,9 +1,9 @@
 [package]
 name = "docker-autoheal"
-version = "0.5.1"
+version = "0.5.2"
 authors = ["Travis M Knight"]
 license = "MIT"
-description = "Monitor and restart unhealthy docker containers"
+description = "A cross-platform tool to monitor and remediate unhealthy Docker containers"
 readme = "README.md"
 homepage = "https://github.com/tmknight/docker-autoheal"
 edition = "2021"
@@ -16,6 +16,9 @@ futures = "0.3.*"
 rustls = "0.22.*"
 tokio = { version = "1.*", features = ["full"] }
 getopts = "0.2.*"
+
+[build-dependencies]
+h2 = "0.3.24"
 
 [[bin]]
 name = "docker-autoheal"
