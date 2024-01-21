@@ -1,4 +1,4 @@
-use bollard::{bollard::Docker, container::RestartContainerOptions};
+use bollard::{Docker, container::RestartContainerOptions};
 use std::time::Duration;
 
 use crate::{

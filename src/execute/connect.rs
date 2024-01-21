@@ -1,4 +1,4 @@
-use crate::{report::logging::log_message, ERROR, INFO, WARNING};
+use crate::{report::logging::log_message, ERROR, INFO};
 use bollard::{Docker, API_DEFAULT_VERSION};
 
 pub async fn connect_docker(
