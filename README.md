@@ -7,7 +7,7 @@
 
 A cross-platform tool to monitor and remediate unhealthy Docker containers
 
-Designed to be OS agnostic, flexible, and performant in large environments via multi-threading and concurrency
+Designed to be OS agnostic, flexible, and performant in large environments via concurrency and multi-threading
 
 The `docker-autoheal` binary may be executed in a native OS or from a Docker container
 
