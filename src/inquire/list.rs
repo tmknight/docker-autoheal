@@ -25,8 +25,8 @@ pub async fn containers_list(
     match docker.list_containers(container_options).await {
         Ok(list) => list,
         Err(e) => {
-            let msg0 = String::from("[ERROR]   Could not reliably determine containers to assess");
-            log_message(&msg0).await;
+            let msg0 = String::from("Could not reliably determine containers to assess");
+            log_message(&msg0, 2).await;
             panic!("{e}")
         }
     }

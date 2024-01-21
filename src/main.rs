@@ -172,11 +172,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Delay start of loop if specified
     if autoheal_start_delay > 0 {
-        let msg0 = format!(
-            "[INFO]    Delaying evaluation {}s on request",
-            autoheal_start_delay
-        );
-        log_message(&msg0).await;
+        let msg0 = format!("Delaying evaluation {}s on request", autoheal_start_delay);
+        log_message(&msg0, 0).await;
         std::thread::sleep(Duration::from_secs(autoheal_start_delay));
     }
 

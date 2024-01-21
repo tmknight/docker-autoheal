@@ -22,10 +22,15 @@ pub fn print_version() {
 }
 
 // Logging
-pub async fn log_message(msg: &str) {
+pub async fn log_message(msg: &str, lvl: u64) {
     let date = Local::now().format("%Y-%m-%d %H:%M:%S%z").to_string();
+    let level = match lvl {
+        1 => "[WARNING]",
+        2 => "[  ERROR]",
+        &_ => "[   INFO]",
+    };
     let mut lock = stdout().lock();
-    writeln!(lock, "{} {}", date, msg).unwrap();
+    writeln!(lock, "{} {} {}", date, level, msg).unwrap();
 }
 
 // todo
