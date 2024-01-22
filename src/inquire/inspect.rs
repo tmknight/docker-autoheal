@@ -1,8 +1,6 @@
 use crate::{report::logging::log_message, ERROR};
 use bollard::Docker;
 
-const ZERO64: i64 = 0;
-
 pub struct Result {
     pub failed: bool,
     pub failing_streak: i64,
@@ -38,11 +36,11 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
             );
             log_message(&msg0, ERROR).await;
             // Health information is not available, set failing_streak to 0
-            ZERO64
+            0
         }
     };
     Result {
-        failed: !matches!(failing_streak, ZERO64),
+        failed: !matches!(failing_streak, 0),
         failing_streak,
     }
 }
