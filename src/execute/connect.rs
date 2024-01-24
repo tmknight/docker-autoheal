@@ -5,9 +5,9 @@ pub async fn connect_docker(
     autoheal_connection_type: String,
     autoheal_tcp_address: String,
     autoheal_tcp_timeout: u64,
-    autoheal_key_path: String,
-    autoheal_cert_path: String,
-    autoheal_ca_path: String,
+    // autoheal_key_path: String,
+    // autoheal_cert_path: String,
+    // autoheal_ca_path: String,
 ) -> Docker {
     // Log final connection paramaters
     let msg0 = format!("Monitoring Docker via {}", autoheal_connection_type);
@@ -17,6 +17,7 @@ pub async fn connect_docker(
             let msg1 = format!("Connecting to {}", autoheal_tcp_address);
             log_message(&msg1, INFO).await;
         }
+        #[cfg(feature = "ssl")]
         "ssl" => {
             let msg1 = format!("Connecting to {}", autoheal_tcp_address);
             log_message(&msg1, INFO).await;
@@ -35,7 +36,6 @@ pub async fn connect_docker(
             autoheal_tcp_timeout,
             API_DEFAULT_VERSION,
         ),
-        #[cfg(unix)]
         "socket" => Docker::connect_with_socket_defaults(),
         #[cfg(feature = "ssl")]
         "ssl" => Docker::connect_with_ssl(
