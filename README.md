@@ -48,6 +48,32 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 
 Used when executed in native OS (NOTE: The environment variables are also accepted)
 
+<!--
+```bash
+Options:
+    -c, --connection-type <CONNECTION_TYPE>
+                        One of local, socket, http, or ssl
+    -l, --container-label <CONTAINER_LABEL>
+                        Container label to monitor (e.g. autoheal)
+    -t, --stop-timeout <STOP_TIMEOUT>
+                        Time in seconds to wait for action to complete
+    -i, --interval <INTERVAL>
+                        Time in seconds to check health
+    -d, --start-delay <START_DELAY>
+                        Time in seconds to wait for first check
+    -n, --tcp-host <TCP_HOST>
+                        The hostname or IP address of the Docker host (when -c
+                        http or ssl)
+    -p, --tcp-port <TCP_PORT>
+                        The tcp port number of the Docker host (when -c http
+                        or ssl)
+    -k, --key-path <KEY_PATH>
+                        The fully qualified path to requisite ssl PEM files
+    -h, --help          Print help
+    -v, --version       Print version information
+```
+-->
+
 ```bash
 Options:
     -c, --connection-type <CONNECTION_TYPE>
