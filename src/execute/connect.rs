@@ -35,15 +35,14 @@ pub async fn connect_docker(
             autoheal_tcp_timeout,
             API_DEFAULT_VERSION,
         ),
-        #[cfg(unix)]
         "socket" => Docker::connect_with_socket_defaults(),
         #[cfg(feature = "ssl")]
         "ssl" => Docker::connect_with_ssl(
             &autoheal_tcp_address,
+            std::path::Path::new(&autoheal_key_path),
+            std::path::Path::new(&autoheal_cert_path),
+            std::path::Path::new(&autoheal_ca_path),
             autoheal_tcp_timeout,
-            Path::new(autoheal_key_path),
-            Path::new(autoheal_cert_path),
-            Path::new(autoheal_ca_path),
             API_DEFAULT_VERSION,
         ),
         &_ => Docker::connect_with_local_defaults(),
