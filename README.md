@@ -21,7 +21,7 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 
 | Variable                     | Default               | Description                                           |
 |:----------------------------:|:---------------------:|:-----------------------------------------------------:|
-| **AUTOHEAL_CONNECTON_TYPE**  | local                 | This determines how `docker-autheal` connects to Docker (One of: local, socket, http, ssl                                                               |
+| **AUTOHEAL_CONNECTON_TYPE**  | local                 | This determines how `docker-autheal` connects to Docker (One of: local, socket, http                                                               |
 | **AUTOHEAL_CONTAINER_LABEL** | autoheal              | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host |
 | **AUTOHEAL_STOP_TIMEOUT**    | 10                    | Docker waits `n` seconds for a container to stop before killing it during restarts <!-- (overridable via label; see below) -->                            |
 | **AUTOHEAL_INTERVAL**        | 5                     | Check container health every `n` seconds              |
@@ -29,7 +29,9 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | **AUTOHEAL_TCP_HOST**        | localhost             | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)      | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                    | Time in `n` seconds before failing connection attempt |
+<!--
 | **AUTOHEAL_PEM_PATH**       | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`                                  |
+-->
 <!--
 |**WEBHOOK_URL**               |                       |Post messages to the webhook following actions on unhealthy container                                                                              |
 -->
@@ -42,14 +44,14 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | **autoheal.stop.timeout**         | 20       | Per container override of the stop timeout (in seconds) during restart                                                            |
 -->
 
-### Binary options 
+### Binary options
 
 Used when executed in native OS (NOTE: The environment variables are also accepted)
 
 ```bash
 Options:
     -c, --connection-type <CONNECTION_TYPE>
-                        One of local, socket, http, or ssl
+                        One of local, socket, or http
     -l, --container-label <CONTAINER_LABEL>
                         Container label to monitor (e.g. autoheal)
     -t, --stop-timeout <STOP_TIMEOUT>
@@ -64,8 +66,6 @@ Options:
     -p, --tcp-port <TCP_PORT>
                         The tcp port number of the Docker host (when -c http
                         or ssl)
-    -k, --key-path <KEY_PATH>
-                        The fully qualified path to requisite ssl PEM files
     -h, --help          Print help
     -v, --version       Print version information
 ```
@@ -132,6 +132,7 @@ OR
 
 c) Set ENV `AUTOHEAL_CONTAINER_LABEL=all` to watch all running containers
 
+<!--
 ### SSL connection type
 
 See <https://docs.docker.com/engine/security/https/> for how to configure TCP with mTLS
@@ -141,6 +142,7 @@ The certificates and keys need these names:
 - ca.pem
 - cert.pem
 - key.pem
+-->
 
 ### Docker timezone
 
