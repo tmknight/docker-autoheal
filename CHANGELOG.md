@@ -5,6 +5,17 @@ The sections should follow the order `Packaging`, `Added`, `Changed`, `Fixed` an
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+- Support for connecting to Docker hosts over TLS
+- Support for webhook and/or apprise
+
+## 0.5.3
+
+### Removed
+
+- SSL support is not ready; removed referrences to SSL
+
 ## 0.5.2
 
 ### Security

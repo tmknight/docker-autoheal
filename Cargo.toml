@@ -1,6 +1,6 @@
 [package]
 name = "docker-autoheal"
-version = "0.5.2"
+version = "0.5.3"
 authors = ["Travis M Knight"]
 license = "MIT"
 description = "A cross-platform tool to monitor and remediate unhealthy Docker containers"
@@ -19,6 +19,9 @@ getopts = "0.2.*"
 
 [build-dependencies]
 h2 = "0.3.24"
+
+# [features]
+# ssl = ["bollard/ssl"]
 
 [[bin]]
 name = "docker-autoheal"
