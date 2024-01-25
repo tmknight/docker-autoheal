@@ -30,13 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Establish usable arguments
     let mut opts = Options::new();
-    // opts.optopt(
-    //     "c",
-    //     "connection-type",
-    //     "One of local, socket, http, or ssl",
-    //     "<CONNECTION_TYPE>",
-    // );
-    opts.optopt(
+     opts.optopt(
         "c",
         "connection-type",
         "One of local, socket, or http",
@@ -78,12 +72,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "The tcp port number of the Docker host (when -c http or ssl)",
         "<TCP_PORT>",
     );
-    // opts.optopt(
-    //     "k",
-    //     "key-path",
-    //     "The fully qualified path to requisite ssl PEM files",
-    //     "<KEY_PATH>",
-    // );
     opts.optflag("h", "help", "Print help");
     opts.optflag("v", "version", "Print version information");
 
@@ -111,7 +99,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let start_delay = matches.opt_str("d").unwrap_or_default();
     let tcp_host = matches.opt_str("n").unwrap_or_default();
     let tcp_port = matches.opt_str("p").unwrap_or_default();
-    // let key_path = matches.opt_str("k").unwrap_or_default();
 
     // Autoheal core variables
     // Determine if we have valid arguments, need to check env, or use defaults
@@ -154,23 +141,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         false => stop_timeout.parse().unwrap(),
     };
 
-    // Autoheal ssl variables
-    // let autoheal_pem_path = match key_path.is_empty() {
-    //     true => get_env("AUTOHEAL_PEM_PATH", "/opt/docker-autoheal/tls"),
-    //     false => key_path.parse().unwrap(),
-    // };
-    // let autoheal_key_path: String = format!("{}/key.pem", autoheal_pem_path);
-    // let autoheal_cert_path: String = format!("{}/cert.pem", autoheal_pem_path);
-    // let autoheal_ca_path: String = format!("{}/ca.pem", autoheal_pem_path);
-
     // Determine connection type & connect to docker per type
     let docker = connect_docker(
         autoheal_connection_type,
         autoheal_tcp_address,
         autoheal_tcp_timeout,
-        // autoheal_key_path,
-        // autoheal_cert_path,
-        // autoheal_ca_path,
     )
     .await;
 
