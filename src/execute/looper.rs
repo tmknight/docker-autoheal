@@ -1,10 +1,9 @@
-use bollard::{Docker, container::RestartContainerOptions};
-use std::time::Duration;
-
 use crate::{
     inquire::inspect::inspect_container, inquire::list::containers_list,
     report::logging::log_message, ERROR, INFO, WARNING,
 };
+use bollard::{container::RestartContainerOptions, Docker};
+use std::time::Duration;
 
 pub async fn start_loop(
     autoheal_interval: u64,
@@ -21,8 +20,10 @@ pub async fn start_loop(
         let mut handles = vec![];
         // Iterate through suspected unhealthy
         for container in containers {
-            // Execute concurrently
+            // Prepare reusable objects
             let docker_clone = docker.clone();
+
+            // Execute concurrently
             let handle = tokio::task::spawn(async move {
                 // Get name of container
                 let name_tmp = match &container.names {
@@ -78,6 +79,7 @@ pub async fn start_loop(
                         // Restart unhealthy container
                         match &docker_clone.restart_container(&id, restart_options).await {
                             Ok(()) => {
+                                // Log result
                                 let msg0 = format!(
                                     "[{}] Restart of container ({}) was successful",
                                     name, id
@@ -85,6 +87,7 @@ pub async fn start_loop(
                                 log_message(&msg0, INFO).await;
                             }
                             Err(e) => {
+                                // Log result
                                 let msg0 = format!(
                                     "[{}] Restart of container ({}) failed: {}",
                                     name, id, e
