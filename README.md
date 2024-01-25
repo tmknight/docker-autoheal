@@ -95,6 +95,7 @@ docker run -d \
     --env="AUTOHEAL_TCP_PORT=2375" \
     ghcr.io/tmknight/docker-autoheal:latest
 ```
+
 Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me`
 
 ### Logging
@@ -107,6 +108,7 @@ Will connect to the Docker host via hostname or IP and the specified port and mo
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Restarting container (74f74eb7b2d0) with 10s timeout
 2024-01-23 03:04:59-0500 [   INFO] [privoxy] Restart of container (74f74eb7b2d0) was successful
 ```
+
 Example log output when docker-autoheal is in action
 
 ## Other Info
