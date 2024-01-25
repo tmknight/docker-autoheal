@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-- Per container override of the [Docker default](https://docs.docker.com/engine/reference/commandline/container_run/#stop-timeout) stop timeout (in seconds) during restart
+- Per container override of the stop timeout (in seconds) during restart
 
 ## 0.6.0
 

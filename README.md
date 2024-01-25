@@ -11,13 +11,13 @@ Designed to be OS agnostic, flexible, and performant in large environments via c
 
 The `docker-autoheal` binary may be executed in a native OS or from a Docker container
 
-## How to use
+## How to Use
 
 ### You must first apply `HEALTHCHECK` to your docker images
 
 - See <https://docs.docker.com/engine/reference/builder/#healthcheck> for details
 
-### ENV Defaults
+### Environment Variables
 
 | Variable                     | Default               | Description                                           |
 |:----------------------------:|:---------------------:|:-----------------------------------------------------:|
@@ -42,7 +42,7 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | **autoheal.stop.timeout**         | 20       | Per container override of the stop timeout (in seconds) during restart                                                            |
 -->
 
-### Binary options
+### Binary Options
 
 Used when executed in native OS (NOTE: The environment variables are also accepted)
 
@@ -126,9 +126,9 @@ Will connect to the Docker host via hostname or IP and the specified port and mo
 ```
 Example log output when docker-autoheal is in action
 
-## Other info
+## Other Info
 
-### Docker labels
+### Docker Labels
 
 a) Apply the label `autoheal=true` to your container to have it watched (only the label name is assessed, the value is not currently used)
 
@@ -138,7 +138,7 @@ OR
 
 c) Set ENV `AUTOHEAL_CONTAINER_LABEL=all` to watch all running containers
 
-### SSL connection type
+### SSL Connection Type
 
 See <https://docs.docker.com/engine/security/https/> for how to configure TCP with mTLS
 
@@ -148,24 +148,11 @@ The certificates and keys need these names:
 - cert.pem
 - key.pem
 
-### Docker timezone
+### Docker Timezone
 
 If you need the `docker-autoheal` container timezone to match the local machine, you can map `/etc/localtime`
 
 docker run ... -v /etc/localtime:/etc/localtime:ro
-
-<!--
-## Testing
-
-```bash
-docker build -t autoheal .
-
-docker run -d \
-    -e AUTOHEAL_CONTAINER_LABEL=all \
-    -v /var/run/docker.sock:/var/run/docker.sock \
-    autoheal
-```
--->
 
 ## Credits
 
