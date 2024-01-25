@@ -32,10 +32,3 @@ pub async fn log_message(msg: &str, lvl: i8) {
     let mut lock = stdout().lock();
     writeln!(lock, "{} {} {}", date, level, msg).unwrap();
 }
-
-// todo
-// Webhook
-// pub async fn webhook (msg: &str) {
-//     let date = Local::now().format("%Y-%m-%d %H:%M:%S%z").to_string();
-//     msg;
-// }

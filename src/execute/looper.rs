@@ -1,6 +1,6 @@
 use crate::{
     inquire::inspect::inspect_container, inquire::list::containers_list,
-    report::logging::log_message, report::webhook::notify_webhook, ERROR, INFO, WARNING,
+    report::logging::log_message, ERROR, INFO, WARNING,
 };
 use bollard::{container::RestartContainerOptions, Docker};
 use std::time::Duration;
@@ -9,9 +9,6 @@ pub async fn start_loop(
     autoheal_interval: u64,
     autoheal_container_label: String,
     autoheal_stop_timeout: isize,
-    autoheal_apprise_url: String,
-    autoheal_webhook_key: String,
-    autoheal_webhook_url: String,
     docker: Docker,
 ) -> Result<(), Box<dyn std::error::Error>> {
     // Establish loop interval
@@ -25,9 +22,6 @@ pub async fn start_loop(
         for container in containers {
             // Prepare reusable objects
             let docker_clone = docker.clone();
-            let apprise_url = autoheal_apprise_url.clone();
-            let webhook_key = autoheal_webhook_key.clone();
-            let webhook_url = autoheal_webhook_url.clone();
 
             // Execute concurrently
             let handle = tokio::task::spawn(async move {
@@ -91,19 +85,6 @@ pub async fn start_loop(
                                     name, id
                                 );
                                 log_message(&msg0, INFO).await;
-                                // Send webhook
-                                if !(webhook_url.is_empty() && webhook_key.is_empty()) {
-                                    let payload = format!("{{\"{}\":\"{}\"}}", &webhook_key, &msg0);
-                                    notify_webhook(&webhook_url, &payload).await;
-                                }
-                                // Send apprise
-                                if !apprise_url.is_empty() {
-                                    let payload = format!(
-                                        "{{\"title\":\"Docker-Autoheal\",\"body\":\"{}\"}}",
-                                        &msg0
-                                    );
-                                    notify_webhook(&apprise_url, &payload).await;
-                                }
                             }
                             Err(e) => {
                                 // Log result
@@ -112,19 +93,6 @@ pub async fn start_loop(
                                     name, id, e
                                 );
                                 log_message(&msg0, ERROR).await;
-                                // Send webhook
-                                if !(webhook_url.is_empty() && webhook_key.is_empty()) {
-                                    let payload = format!("{{\"{}\":\"{}\"}}", &webhook_key, &msg0);
-                                    notify_webhook(&webhook_url, &payload).await;
-                                }
-                                // Send apprise
-                                if !apprise_url.is_empty() {
-                                    let payload = format!(
-                                        "{{\"title\":\"Docker-Autoheal\",\"body\":\"{}\"}}",
-                                        &msg0
-                                    );
-                                    notify_webhook(&apprise_url, &payload).await;
-                                }
                             }
                         }
                     }

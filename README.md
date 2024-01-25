@@ -30,17 +30,6 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)      | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                    | Time in `n` seconds before failing connection attempt |
 | **AUTOHEAL_PEM_PATH**       | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`                                  |
-|**AUTHOHEAL_APPRISE_URL**               |                       |URL to post messages to the apprise following actions on unhealthy container                                                                              |
-|**AUTHOHEAL_WEBHOOK_KEY**               |                       |KEY to post messages to the webhook following actions on unhealthy container                                                                              |
-|**AUTHOHEAL_WEBHOOK_URL**               |                       |URL to post messages to the webhook following actions on unhealthy container                                                                              |
-
-<!--
-### Optional Container Labels
-
-| Label                             | Value    | Description                                                                                                                       |
-|:---------------------------------:|:--------:|:---------------------------------------------------------------------------------------------------------------------------------:|
-| **autoheal.stop.timeout**         | 20       | Per container override of the stop timeout (in seconds) during restart                                                            |
--->
 
 ### Binary Options
 
@@ -66,12 +55,6 @@ Options:
                         or ssl)
     -k, --key-path <KEY_PATH>
                         The fully qualified path to requisite ssl PEM files
-    -a, --apprise-url <KEY_PATH>
-                        The apprise url
-    -j, --webhook-key <KEY_PATH>
-                        The webhook json key
-    -w, --webhook-url <KEY_PATH>
-                        The webhook url
     -h, --help          Print help
     -v, --version       Print version information
 ```
@@ -99,7 +82,7 @@ docker run -d \
 
 Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal`
 
-### Http
+### HTTP
 
 ```bash
 docker run -d \
