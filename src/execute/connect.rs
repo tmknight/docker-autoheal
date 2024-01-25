@@ -5,9 +5,6 @@ pub async fn connect_docker(
     autoheal_connection_type: String,
     autoheal_tcp_address: String,
     autoheal_tcp_timeout: u64,
-    autoheal_key_path: String,
-    autoheal_cert_path: String,
-    autoheal_ca_path: String,
 ) -> Docker {
     // Log final connection paramaters
     let msg0 = format!("Monitoring Docker via {}", autoheal_connection_type);
@@ -16,15 +13,6 @@ pub async fn connect_docker(
         "http" => {
             let msg1 = format!("Connecting to {}", autoheal_tcp_address);
             log_message(&msg1, INFO).await;
-        }
-        "ssl" => {
-            let msg1 = format!("Connecting to {}", autoheal_tcp_address);
-            log_message(&msg1, INFO).await;
-            let msg2 = format!(
-                "Certificate information: {}, {}, {}",
-                autoheal_key_path, autoheal_cert_path, autoheal_ca_path
-            );
-            log_message(&msg2, INFO).await;
         }
         &_ => {}
     }

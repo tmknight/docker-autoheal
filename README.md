@@ -21,7 +21,7 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 
 | Variable                     | Default               | Description                                           |
 |:----------------------------:|:---------------------:|:-----------------------------------------------------:|
-| **AUTOHEAL_CONNECTON_TYPE**  | local                 | This determines how `docker-autheal` connects to Docker (One of: local, socket, http, ssl                                                               |
+| **AUTOHEAL_CONNECTON_TYPE**  | local                 | This determines how `docker-autheal` connects to Docker (One of: local, socket, http                                                               |
 | **AUTOHEAL_CONTAINER_LABEL** | autoheal              | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host |
 | **AUTOHEAL_STOP_TIMEOUT**    | 10                    | Docker waits `n` seconds for a container to stop before killing it during restarts <!-- (overridable via label; see below) -->                            |
 | **AUTOHEAL_INTERVAL**        | 5                     | Check container health every `n` seconds              |
@@ -38,7 +38,7 @@ Used when executed in native OS (NOTE: The environment variables are also accept
 ```bash
 Options:
     -c, --connection-type <CONNECTION_TYPE>
-                        One of local, socket, http, or ssl
+                        One of local, socket, or http
     -l, --container-label <CONTAINER_LABEL>
                         Container label to monitor (e.g. autoheal)
     -t, --stop-timeout <STOP_TIMEOUT>
@@ -53,8 +53,6 @@ Options:
     -p, --tcp-port <TCP_PORT>
                         The tcp port number of the Docker host (when -c http
                         or ssl)
-    -k, --key-path <KEY_PATH>
-                        The fully qualified path to requisite ssl PEM files
     -h, --help          Print help
     -v, --version       Print version information
 ```
@@ -95,6 +93,7 @@ docker run -d \
     --env="AUTOHEAL_TCP_PORT=2375" \
     ghcr.io/tmknight/docker-autoheal:latest
 ```
+
 Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me`
 
 ### Logging
@@ -107,6 +106,7 @@ Will connect to the Docker host via hostname or IP and the specified port and mo
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Restarting container (74f74eb7b2d0) with 10s timeout
 2024-01-23 03:04:59-0500 [   INFO] [privoxy] Restart of container (74f74eb7b2d0) was successful
 ```
+
 Example log output when docker-autoheal is in action
 
 ## Other Info
