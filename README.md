@@ -17,7 +17,7 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 
 - See <https://docs.docker.com/engine/reference/builder/#healthcheck> for details
 
-### ENV Defaults
+### Environment variables
 
 | Variable                     | Default               | Description                                           |
 |:----------------------------:|:---------------------:|:-----------------------------------------------------:|
