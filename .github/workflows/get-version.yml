@@ -19,7 +19,7 @@ jobs:
       pkg-version: ${{ steps.pkg-version.outputs.PKG_VERSION }}
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 

@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Per container override of the stop timeout (in seconds) during restart
 
+## 0.6.1
+
+### Fixed
+
+- Corrected binary options descriptions and hints for webhook entries
+
 ## 0.6.0
 
 ### Added

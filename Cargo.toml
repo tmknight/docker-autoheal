@@ -1,6 +1,6 @@
 [package]
 name = "docker-autoheal"
-version = "0.6.0"
+version = "0.6.1"
 authors = ["Travis M Knight"]
 license = "MIT"
 description = "A cross-platform tool to monitor and remediate unhealthy Docker containers"
@@ -21,6 +21,12 @@ tokio = { version = "1.*", features = ["full"] }
 h2 = "0.3.24"
 
 [target.x86_64-unknown-linux-musl.dependencies]
+openssl = { version = "0.10.*", features = ["vendored"] }
+
+[target.aarch64-unknown-linux-gnu.dependencies]
+openssl = { version = "0.10.*", features = ["vendored"] }
+
+[target.aarch64-unknown-linux-musl.dependencies]
 openssl = { version = "0.10.*", features = ["vendored"] }
 
 [[bin]]
