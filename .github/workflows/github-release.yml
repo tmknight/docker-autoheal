@@ -6,8 +6,9 @@ permissions:
 on:
   workflow_run:
     workflows: ["Github Tag"]
-    types:
-      - "completed"
+    types: [completed]
+    branches: [main]
+
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
