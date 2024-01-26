@@ -21,18 +21,18 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 
 | Variable                     | Default               | Description                                           |
 |:----------------------------:|:---------------------:|:-----------------------------------------------------:|
-| **AUTOHEAL_CONNECTON_TYPE**  | local                 | This determines how `docker-autheal` connects to Docker (One of: local, socket, http, ssl                                                               |
-| **AUTOHEAL_CONTAINER_LABEL** | autoheal              | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host |
-| **AUTOHEAL_STOP_TIMEOUT**    | 10                    | Docker waits `n` seconds for a container to stop before killing it during restarts <!-- (overridable via label; see below) -->                            |
-| **AUTOHEAL_INTERVAL**        | 5                     | Check container health every `n` seconds              |
-| **AUTOHEAL_START_DELAY**     | 0                     | Wait `n` seconds before first health check            |
-| **AUTOHEAL_TCP_HOST**        | localhost             | Address of Docker host                                |
-| **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)      | Port on which to connect to the Docker host           |
-| **AUTOHEAL_TCP_TIMEOUT**     | 10                    | Time in `n` seconds before failing connection attempt |
-| **AUTOHEAL_PEM_PATH**       | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`                                  |
-|**AUTHOHEAL_APPRISE_URL**               |                       |URL to post messages to the apprise following actions on unhealthy container                                                                              |
-|**AUTHOHEAL_WEBHOOK_KEY**               |                       |KEY to post messages to the webhook following actions on unhealthy container                                                                              |
-|**AUTHOHEAL_WEBHOOK_URL**               |                       |URL to post messages to the webhook following actions on unhealthy container                                                                              |
+| **AUTOHEAL_CONNECTON_TYPE**  | local                    | This determines how `docker-autheal` connects to Docker (One of: local, socket, http, ssl                                                                    |
+| **AUTOHEAL_CONTAINER_LABEL** | autoheal                 | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host |
+| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts <!-- (overridable via label; see below) -->                               |
+| **AUTOHEAL_INTERVAL**        | 5                        | Check container health every `n` seconds              |
+| **AUTOHEAL_START_DELAY**     | 0                        | Wait `n` seconds before first health check            |
+| **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
+| **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)         | Port on which to connect to the Docker host           |
+| **AUTOHEAL_TCP_TIMEOUT**     | 10                       | Time in `n` seconds before failing connection attempt |
+| **AUTOHEAL_PEM_PATH**        | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`|
+| **AUTOHEAL_APPRISE_URL**    |                          |URL to post messages to the apprise following actions on unhealthy container                                             |
+| **AUTOHEAL_WEBHOOK_KEY**    |                          |KEY to post messages to the webhook following actions on unhealthy container                                             |
+| **AUTOHEAL_WEBHOOK_URL**    |                          |URL to post messages to the webhook following actions on unhealthy container                                             |
 
 <!--
 ### Optional Container Labels
@@ -99,7 +99,7 @@ docker run -d \
 
 Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal`
 
-### Http
+### HTTP
 
 ```bash
 docker run -d \
@@ -112,6 +112,7 @@ docker run -d \
     --env="AUTOHEAL_TCP_PORT=2375" \
     ghcr.io/tmknight/docker-autoheal:latest
 ```
+
 Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me`
 
 ### Logging
@@ -124,6 +125,7 @@ Will connect to the Docker host via hostname or IP and the specified port and mo
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Restarting container (74f74eb7b2d0) with 10s timeout
 2024-01-23 03:04:59-0500 [   INFO] [privoxy] Restart of container (74f74eb7b2d0) was successful
 ```
+
 Example log output when docker-autoheal is in action
 
 ## Other Info

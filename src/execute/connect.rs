@@ -36,7 +36,6 @@ pub async fn connect_docker(
             API_DEFAULT_VERSION,
         ),
         "socket" => Docker::connect_with_socket_defaults(),
-        #[cfg(feature = "ssl")]
         "ssl" => Docker::connect_with_ssl(
             &autoheal_tcp_address,
             std::path::Path::new(&autoheal_key_path),
