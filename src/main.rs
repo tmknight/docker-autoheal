@@ -12,6 +12,7 @@ mod inquire {
 }
 mod report {
     pub mod logging;
+    pub mod webhook;
 }
 
 use execute::{connect::connect_docker, looper::start_loop};
@@ -78,6 +79,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "The fully qualified path to requisite ssl PEM files",
         "<KEY_PATH>",
     );
+    opts.optopt("a", "apprise-url", "The apprise url", "<KEY_PATH>");
+    opts.optopt("j", "webhook-key", "The webhook json key", "<KEY_PATH>");
+    opts.optopt("w", "webhook-url", "The webhook url", "<KEY_PATH>");
     opts.optflag("h", "help", "Print help");
     opts.optflag("v", "version", "Print version information");
 
@@ -106,6 +110,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let tcp_host = matches.opt_str("n").unwrap_or_default();
     let tcp_port = matches.opt_str("p").unwrap_or_default();
     let key_path = matches.opt_str("k").unwrap_or_default();
+    let apprise_url = matches.opt_str("a").unwrap_or_default();
+    let webhook_key = matches.opt_str("j").unwrap_or_default();
+    let webhook_url = matches.opt_str("w").unwrap_or_default();
 
     // Autoheal core variables
     // Determine if we have valid arguments, need to check env, or use defaults
@@ -157,6 +164,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let autoheal_cert_path: String = format!("{}/cert.pem", autoheal_pem_path);
     let autoheal_ca_path: String = format!("{}/ca.pem", autoheal_pem_path);
 
+    // Webhook variables
+    let autoheal_apprise_url: String = match apprise_url.is_empty() {
+        true => get_env("AUTOHEAL_APPRISE_URL", "").to_string(),
+        false => apprise_url,
+    };
+    let autoheal_webhook_key: String = match webhook_key.is_empty() {
+        true => get_env("AUTOHEAL_WEBHOOK_KEY", "").to_string(),
+        false => webhook_key,
+    };
+    let autoheal_webhook_url: String = match webhook_url.is_empty() {
+        true => get_env("AUTOHEAL_WEBHOOK_URL", "").to_string(),
+        false => webhook_url,
+    };
+
     // Determine connection type & connect to docker per type
     let docker = connect_docker(
         autoheal_connection_type,
@@ -180,6 +201,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         autoheal_interval,
         autoheal_container_label,
         autoheal_stop_timeout,
+        autoheal_apprise_url,
+        autoheal_webhook_key,
+        autoheal_webhook_url,
         docker,
     )
     .await
