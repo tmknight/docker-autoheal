@@ -61,7 +61,7 @@ Options:
     -a, --apprise-url <APPRISE_URL>
                         The apprise url
     -j, --webhook-key <WEBHOOK_KEY>
-                        The webhook json key
+                        The webhook json key string
     -w, --webhook-url <WEBHOOK_URL>
                         The webhook url
     -h, --help          Print help
