@@ -79,9 +79,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         "The fully qualified path to requisite ssl PEM files",
         "<KEY_PATH>",
     );
-    opts.optopt("a", "apprise-url", "The apprise url", "<KEY_PATH>");
-    opts.optopt("j", "webhook-key", "The webhook json key", "<KEY_PATH>");
-    opts.optopt("w", "webhook-url", "The webhook url", "<KEY_PATH>");
+    opts.optopt("a", "apprise-url", "The apprise url", "<APPRISE_URL>");
+    opts.optopt("j", "webhook-key", "The webhook json key string", "<WEBHOOK_KEY>");
+    opts.optopt("w", "webhook-url", "The webhook url", "<WEBHOOK_URL>");
     opts.optflag("h", "help", "Print help");
     opts.optflag("v", "version", "Print version information");
 
