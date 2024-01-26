@@ -58,11 +58,11 @@ Options:
                         or ssl)
     -k, --key-path <KEY_PATH>
                         The fully qualified path to requisite ssl PEM files
-    -a, --apprise-url <KEY_PATH>
+    -a, --apprise-url <APPRISE_URL>
                         The apprise url
-    -j, --webhook-key <KEY_PATH>
+    -j, --webhook-key <WEBHOOK_KEY>
                         The webhook json key
-    -w, --webhook-url <KEY_PATH>
+    -w, --webhook-url <WEBHOOK_URL>
                         The webhook url
     -h, --help          Print help
     -v, --version       Print version information
