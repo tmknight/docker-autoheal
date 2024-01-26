@@ -7,8 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-- Support for webhook and/or apprise
 - Per container override of the stop timeout (in seconds) during restart
+
+## 0.6.0
+
+### Added
+
+- Support for webhook and/or apprise
 
 ## 0.5.4
 
