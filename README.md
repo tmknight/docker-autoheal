@@ -34,14 +34,6 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | **AUTOHEAL_WEBHOOK_KEY**    |                          |KEY to post messages to the webhook following actions on unhealthy container                                             |
 | **AUTOHEAL_WEBHOOK_URL**    |                          |URL to post messages to the webhook following actions on unhealthy container                                             |
 
-<!--
-### Optional Container Labels
-
-| Label                             | Value    | Description                                                                                                                       |
-|:---------------------------------:|:--------:|:---------------------------------------------------------------------------------------------------------------------------------:|
-| **autoheal.stop.timeout**         | 20       | Per container override of the stop timeout (in seconds) during restart                                                            |
--->
-
 ### Binary Options
 
 Used when executed in native OS (NOTE: The environment variables are also accepted)
