@@ -23,6 +23,12 @@ h2 = "0.3.24"
 [target.x86_64-unknown-linux-musl.dependencies]
 openssl = { version = "0.10.*", features = ["vendored"] }
 
+[target.aarch64-unknown-linux-gnu.dependencies]
+openssl = { version = "0.10.*", features = ["vendored"] }
+
+[target.aarch64-unknown-linux-musl.dependencies]
+openssl = { version = "0.10.*", features = ["vendored"] }
+
 [[bin]]
 name = "docker-autoheal"
 bench = true
