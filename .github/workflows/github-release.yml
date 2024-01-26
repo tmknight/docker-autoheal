@@ -33,7 +33,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: "Create release"
         uses: "taiki-e/create-gh-release-action@v1"
@@ -66,7 +66,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: "Upload assets"
         uses: "taiki-e/upload-rust-binary-action@v1"
