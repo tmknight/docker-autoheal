@@ -164,7 +164,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let autoheal_cert_path: String = format!("{}/cert.pem", autoheal_pem_path);
     let autoheal_ca_path: String = format!("{}/ca.pem", autoheal_pem_path);
 
-    // todo
     // Webhook variables
     let autoheal_apprise_url: String = match apprise_url.is_empty() {
         true => get_env("AUTOHEAL_APPRISE_URL", "").to_string(),
