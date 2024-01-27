@@ -29,6 +29,18 @@ pub async fn start_loop(
             let webhook_key = autoheal_webhook_key.clone();
             let webhook_url = autoheal_webhook_url.clone();
 
+            // Determine if stop override label
+            let s = "autoheal.stop.timeout".to_string();
+            let autoheal_stop_timeout: isize = match container.labels {
+                Some(label) => {
+                    match label.get(&s) {
+                        Some(v) => v.parse().unwrap_or(autoheal_stop_timeout),
+                        None => autoheal_stop_timeout,
+                    }
+                }
+                None => autoheal_stop_timeout,
+            };
+
             // Execute concurrently
             let handle = tokio::task::spawn(async move {
                 // Get name of container
