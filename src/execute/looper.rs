@@ -3,7 +3,7 @@ use crate::{
     report::logging::log_message, report::webhook::notify_webhook, ERROR, INFO, WARNING,
 };
 use bollard::{container::RestartContainerOptions, Docker};
-use std::{isize, time::Duration};
+use std::time::Duration;
 
 pub async fn start_loop(
     autoheal_interval: u64,
