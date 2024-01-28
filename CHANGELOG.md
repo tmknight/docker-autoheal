@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.8.0
+
+### Changed
+
+- Refactored binary options into separate crate for more efficient parsing
+
+### Added
+
+- Added binary option for `tcp-timeout`, now in alignment with environment `AUTOHEAL_TCP_TIMEOUT`
+  - Breaking changes
+    - `stop-timeout` is now `s`
+    - `tcp-timeout` is now `t`
+
 ## 0.7.0
 
 ### Added
