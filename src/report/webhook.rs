@@ -1,5 +1,5 @@
-use reqwest::Client;
 use crate::{log_message, INFO};
+use reqwest::Client;
 
 pub async fn notify_webhook(url: &str, payload: &str) {
     let client = Client::new();

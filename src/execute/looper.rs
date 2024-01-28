@@ -32,12 +32,10 @@ pub async fn start_loop(
             // Determine if stop override label
             let s = "autoheal.stop.timeout".to_string();
             let autoheal_stop_timeout: isize = match container.labels {
-                Some(label) => {
-                    match label.get(&s) {
-                        Some(v) => v.parse().unwrap_or(autoheal_stop_timeout),
-                        None => autoheal_stop_timeout,
-                    }
-                }
+                Some(label) => match label.get(&s) {
+                    Some(v) => v.parse().unwrap_or(autoheal_stop_timeout),
+                    None => autoheal_stop_timeout,
+                },
                 None => autoheal_stop_timeout,
             };
 
