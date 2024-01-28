@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added binary option for `tcp-timeout`, now in alignment with environment `AUTOHEAL_TCP_TIMEOUT`
+- Binary option for `tcp-timeout`, now in alignment with environment `AUTOHEAL_TCP_TIMEOUT`
   - Breaking changes
     - `stop-timeout` is now `s`
     - `tcp-timeout` is now `t`
@@ -30,7 +30,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Corrected binary options descriptions and hints for webhook entries
+- Binary options descriptions and hints for webhook entries
 
 ## 0.6.0
 
