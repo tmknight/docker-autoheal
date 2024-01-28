@@ -32,12 +32,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Autoheal core variables
     // Determine if we have valid arguments, need to check env, or use defaults
     let autoheal_connection_type: String = match opt.connection_type {
-        None => get_env("AUTOHEAL_CONNECTION_TYPE", "local").to_string(),
+        None => get_env("AUTOHEAL_CONNECTION_TYPE", "local"),
         Some(o) => o,
     };
 
     let autoheal_container_label: String = match opt.container_label {
-        None => get_env("AUTOHEAL_CONTAINER_LABEL", "autoheal").to_string(),
+        None => get_env("AUTOHEAL_CONTAINER_LABEL", "autoheal"),
         Some(o) => o,
     };
     let autoheal_stop_timeout: isize = match opt.stop_timeout {
