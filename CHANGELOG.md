@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- Refactored binary options into separate crate for more efficient parsing
+- Refactored binary options into separate function for more efficient parsing
 
 ### Added
 
