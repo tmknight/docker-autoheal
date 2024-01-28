@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to docker-autoheal are documented in this file.
-The sections should follow the order `Security`, `Added`, `Changed`, `Fixed` and `Removed`.
+The sections should follow the order `Security`, `Added`, `Changed`, `Fixed`, and `Removed`.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
