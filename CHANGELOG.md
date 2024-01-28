@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to docker-autoheal are documented in this file.
-The sections should follow the order `Packaging`, `Added`, `Changed`, `Fixed` and `Removed`.
+The sections should follow the order `Security`, `Added`, `Changed`, `Fixed` and `Removed`.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
@@ -9,16 +9,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## 0.8.0
 
-### Changed
-
-- Refactored binary options into separate function for more efficient parsing
-
 ### Added
 
 - Added binary option for `tcp-timeout`, now in alignment with environment `AUTOHEAL_TCP_TIMEOUT`
   - Breaking changes
     - `stop-timeout` is now `s`
     - `tcp-timeout` is now `t`
+
+### Changed
+
+- Refactored binary options into separate function for more efficient parsing
 
 ## 0.7.0
 
