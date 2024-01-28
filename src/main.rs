@@ -85,15 +85,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Webhook variables
     let autoheal_apprise_url: String = match opt.apprise_url {
-        None => get_env("AUTOHEAL_APPRISE_URL", "").to_string(),
+        None => get_env("AUTOHEAL_APPRISE_URL", ""),
         Some(o) => o,
     };
     let autoheal_webhook_key: String = match opt.webhook_key {
-        None => get_env("AUTOHEAL_WEBHOOK_KEY", "").to_string(),
+        None => get_env("AUTOHEAL_WEBHOOK_KEY", ""),
         Some(o) => o,
     };
     let autoheal_webhook_url: String = match opt.webhook_url {
-        None => get_env("AUTOHEAL_WEBHOOK_URL", "").to_string(),
+        None => get_env("AUTOHEAL_WEBHOOK_URL", ""),
         Some(o) => o,
     };
 
