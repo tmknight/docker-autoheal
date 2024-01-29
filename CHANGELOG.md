@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Refactored binary options into separate function for more efficient parsing
+- Refactored environment variables into separate function for better organization
 
 ## 0.7.0
 
