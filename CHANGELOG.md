@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Breaking changes
     - `stop-timeout` is now `s`
     - `tcp-timeout` is now `t`
+- Additional checks, balances & error handling
 
 ### Changed
 
