@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+// Docher-Autoheal modules
 mod execute {
     pub mod connect;
     pub mod looper;
@@ -15,10 +16,12 @@ mod report {
     pub mod webhook;
 }
 
+// Docher-Autoheal functions
 use execute::{connect::connect_docker, looper::start_loop};
 use inquire::{environment::get_var, options::get_opts};
 use report::logging::log_message;
 
+// Error level constants
 pub const INFO: i8 = 0;
 pub const WARNING: i8 = 1;
 pub const ERROR: i8 = 2;
@@ -30,9 +33,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let opt = get_opts(args);
 
     // Get Autoheal core variables
+    // Determine if we have valid arguments, need to check env, or use defaults
     let var = get_var(opt).await;
 
-    // Determine connection type & connect to Docker per type
+    // Connect to Docker per type
     let docker = connect_docker(
         var.connection_type,
         var.tcp_address,
@@ -43,7 +47,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await;
 
-    // Delay start of loop if specified
+    // Delay start of loop, if specified
     if var.start_delay > 0 {
         let msg0 = format!("Delaying evaluation {}s on request", var.start_delay);
         log_message(&msg0, INFO).await;
