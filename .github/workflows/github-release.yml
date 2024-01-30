@@ -7,7 +7,6 @@ on:
   workflow_run:
     workflows: ["Github Tag"]
     types: [completed]
-    # branches: [main]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -16,8 +15,6 @@ env:
   IMAGE: docker-autoheal
   # github.repository as <account>/<repo>
   IMAGE_NAME: tmknight/docker-autoheal
-  # cosign version
-  COSIGN_VER: 'v2.1.1'
   # Build args
   CONTEXT: .
   DISTRO: alpine

@@ -1,4 +1,4 @@
-use crate::{report::logging::log_message, ERROR};
+use crate::{log_message, ERROR};
 use bollard::Docker;
 
 pub struct Result {
