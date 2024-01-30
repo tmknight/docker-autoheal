@@ -50,7 +50,7 @@ Options:
                         One of local, socket, http, or ssl
     -l, --container-label <CONTAINER_LABEL>
                         Container label to monitor (e.g. autoheal)
-    -t, --stop-timeout <STOP_TIMEOUT>
+    -s, --stop-timeout <STOP_TIMEOUT>
                         Time in seconds to wait for action to complete
     -i, --interval <INTERVAL>
                         Time in seconds to check health
@@ -62,6 +62,8 @@ Options:
     -p, --tcp-port <TCP_PORT>
                         The tcp port number of the Docker host (when -c http
                         or ssl)
+    -t, --tcp-timeout <TCP_TIMEOUT>
+                        Time in seconds to wait for connection to complete
     -k, --key-path <KEY_PATH>
                         The fully qualified path to requisite ssl PEM files
     -a, --apprise-url <APPRISE_URL>
