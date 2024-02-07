@@ -1,13 +1,13 @@
 [package]
 name = "docker-autoheal"
-version = "0.8.0"
+version = "0.8.1"
 authors = ["Travis M Knight"]
-license = "MIT"
+license = "GPL-3.0"
 description = "A cross-platform tool to monitor and remediate unhealthy Docker containers"
 readme = "README.md"
 homepage = "https://github.com/tmknight/docker-autoheal"
 edition = "2021"
-rust-version = "1.74.1"
+rust-version = "1.74"
 
 [dependencies]
 bollard = { version = "0.*", features = ["ssl"] }
