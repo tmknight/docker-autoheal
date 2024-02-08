@@ -88,6 +88,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "Release draft"
-        run: gh release edit "${GITHUB_REF#refs/tags/${{ needs.get-version.outputs.pkg-version }}}" --draft=false
+        run: gh release edit ${{ needs.get-version.outputs.pkg-version }}} --draft=false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
