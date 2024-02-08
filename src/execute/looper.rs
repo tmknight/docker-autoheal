@@ -93,7 +93,8 @@ pub async fn start_loop(
                         log_message(&msg1, WARNING).await;
 
                         // Restart unhealthy container
-                        match &docker_clone.restart_container(&id, restart_options).await {
+                        let msg = match &docker_clone.restart_container(&id, restart_options).await
+                        {
                             Ok(()) => {
                                 // Log result
                                 let msg0 = format!(
@@ -101,19 +102,7 @@ pub async fn start_loop(
                                     name, id
                                 );
                                 log_message(&msg0, INFO).await;
-                                // Send webhook
-                                if !(webhook_url.is_empty() && webhook_key.is_empty()) {
-                                    let payload = format!("{{\"{}\":\"{}\"}}", &webhook_key, &msg0);
-                                    notify_webhook(&webhook_url, &payload).await;
-                                }
-                                // Send apprise
-                                if !apprise_url.is_empty() {
-                                    let payload = format!(
-                                        "{{\"title\":\"Docker-Autoheal\",\"body\":\"{}\"}}",
-                                        &msg0
-                                    );
-                                    notify_webhook(&apprise_url, &payload).await;
-                                }
+                                msg0
                             }
                             Err(e) => {
                                 // Log result
@@ -122,20 +111,20 @@ pub async fn start_loop(
                                     name, id, e
                                 );
                                 log_message(&msg0, ERROR).await;
-                                // Send webhook
-                                if !(webhook_url.is_empty() && webhook_key.is_empty()) {
-                                    let payload = format!("{{\"{}\":\"{}\"}}", &webhook_key, &msg0);
-                                    notify_webhook(&webhook_url, &payload).await;
-                                }
-                                // Send apprise
-                                if !apprise_url.is_empty() {
-                                    let payload = format!(
-                                        "{{\"title\":\"Docker-Autoheal\",\"body\":\"{}\"}}",
-                                        &msg0
-                                    );
-                                    notify_webhook(&apprise_url, &payload).await;
-                                }
+                                msg0
                             }
+                        };
+
+                        // Send webhook
+                        if !(webhook_url.is_empty() && webhook_key.is_empty()) {
+                            let payload = format!("{{\"{}\":\"{}\"}}", &webhook_key, &msg);
+                            notify_webhook(&webhook_url, &payload).await;
+                        }
+                        // Send apprise
+                        if !apprise_url.is_empty() {
+                            let payload =
+                                format!("{{\"title\":\"Docker-Autoheal\",\"body\":\"{}\"}}", &msg);
+                            notify_webhook(&apprise_url, &payload).await;
                         }
                     }
                 }
