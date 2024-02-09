@@ -1,5 +1,5 @@
 use super::options::OptionsList;
-use crate::{log_message, ERROR, WARNING};
+use crate::{log_message, ALLOWED_CONNECTION_TYPES, ERROR, WARNING};
 
 pub struct VariablesList {
     pub connection_type: String,
@@ -29,14 +29,13 @@ fn get_env(key: &str, default: &str) -> String {
 pub async fn get_var(opt: OptionsList) -> VariablesList {
     let autoheal_connection_type: String = match opt.connection_type {
         None => {
-            let allowed_connection_types: Vec<&str> = vec!["local", "socket", "http", "ssl"];
             let env_connection_type = get_env("AUTOHEAL_CONNECTION_TYPE", "local");
-            match allowed_connection_types.contains(&env_connection_type.as_str()) {
+            match ALLOWED_CONNECTION_TYPES.contains(&env_connection_type.as_str()) {
                 true => env_connection_type,
                 false => {
                     let msg0 = format!(
-                        "Unexpected connection-type ({}): {}",
-                        allowed_connection_types.join(","),
+                        "Unexpected connection-type ({}): Expected one of {}",
+                        ALLOWED_CONNECTION_TYPES.join(","),
                         env_connection_type
                     );
                     log_message(&msg0, ERROR).await;

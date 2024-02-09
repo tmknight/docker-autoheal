@@ -26,6 +26,9 @@ pub const INFO: i8 = 0;
 pub const WARNING: i8 = 1;
 pub const ERROR: i8 = 2;
 
+// Allowed connection types
+pub const ALLOWED_CONNECTION_TYPES: [&str; 4] = ["local", "socket", "http", "ssl"];
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Collect binary arguments
