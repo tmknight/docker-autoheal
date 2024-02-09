@@ -31,7 +31,7 @@ jobs:
 
   push-to-registry:
     name: "Publish Docker image"
-    if: ${{ github.event.workflow_run.conclusion == 'success'  || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
     needs:
       - "get-version"
     runs-on: ubuntu-latest
