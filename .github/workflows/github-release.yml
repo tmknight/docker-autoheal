@@ -76,7 +76,7 @@ jobs:
           ref: refs/tags/${{ needs.get-version.outputs.pkg-version }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  promote-release:
+  publish-release:
     name: "Publish release"
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     needs: 
