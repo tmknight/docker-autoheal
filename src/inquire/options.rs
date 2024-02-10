@@ -1,4 +1,4 @@
-use crate::report::logging::print_version;
+use crate::{report::logging::print_version, ALLOWED_CONNECTION_TYPES};
 use getopts::Options;
 
 pub struct OptionsList {
@@ -105,11 +105,10 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
     }
 
     // Ensure acceptable connection type arguments
-    let allowed_connection_types: Vec<&str> = vec!["local", "socket", "http", "ssl"];
     match matches.opt_str("c").is_some() {
         true => {
             let opt_connection_type = matches.opt_str("c").unwrap();
-            match allowed_connection_types.contains(&opt_connection_type.as_str()) {
+            match ALLOWED_CONNECTION_TYPES.contains(&opt_connection_type.as_str()) {
                 true => {}
                 false => {
                     println!("Unexpected connection-type: {}", opt_connection_type);
