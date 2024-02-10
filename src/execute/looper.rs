@@ -31,7 +31,7 @@ pub async fn start_loop(
 
             // Determine if stop override label
             let s = "autoheal.stop.timeout".to_string();
-            let autoheal_stop_timeout: isize = match container.labels {
+            let autoheal_stop_timeout = match container.labels {
                 Some(label) => match label.get(&s) {
                     Some(v) => v.parse().unwrap_or(autoheal_stop_timeout),
                     None => autoheal_stop_timeout,
@@ -53,7 +53,7 @@ pub async fn start_loop(
                 let name = name_tmp.trim_matches('/').trim();
 
                 // Get id of container
-                let id: String = match container.id {
+                let id = match container.id {
                     Some(id) => id.chars().take(12).collect(),
                     None => {
                         let msg0 = String::from("Could not reliably determine container id");

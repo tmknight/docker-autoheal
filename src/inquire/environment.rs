@@ -35,8 +35,8 @@ pub async fn get_var(opt: OptionsList) -> VariablesList {
                 false => {
                     let msg0 = format!(
                         "Unexpected connection-type ({}): Expected one of {}",
-                        ALLOWED_CONNECTION_TYPES.join(","),
-                        env_connection_type
+                        env_connection_type,
+                        ALLOWED_CONNECTION_TYPES.join(",")
                     );
                     log_message(&msg0, ERROR).await;
                     let msg1 = String::from("Attempting connection via default (local)");

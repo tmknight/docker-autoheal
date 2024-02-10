@@ -32,7 +32,7 @@ pub const ALLOWED_CONNECTION_TYPES: [&str; 4] = ["local", "socket", "http", "ssl
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Collect binary arguments
-    let args: Vec<String> = std::env::args().collect();
+    let args = std::env::args().collect();
     let opt = get_opts(args);
 
     // Get Autoheal core variables
