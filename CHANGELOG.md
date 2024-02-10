@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Small change to how connection type assessed and reported for the sake of efficiency
+- Minor code cleanup
 
 ## 0.8.1
 
