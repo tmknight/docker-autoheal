@@ -87,10 +87,9 @@ Will connect to the local Docker host and monitor all containers
 ### Socket
 
 ```bash
-docker run -d \
+docker run -d --read-only \
     --name docker-autoheal \
     --restart=always \
-    --read-only \
     --env="AUTOHEAL_CONNECTION_TYPE=socket" \
     --env="AUTOHEAL_CONTAINER_LABEL=autoheal" \
     --volume=/var/run/docker.sock:/var/run/docker.sock:ro \
@@ -102,10 +101,9 @@ Will connect to the Docker host via unix socket location /var/run/docker.sock or
 ### HTTP
 
 ```bash
-docker run -d \
+docker run -d --read-only \
     --name docker-autoheal \
     --restart=always \
-    --read-only \
     --env="AUTOHEAL_CONNECTION_TYPE=http" \
     --env="AUTOHEAL_CONTAINER_LABEL=watch-me" \
     --env="AUTOHEAL_TCP_HOST=MYHOST" \
