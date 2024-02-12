@@ -93,7 +93,7 @@ docker run -d \
     --read-only \
     --env="AUTOHEAL_CONNECTION_TYPE=socket" \
     --env="AUTOHEAL_CONTAINER_LABEL=autoheal" \
-    --volume=/var/run/docker.sock:/var/run/docker.sock \
+    --volume=/var/run/docker.sock:/var/run/docker.sock:ro \
     ghcr.io/tmknight/docker-autoheal:latest
 ```
 
