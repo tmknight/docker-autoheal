@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-// Docher-Autoheal modules
+// Docker-Autoheal modules
 mod execute {
     pub mod connect;
     pub mod looper;
@@ -16,7 +16,7 @@ mod report {
     pub mod webhook;
 }
 
-// Docher-Autoheal functions
+// Docker-Autoheal functions
 use execute::{connect::connect_docker, looper::start_loop};
 use inquire::{environment::get_var, options::get_opts};
 use report::logging::log_message;
