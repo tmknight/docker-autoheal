@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.8.3
+
+### Changed
+
+- Small change to `log_message` to discard Err and always return Ok
+- Minor code cleanup
+
 ## 0.8.2
 
 ### Changed
