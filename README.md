@@ -21,9 +21,9 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 
 | Variable                     | Default                  | Description                                           |
 |:----------------------------:|:------------------------:|:-----------------------------------------------------:|
-| **AUTOHEAL_CONNECTON_TYPE**  | local                    | This determines how `docker-autheal` connects to Docker (One of: local, socket, http, ssl                               |
+| **AUTOHEAL_CONNECTON_TYPE**  | local                    | This determines how `docker-autoheal` connects to Docker (One of: local, socket, http, ssl                               |
 | **AUTOHEAL_CONTAINER_LABEL** | autoheal                 | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host         |
-| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (overridable via label; see below)   |
+| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)   |
 | **AUTOHEAL_INTERVAL**        | 5                        | Check container health every `n` seconds              |
 | **AUTOHEAL_START_DELAY**     | 0                        | Wait `n` seconds before first health check            |
 | **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
@@ -88,7 +88,9 @@ Will connect to the local Docker host and monitor all containers
 
 ```bash
 docker run -d --read-only \
+    --user=[uid]:[gid]
     --name docker-autoheal \
+    --network=none \
     --restart=always \
     --env="AUTOHEAL_CONNECTION_TYPE=socket" \
     --env="AUTOHEAL_CONTAINER_LABEL=autoheal" \
@@ -96,12 +98,13 @@ docker run -d --read-only \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal`
+Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal` as the user with the specified uid:gid
 
 ### HTTP
 
 ```bash
 docker run -d --read-only \
+    --user=[uid]:[gid]
     --name docker-autoheal \
     --restart=always \
     --env="AUTOHEAL_CONNECTION_TYPE=http" \
@@ -111,7 +114,7 @@ docker run -d --read-only \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me`
+Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me` as the user with the specified uid:gid
 
 ### Logging
 
@@ -148,11 +151,23 @@ The certificates and keys need these names:
 - cert.pem
 - key.pem
 
+### Docker Security
+
+Additional security can be obtained by:
+
+- Use a unique user for monitoring and remediating
+  - Create a new user
+  - Add that user to the `docker` group
+  - Execute the binary or docker container with that uid:gid
+- Run docker in [rootless mode](https://docs.docker.com/engine/security/rootless/)
+
 ### Docker Timezone
 
 If you need the `docker-autoheal` container timezone to match the local machine, you can map `/etc/localtime`
 
+```bash
 docker run ... -v /etc/localtime:/etc/localtime:ro
+```
 
 ## Credits
 

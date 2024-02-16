@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-// Docher-Autoheal modules
+// Docker-Autoheal modules
 mod execute {
     pub mod connect;
     pub mod looper;
@@ -16,7 +16,7 @@ mod report {
     pub mod webhook;
 }
 
-// Docher-Autoheal functions
+// Docker-Autoheal functions
 use execute::{connect::connect_docker, looper::start_loop};
 use inquire::{environment::get_var, options::get_opts};
 use report::logging::log_message;
@@ -39,6 +39,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Determine if we have valid arguments, need to check env, or use defaults
     let var = get_var(opt).await;
 
+    // Delay start of monitoring, if specified
+    if var.start_delay > 0 {
+        let msg0 = format!("Pausing startup {}s on request", var.start_delay);
+        log_message(&msg0, INFO).await;
+        tokio::time::sleep(Duration::from_secs(var.start_delay)).await;
+        let msg1 = String::from("Resuming startup");
+        log_message(&msg1, INFO).await;
+    }
+
     // Connect to Docker per type
     let docker = connect_docker(
         var.connection_type,
@@ -49,13 +58,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         var.ca_path,
     )
     .await;
-
-    // Delay start of loop, if specified
-    if var.start_delay > 0 {
-        let msg0 = format!("Delaying evaluation {}s on request", var.start_delay);
-        log_message(&msg0, INFO).await;
-        std::thread::sleep(Duration::from_secs(var.start_delay));
-    }
 
     // Begin work
     start_loop(
