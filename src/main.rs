@@ -54,7 +54,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     if var.start_delay > 0 {
         let msg0 = format!("Delaying evaluation {}s on request", var.start_delay);
         log_message(&msg0, INFO).await;
-        std::thread::sleep(Duration::from_secs(var.start_delay));
+        tokio::time::sleep(Duration::from_secs(var.start_delay)).await;
     }
 
     // Begin work
