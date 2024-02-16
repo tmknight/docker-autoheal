@@ -1,6 +1,6 @@
 [package]
 name = "docker-autoheal"
-version = "0.8.2"
+version = "0.8.3"
 authors = ["Travis M Knight"]
 license = "GPL-3.0"
 description = "A cross-platform tool to monitor and remediate unhealthy Docker containers"
@@ -16,9 +16,6 @@ futures = "0.3.*"
 getopts = "0.2.*"
 reqwest = "0.11.*"
 tokio = { version = "1.*", features = ["full"] }
-
-[build-dependencies]
-h2 = "0.3.24"
 
 [target.x86_64-unknown-linux-musl.dependencies]
 openssl = { version = "0.10.*", features = ["vendored"] }

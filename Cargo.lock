@@ -188,13 +188,12 @@ dependencies = [
 
 [[package]]
 name = "docker-autoheal"
-version = "0.8.2"
+version = "0.8.3"
 dependencies = [
  "bollard",
  "chrono",
  "futures",
  "getopts",
- "h2",
  "openssl",
  "reqwest",
  "tokio",

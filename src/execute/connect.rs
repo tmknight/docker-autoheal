@@ -9,7 +9,7 @@ pub async fn connect_docker(
     cert_path: String,
     ca_path: String,
 ) -> Docker {
-    // Log final connection paramaters
+    // Log final connection parameters
     let msg0 = format!("Monitoring Docker via {}", connection_type);
     log_message(&msg0, INFO).await;
 
