@@ -12,14 +12,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Small change to `log_message` to discard Err and always return Ok
+- Slight change to how startup delay is implemented for the sake of consistency
 - Minor code cleanup
+
+### Removed
+
+- h2 build dependency statement no longer required as now addressed upstream
 
 ## 0.8.2
 
 ### Changed
 
 - Small change to how connection type assessed and reported for the sake of efficiency
-- Slight change to how startup delay is implemented for the sake of consistency
 - Minor code cleanup
 
 ## 0.8.1

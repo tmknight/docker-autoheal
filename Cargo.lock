@@ -194,7 +194,6 @@ dependencies = [
  "chrono",
  "futures",
  "getopts",
- "h2",
  "openssl",
  "reqwest",
  "tokio",
