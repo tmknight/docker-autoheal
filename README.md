@@ -98,7 +98,7 @@ docker run -d --read-only \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal` as the user with the specified uid:gid
+Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal` as the user with the specified `uid:gid`
 
 ### HTTP
 
@@ -114,7 +114,7 @@ docker run -d --read-only \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me` as the user with the specified uid:gid
+Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me` as the user with the specified `uid:gid`
 
 ### Logging
 
