@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Small change to `log_message` to discard Err and always return Ok
-- Slight change to how startup delay is implemented for the sake of consistency
+- Slight change to how startup delay is implemented and reported
 - Minor code cleanup
 
 ### Removed
