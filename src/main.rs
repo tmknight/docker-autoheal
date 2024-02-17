@@ -23,12 +23,22 @@ use inquire::{environment::get_var, options::get_opts};
 use report::logging::log_message;
 
 // Error level constants
-pub const INFO: i8 = 0;
-pub const WARNING: i8 = 1;
-pub const ERROR: i8 = 2;
+const INFO: i8 = 0;
+const WARNING: i8 = 1;
+const ERROR: i8 = 2;
 
 // Allowed connection types
-pub const ALLOWED_CONNECTION_TYPES: [&str; 4] = ["local", "socket", "http", "ssl"];
+const ALLOWED_CONNECTION_TYPES: [&str; 4] = ["local", "socket", "http", "ssl"];
+
+struct LoopVariablesList {
+    container_label: String,
+    stop_timeout: isize,
+    interval: u64,
+    apprise_url: String,
+    webhook_key: String,
+    webhook_url: String,
+    post_action: String,
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -60,16 +70,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await;
 
+    let loop_variables = {
+        LoopVariablesList {
+            container_label: var.container_label,
+            stop_timeout: var.stop_timeout,
+            interval: var.interval,
+            apprise_url: var.apprise_url,
+            webhook_key: var.webhook_key,
+            webhook_url: var.webhook_url,
+            post_action: var.post_action,
+        }
+    };
+
     // Begin work
-    start_loop(
-        var.interval,
-        var.container_label,
-        var.stop_timeout,
-        var.apprise_url,
-        var.webhook_key,
-        var.webhook_url,
-        var.post_action,
-        docker,
-    )
-    .await
+    start_loop(loop_variables, docker).await
 }
