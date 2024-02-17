@@ -15,6 +15,7 @@ pub struct VariablesList {
     pub apprise_url: String,
     pub webhook_key: String,
     pub webhook_url: String,
+    pub post_action: String,
 }
 
 // Get environment variable
@@ -149,6 +150,10 @@ pub async fn get_var(opt: OptionsList) -> VariablesList {
         None => get_env("AUTOHEAL_WEBHOOK_URL", ""),
         Some(o) => o,
     };
+    let autoheal_post_action: String = match opt.post_action {
+        None => get_env("AUTOHEAL_POST_ACTION", ""),
+        Some(o) => o,
+    };
 
     VariablesList {
         connection_type: autoheal_connection_type,
@@ -164,5 +169,6 @@ pub async fn get_var(opt: OptionsList) -> VariablesList {
         apprise_url: autoheal_apprise_url,
         webhook_key: autoheal_webhook_key,
         webhook_url: autoheal_webhook_url,
+        post_action: autoheal_post_action,
     }
 }

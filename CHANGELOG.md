@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.9.0
+
+### Added
+
+- `post-action` to execute a task post-restart attempt
+- `exclude` to all for inverse filtering when docker-autoheal label set to `all`
+
 ## 0.8.3
 
 ### Changed

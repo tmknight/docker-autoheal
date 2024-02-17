@@ -4,6 +4,7 @@ use std::time::Duration;
 mod execute {
     pub mod connect;
     pub mod looper;
+    pub mod postaction;
 }
 mod inquire {
     pub mod environment;
@@ -67,6 +68,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         var.apprise_url,
         var.webhook_key,
         var.webhook_url,
+        var.post_action,
         docker,
     )
     .await

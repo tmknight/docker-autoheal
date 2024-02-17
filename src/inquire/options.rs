@@ -14,6 +14,7 @@ pub struct OptionsList {
     pub apprise_url: Option<String>,
     pub webhook_key: Option<String>,
     pub webhook_url: Option<String>,
+    pub post_action: Option<String>,
 }
 
 pub fn get_opts(args: Vec<String>) -> OptionsList {
@@ -83,6 +84,12 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
         "<WEBHOOK_KEY>",
     );
     opts.optopt("w", "webhook-url", "The webhook url", "<WEBHOOK_URL>");
+    opts.optopt(
+        "",
+        "post-action",
+        "The fully qualified path to a script that should be executed after container restart",
+        "<SCRIPT_PATH>",
+    );
     opts.optflag("h", "help", "Print help");
     opts.optflag("v", "version", "Print version information");
 
@@ -133,5 +140,6 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
         apprise_url: matches.opt_str("a"),
         webhook_key: matches.opt_str("j"),
         webhook_url: matches.opt_str("w"),
+        post_action: matches.opt_str("post-action"),
     }
 }

@@ -1,6 +1,7 @@
 use crate::{
-    inquire::inspect::inspect_container, inquire::list::containers_list,
-    report::logging::log_message, report::webhook::notify_webhook, ERROR, INFO, WARNING,
+    execute::postaction::execute_action, inquire::inspect::inspect_container,
+    inquire::list::containers_list, report::logging::log_message, report::webhook::notify_webhook,
+    ERROR, INFO, WARNING,
 };
 use bollard::{container::RestartContainerOptions, Docker};
 use std::time::Duration;
@@ -12,6 +13,7 @@ pub async fn start_loop(
     autoheal_apprise_url: String,
     autoheal_webhook_key: String,
     autoheal_webhook_url: String,
+    autoheal_post_action: String,
     docker: Docker,
 ) -> Result<(), Box<dyn std::error::Error>> {
     // Establish loop interval
@@ -28,6 +30,7 @@ pub async fn start_loop(
             let apprise_url = autoheal_apprise_url.clone();
             let webhook_key = autoheal_webhook_key.clone();
             let webhook_url = autoheal_webhook_url.clone();
+            let post_action = autoheal_post_action.clone();
 
             // Determine if stop override label
             let s = "autoheal.stop.timeout".to_string();
@@ -125,6 +128,16 @@ pub async fn start_loop(
                             let payload =
                                 format!("{{\"title\":\"Docker-Autoheal\",\"body\":\"{}\"}}", &msg);
                             notify_webhook(&apprise_url, &payload).await;
+                        }
+                        // Execute post-action
+                        if !post_action.is_empty() {
+                            execute_action(
+                                post_action,
+                                name,
+                                id,
+                                autoheal_stop_timeout.to_string(),
+                            )
+                            .await;
                         }
                     }
                 }
