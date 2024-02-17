@@ -1,45 +1,50 @@
 use crate::{
-    execute::postaction::execute_action, inquire::inspect::inspect_container,
-    inquire::list::containers_list, report::logging::log_message, report::webhook::notify_webhook,
-    ERROR, INFO, WARNING,
+    execute::postaction::execute_action,
+    inquire::{inspect::inspect_container, list::containers_list},
+    report::{logging::log_message, webhook::notify_webhook},
+    LoopVariablesList, ERROR, INFO, WARNING,
 };
 use bollard::{container::RestartContainerOptions, Docker};
 use std::time::Duration;
 
 pub async fn start_loop(
-    autoheal_interval: u64,
-    autoheal_container_label: String,
-    autoheal_stop_timeout: isize,
-    autoheal_apprise_url: String,
-    autoheal_webhook_key: String,
-    autoheal_webhook_url: String,
-    autoheal_post_action: String,
+    var: LoopVariablesList,
     docker: Docker,
 ) -> Result<(), Box<dyn std::error::Error>> {
     // Establish loop interval
-    let mut interval = tokio::time::interval(Duration::from_secs(autoheal_interval));
+    let mut interval = tokio::time::interval(Duration::from_secs(var.interval));
     loop {
         // Gather all unhealthy containers
-        let containers = containers_list(&autoheal_container_label, docker.clone()).await;
+        let containers = containers_list(&var.container_label, docker.clone()).await;
         // Prepare for concurrent execution
         let mut handles = vec![];
         // Iterate through suspected unhealthy
         for container in containers {
             // Prepare reusable objects
             let docker_clone = docker.clone();
-            let apprise_url = autoheal_apprise_url.clone();
-            let webhook_key = autoheal_webhook_key.clone();
-            let webhook_url = autoheal_webhook_url.clone();
-            let post_action = autoheal_post_action.clone();
+            let apprise_url = var.apprise_url.clone();
+            let webhook_key = var.webhook_key.clone();
+            let webhook_url = var.webhook_url.clone();
+            let post_action = var.post_action.clone();
 
             // Determine if stop override label
             let s = "autoheal.stop.timeout".to_string();
             let autoheal_stop_timeout = match container.labels {
-                Some(label) => match label.get(&s) {
-                    Some(v) => v.parse().unwrap_or(autoheal_stop_timeout),
-                    None => autoheal_stop_timeout,
+                Some(ref label) => match label.get(&s) {
+                    Some(v) => v.parse().unwrap_or(var.stop_timeout),
+                    None => var.stop_timeout,
                 },
-                None => autoheal_stop_timeout,
+                None => var.stop_timeout,
+            };
+
+            // Determine if excluded
+            let s = "autoheal.restart.exclude".to_string();
+            let autoheal_restart_exclude = match container.labels {
+                Some(ref label) => match label.get(&s) {
+                    Some(v) => v.parse().unwrap_or(false),
+                    None => false,
+                },
+                None => false,
             };
 
             // Execute concurrently
@@ -72,6 +77,12 @@ pub async fn start_loop(
                         name, id
                     );
                     log_message(&msg0, ERROR).await;
+                } else if autoheal_restart_exclude {
+                    let msg0 = format!(
+                        "[{}] Container ({}) is unhealthy, however is labeled for restart exclusion",
+                        name, id
+                    );
+                    log_message(&msg0, WARNING).await;
                 } else {
                     // Determine failing streak of the unhealthy container
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
