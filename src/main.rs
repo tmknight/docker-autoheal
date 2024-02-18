@@ -38,6 +38,7 @@ struct LoopVariablesList {
     webhook_key: String,
     webhook_url: String,
     post_action: String,
+    log_excluded: bool,
 }
 
 #[tokio::main]
@@ -79,6 +80,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             webhook_key: var.webhook_key,
             webhook_url: var.webhook_url,
             post_action: var.post_action,
+            log_excluded: var.log_excluded,
         }
     };
 

@@ -26,6 +26,7 @@ pub async fn start_loop(
             let webhook_key = var.webhook_key.clone();
             let webhook_url = var.webhook_url.clone();
             let post_action = var.post_action.clone();
+            let log_excluded = var.log_excluded;
 
             // Determine if stop override label
             let s = "autoheal.stop.timeout".to_string();
@@ -78,11 +79,13 @@ pub async fn start_loop(
                     );
                     log_message(&msg0, ERROR).await;
                 } else if autoheal_restart_exclude {
-                    let msg0 = format!(
-                        "[{}] Container ({}) is unhealthy, however is labeled for restart exclusion",
+                    if log_excluded {
+                        let msg0 = format!(
+                        "[{}] Container ({}) is unhealthy, however is excluded from restart on request",
                         name, id
                     );
-                    log_message(&msg0, WARNING).await;
+                        log_message(&msg0, WARNING).await;
+                    };
                 } else {
                     // Determine failing streak of the unhealthy container
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
@@ -130,25 +133,32 @@ pub async fn start_loop(
                         };
 
                         // Send webhook
-                        if !(webhook_url.is_empty() && webhook_key.is_empty()) {
+                        if !(webhook_url.is_empty() || webhook_key.is_empty())
+                            && (!autoheal_restart_exclude || log_excluded)
+                        {
                             let payload = format!("{{\"{}\":\"{}\"}}", &webhook_key, &msg);
                             notify_webhook(&webhook_url, &payload).await;
                         }
                         // Send apprise
-                        if !apprise_url.is_empty() {
+                        if !apprise_url.is_empty() && (!autoheal_restart_exclude || log_excluded) {
                             let payload =
                                 format!("{{\"title\":\"Docker-Autoheal\",\"body\":\"{}\"}}", &msg);
                             notify_webhook(&apprise_url, &payload).await;
                         }
-                        // Execute post-action
-                        if !post_action.is_empty() {
-                            execute_action(
-                                post_action,
-                                name,
-                                id,
-                                autoheal_stop_timeout.to_string(),
-                            )
-                            .await;
+                        // Execute post-action if not excluded
+                        match post_action.is_empty() {
+                            false => {
+                                if !autoheal_restart_exclude {
+                                    execute_action(
+                                        post_action,
+                                        name,
+                                        id,
+                                        autoheal_stop_timeout.to_string(),
+                                    )
+                                    .await;
+                                }
+                            }
+                            true => {}
                         }
                     }
                 }

@@ -15,6 +15,7 @@ pub struct OptionsList {
     pub webhook_key: Option<String>,
     pub webhook_url: Option<String>,
     pub post_action: Option<String>,
+    pub log_excluded: bool,
 }
 
 pub fn get_opts(args: Vec<String>) -> OptionsList {
@@ -87,8 +88,13 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
     opts.optopt(
         "",
         "post-action",
-        "The fully qualified path to a script that should be executed after container restart",
+        "The absolute path to a script that should be executed after container restart",
         "<SCRIPT_PATH>",
+    );
+    opts.optflag(
+        "",
+        "log-excluded",
+        "Log unhealthy, but restart excluded containers (WARNING, this could be chatty)",
     );
     opts.optflag("h", "help", "Print help");
     opts.optflag("v", "version", "Print version information");
@@ -141,5 +147,6 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
         webhook_key: matches.opt_str("j"),
         webhook_url: matches.opt_str("w"),
         post_action: matches.opt_str("post-action"),
+        log_excluded: matches.opt_present("log-excluded"),
     }
 }
