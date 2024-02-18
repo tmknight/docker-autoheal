@@ -12,7 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - `post-action` to execute a task post-restart attempt
-- `exclude` to all for inverse filtering when docker-autoheal label set to `all`
+- `autoheal.restart.exclude` container label as override when `AUTOHEAL_CONTAINER_LABEL` set to `all`
+- `log-excluded` as a switch to allow logging of containers excluded from restart
 
 ## 0.8.3
 
