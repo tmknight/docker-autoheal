@@ -1,4 +1,4 @@
-# Docker Autoheal
+# Docker-Autoheal
 
 [![GitHubRelease][GitHubReleaseBadge]][GitHubReleaseLink]
 [![DockerPublishing][DockerPublishingBadge]][DockerLink]
