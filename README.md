@@ -26,8 +26,8 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)                                                    |
 | **AUTOHEAL_INTERVAL**        | 5                        | Check container health every `n` seconds              |
 | **AUTOHEAL_START_DELAY**     | 0                        | Wait `n` seconds before first health check            |
-| **AUTOHEAL_LOG_EXCLUDED**    | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.exclusion=TRUE`                                           |
 | **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments                                   |
+| **AUTOHEAL_LOG_EXCLUDED**    | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.exclusion=TRUE`                                           |
 | **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)         | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                       | Time in `n` seconds before failing connection attempt |
