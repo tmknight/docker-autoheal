@@ -1,4 +1,4 @@
-# Docker Autoheal
+# Docker-Autoheal
 
 [![GitHubRelease][GitHubReleaseBadge]][GitHubReleaseLink]
 [![DockerPublishing][DockerPublishingBadge]][DockerLink]
@@ -21,24 +21,27 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 
 | Variable                     | Default                  | Description                                           |
 |:----------------------------:|:------------------------:|:-----------------------------------------------------:|
-| **AUTOHEAL_CONNECTON_TYPE**  | local                    | This determines how `docker-autoheal` connects to Docker (One of: local, socket, http, ssl                               |
-| **AUTOHEAL_CONTAINER_LABEL** | autoheal                 | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host         |
-| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)   |
+| **AUTOHEAL_CONNECTION_TYPE** | local                    | This determines how `docker-autoheal` connects to Docker (One of: local, socket, http, ssl                                                       |
+| **AUTOHEAL_CONTAINER_LABEL** | autoheal                 | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host        |
+| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)                                                    |
 | **AUTOHEAL_INTERVAL**        | 5                        | Check container health every `n` seconds              |
 | **AUTOHEAL_START_DELAY**     | 0                        | Wait `n` seconds before first health check            |
+| **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments                                   |
+| **AUTOHEAL_LOG_EXCLUDED**    | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.exclusion=TRUE`                                           |
 | **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)         | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                       | Time in `n` seconds before failing connection attempt |
-| **AUTOHEAL_PEM_PATH**        | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl` |
-| **AUTOHEAL_APPRISE_URL**     |                          |URL to post messages to the apprise following actions on unhealthy container                                             |
-| **AUTOHEAL_WEBHOOK_KEY**     |                          |KEY to post messages to the webhook following actions on unhealthy container                                             |
-| **AUTOHEAL_WEBHOOK_URL**     |                          |URL to post messages to the webhook following actions on unhealthy container                                             |
+| **AUTOHEAL_PEM_PATH**        | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`                            |
+| **AUTOHEAL_APPRISE_URL**     |                          |URL to post messages to the apprise following actions on unhealthy container                                                 |
+| **AUTOHEAL_WEBHOOK_KEY**     |                          |KEY to post messages to the webhook following actions on unhealthy container                                                 |
+| **AUTOHEAL_WEBHOOK_URL**     |                          |URL to post messages to the webhook following actions on unhealthy container                                                 |
 
 ### Optional Container Labels
 
-| Label                        | Description                                                                                                                                        |
-|:----------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------:|
-| **autoheal.stop.timeout**    | Per container override (in seconds) of `AUTOHEAL_STOP_TIMEOUT` during restart (e.g. some container routinely takes longer to cleanly exit)         |
+| Label | Description | Example |
+|:----------------------------:|:-------------------------------------------------------------------------:|:---:|
+| **autoheal.stop.timeout**    | Per container override (in seconds) of `AUTOHEAL_STOP_TIMEOUT` during restart | Some container routinely takes longer to cleanly exit         |
+| **autoheal.restart.exclusion**    | Per container override (true/false) to `AUTOHEAL_CONTAINER_LABEL` | If you have a large number of containers that you wish to monitor and restart, apply this label as `TRUE` to the few that you do not wish to restart and set `AUTOHEAL_CONTAINER_LABEL` to `all`         |
 
 ### Binary Options
 
@@ -72,6 +75,11 @@ Options:
                         The webhook json key string
     -w, --webhook-url <WEBHOOK_URL>
                         The webhook url
+        --post-action <SCRIPT_PATH>
+                        The fully qualified path to a script that should be
+                        executed after container restart
+        --log-excluded  Log unhealthy, but restart excluded containers
+                        (WARNING, this could be chatty)
     -h, --help          Print help
     -v, --version       Print version information
 ```
@@ -98,7 +106,7 @@ docker run -d --read-only \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal` as the user with the specified uid:gid
+Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal` as the user with the specified `uid:gid`
 
 ### HTTP
 
@@ -114,7 +122,7 @@ docker run -d --read-only \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me` as the user with the specified uid:gid
+Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me` as the user with the specified `uid:gid`
 
 ### Logging
 
@@ -168,6 +176,11 @@ If you need the `docker-autoheal` container timezone to match the local machine,
 ```bash
 docker run ... -v /etc/localtime:/etc/localtime:ro
 ```
+
+### A Word of Caution about Excluding from Restart and Logging Exclusions
+
+- If you exclude containers from restart and set logging of excluded to `true` there will be a large number of log messages about that container if it becomes unhealthy
+- Additionally, if you have set a webhook or apprise in this scenario, those will be executed at the same interval as monitoring is set
 
 ## Credits
 

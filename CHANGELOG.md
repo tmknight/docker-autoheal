@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.9.0
+
+### Added
+
+- `post-action` to execute a task post-restart attempt
+- `autoheal.restart.exclude` container label as override when `AUTOHEAL_CONTAINER_LABEL` set to `all`
+- `log-excluded` as a switch to allow logging of containers excluded from restart
+
 ## 0.8.3
 
 ### Changed
