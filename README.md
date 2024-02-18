@@ -179,7 +179,7 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 
 ### A Word of Caution about Excluding from Restart and Logging Exclusions
 
-- If you exclude containers from restart and set logging of excluded to `true` there will be a large number of log messages about that container if it becomes unhealthy
+- If you exclude containers from restart and set logging of excluded to `true`, there will be a large number of log messages about that container if it becomes unhealthy
 - Additionally, if you have set a webhook or apprise in this scenario, those will be executed at the same interval as monitoring is set
 
 ## Credits
