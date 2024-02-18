@@ -34,8 +34,8 @@ pub async fn execute_action(post_action: String, name: &str, id: String, timeout
         log_message(&msg0, INFO).await;
     } else {
         let msg0 = format!(
-            "[{}] Post-action for container ({}) not found: {}",
-            name, id, post_action
+            "[{}] Post-action ({}) for container ({}) not found",
+            name, post_action, id
         );
         log_message(&msg0, ERROR).await;
     }
