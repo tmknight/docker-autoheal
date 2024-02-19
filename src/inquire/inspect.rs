@@ -41,7 +41,7 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
             0
         }
     };
-    // Get last output and exitcode from state:health
+    // Get last 'output' and 'exitcode' from state:health
     let default_reason = String::from("unknown");
     let mut failing_reason = default_reason.clone();
     let mut exit_code: i64 = -1;
