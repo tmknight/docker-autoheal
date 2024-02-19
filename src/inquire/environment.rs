@@ -3,7 +3,6 @@ use crate::{log_message, ALLOWED_CONNECTION_TYPES, ERROR, WARNING};
 
 pub struct VariablesList {
     pub connection_type: String,
-    pub container_label: String,
     pub stop_timeout: isize,
     pub interval: u64,
     pub start_delay: u64,
@@ -16,7 +15,8 @@ pub struct VariablesList {
     pub webhook_key: String,
     pub webhook_url: String,
     pub post_action: String,
-    pub log_excluded: bool,
+    pub log_all: bool,
+    pub monitor_all: bool,
 }
 
 // Get environment variable
@@ -47,10 +47,6 @@ pub async fn get_var(opt: OptionsList) -> VariablesList {
                 }
             }
         }
-        Some(o) => o,
-    };
-    let autoheal_container_label: String = match opt.container_label {
-        None => get_env("AUTOHEAL_CONTAINER_LABEL", "autoheal"),
         Some(o) => o,
     };
     let autoheal_stop_timeout: isize = match opt.stop_timeout {
@@ -90,13 +86,13 @@ pub async fn get_var(opt: OptionsList) -> VariablesList {
         None => get_env("AUTOHEAL_POST_ACTION", ""),
         Some(o) => o,
     };
-    let mut autoheal_log_excluded = false;
-    if !opt.log_excluded {
-        if get_env("AUTOHEAL_LOG_EXCLUDED", "false") != "false" {
-            autoheal_log_excluded = true
-        }
-    } else {
-        autoheal_log_excluded = true
+    let mut autoheal_log_all = get_env("AUTOHEAL_LOG_ALL", "false") == "true";
+    if opt.log_all {
+        autoheal_log_all = true;
+    }
+    let mut autoheal_monitor_all = get_env("AUTOHEAL_MONITOR_ALL", "false") == "true";
+    if opt.monitor_all {
+        autoheal_monitor_all = true
     }
 
     // Autoheal tcp variables
@@ -166,12 +162,9 @@ pub async fn get_var(opt: OptionsList) -> VariablesList {
 
     VariablesList {
         connection_type: autoheal_connection_type,
-        container_label: autoheal_container_label,
         stop_timeout: autoheal_stop_timeout,
         interval: autoheal_interval,
         start_delay: autoheal_start_delay,
-        post_action: autoheal_post_action,
-        log_excluded: autoheal_log_excluded,
         tcp_address: autoheal_tcp_address,
         tcp_timeout: autoheal_tcp_timeout,
         key_path: autoheal_key_path,
@@ -180,5 +173,8 @@ pub async fn get_var(opt: OptionsList) -> VariablesList {
         apprise_url: autoheal_apprise_url,
         webhook_key: autoheal_webhook_key,
         webhook_url: autoheal_webhook_url,
+        post_action: autoheal_post_action,
+        log_all: autoheal_log_all,
+        monitor_all: autoheal_monitor_all,
     }
 }

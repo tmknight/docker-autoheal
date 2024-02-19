@@ -1,11 +1,28 @@
 use crate::{
-    execute::postaction::execute_action,
-    inquire::{inspect::inspect_container, list::containers_list},
-    report::{logging::log_message, webhook::notify_webhook},
-    LoopVariablesList, ERROR, INFO, WARNING,
+    execute::action::execute_tasks,
+    inquire::{
+        inspect::{self, inspect_container},
+        list::containers_list,
+    },
+    report::logging::log_message,
+    LoopVariablesList, ERROR, WARNING,
 };
-use bollard::{container::RestartContainerOptions, Docker};
+use bollard::Docker;
 use std::time::Duration;
+
+pub struct TaskVariablesList {
+    pub docker: Docker,
+    pub name: String,
+    pub id: String,
+    pub inspection: inspect::Result,
+    pub autoheal_stop_timeout: isize,
+    pub apprise_url: String,
+    pub webhook_key: String,
+    pub webhook_url: String,
+    pub post_action: String,
+    pub autoheal_restart_enable: bool,
+    pub log_all: bool,
+}
 
 pub async fn start_loop(
     var: LoopVariablesList,
@@ -15,7 +32,7 @@ pub async fn start_loop(
     let mut interval = tokio::time::interval(Duration::from_secs(var.interval));
     loop {
         // Gather all unhealthy containers
-        let containers = containers_list(&var.container_label, docker.clone()).await;
+        let containers = containers_list(docker.clone()).await;
         // Prepare for concurrent execution
         let mut handles = vec![];
         // Iterate through suspected unhealthy
@@ -26,7 +43,8 @@ pub async fn start_loop(
             let webhook_key = var.webhook_key.clone();
             let webhook_url = var.webhook_url.clone();
             let post_action = var.post_action.clone();
-            let log_excluded = var.log_excluded;
+            let log_all = var.log_all;
+            let monitor_all = var.monitor_all;
 
             // Determine if stop override label
             let s = "autoheal.stop.timeout".to_string();
@@ -39,13 +57,21 @@ pub async fn start_loop(
             };
 
             // Determine if excluded
-            let s = "autoheal.restart.exclude".to_string();
-            let autoheal_restart_exclude = match container.labels {
+            let s = "autoheal.monitor.enable".to_string();
+            let autoheal_monitor_enable = match container.labels {
                 Some(ref label) => match label.get(&s) {
-                    Some(v) => v.parse().unwrap_or(false),
-                    None => false,
+                    Some(v) => v.parse().unwrap_or(monitor_all),
+                    None => monitor_all,
                 },
-                None => false,
+                None => monitor_all,
+            };
+            let s = "autoheal.restart.enable".to_string();
+            let autoheal_restart_enable = match container.labels {
+                Some(ref label) => match label.get(&s) {
+                    Some(v) => v.parse().unwrap_or(true),
+                    None => true,
+                },
+                None => true,
             };
 
             // Execute concurrently
@@ -78,88 +104,35 @@ pub async fn start_loop(
                         name, id
                     );
                     log_message(&msg0, ERROR).await;
-                } else if autoheal_restart_exclude {
-                    if log_excluded {
+                } else if !autoheal_restart_enable {
+                    if log_all {
                         let msg0 = format!(
-                        "[{}] Container ({}) is unhealthy, however is excluded from restart on request",
+                        "[{}] Container ({}) is unhealthy, however restart is disabled on request",
                         name, id
                     );
                         log_message(&msg0, WARNING).await;
                     };
-                } else {
+                } else if autoheal_monitor_enable {
                     // Determine failing streak of the unhealthy container
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
                     if inspection.failed {
-                        // Report unhealthy container
-                        let msg0 = format!(
-                            "[{}] Container ({}) is unhealthy with {} failures",
-                            name, id, inspection.failing_streak
-                        );
-                        log_message(&msg0, WARNING).await;
-
-                        // Build restart options
-                        let restart_options = Some(RestartContainerOptions {
-                            t: autoheal_stop_timeout,
-                        });
-
-                        // Report container restart
-                        let msg1 = format!(
-                            "[{}] Restarting container ({}) with {}s timeout",
-                            name, id, autoheal_stop_timeout
-                        );
-                        log_message(&msg1, WARNING).await;
-
-                        // Restart unhealthy container
-                        let msg = match &docker_clone.restart_container(&id, restart_options).await
-                        {
-                            Ok(()) => {
-                                // Log result
-                                let msg0 = format!(
-                                    "[{}] Restart of container ({}) was successful",
-                                    name, id
-                                );
-                                log_message(&msg0, INFO).await;
-                                msg0
-                            }
-                            Err(e) => {
-                                // Log result
-                                let msg0 = format!(
-                                    "[{}] Restart of container ({}) failed: {}",
-                                    name, id, e
-                                );
-                                log_message(&msg0, ERROR).await;
-                                msg0
+                        // Remediate
+                        let task_variables = {
+                            TaskVariablesList {
+                                docker: docker_clone,
+                                name: name.to_string(),
+                                id,
+                                inspection,
+                                autoheal_stop_timeout,
+                                apprise_url,
+                                webhook_key,
+                                webhook_url,
+                                post_action,
+                                autoheal_restart_enable,
+                                log_all,
                             }
                         };
-
-                        // Send webhook
-                        if !(webhook_url.is_empty() || webhook_key.is_empty())
-                            && (!autoheal_restart_exclude || log_excluded)
-                        {
-                            let payload = format!("{{\"{}\":\"{}\"}}", &webhook_key, &msg);
-                            notify_webhook(&webhook_url, &payload).await;
-                        }
-                        // Send apprise
-                        if !apprise_url.is_empty() && (!autoheal_restart_exclude || log_excluded) {
-                            let payload =
-                                format!("{{\"title\":\"Docker-Autoheal\",\"body\":\"{}\"}}", &msg);
-                            notify_webhook(&apprise_url, &payload).await;
-                        }
-                        // Execute post-action if not excluded
-                        match post_action.is_empty() {
-                            false => {
-                                if !autoheal_restart_exclude {
-                                    execute_action(
-                                        post_action,
-                                        name,
-                                        id,
-                                        autoheal_stop_timeout.to_string(),
-                                    )
-                                    .await;
-                                }
-                            }
-                            true => {}
-                        }
+                        execute_tasks(task_variables).await
                     }
                 }
             });
