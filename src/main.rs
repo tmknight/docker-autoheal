@@ -2,6 +2,7 @@ use std::time::Duration;
 
 // Docker-Autoheal modules
 mod execute {
+    pub mod action;
     pub mod connect;
     pub mod looper;
     pub mod postaction;
@@ -31,14 +32,14 @@ const ERROR: i8 = 2;
 const ALLOWED_CONNECTION_TYPES: [&str; 4] = ["local", "socket", "http", "ssl"];
 
 struct LoopVariablesList {
-    container_label: String,
     stop_timeout: isize,
     interval: u64,
     apprise_url: String,
     webhook_key: String,
     webhook_url: String,
     post_action: String,
-    log_excluded: bool,
+    log_all: bool,
+    monitor_all: bool,
 }
 
 #[tokio::main]
@@ -73,14 +74,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let loop_variables = {
         LoopVariablesList {
-            container_label: var.container_label,
             stop_timeout: var.stop_timeout,
             interval: var.interval,
             apprise_url: var.apprise_url,
             webhook_key: var.webhook_key,
             webhook_url: var.webhook_url,
             post_action: var.post_action,
-            log_excluded: var.log_excluded,
+            log_all: var.log_all,
+            monitor_all: var.monitor_all,
         }
     };
 

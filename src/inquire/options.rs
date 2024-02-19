@@ -3,7 +3,6 @@ use getopts::Options;
 
 pub struct OptionsList {
     pub connection_type: Option<String>,
-    pub container_label: Option<String>,
     pub stop_timeout: Option<String>,
     pub interval: Option<String>,
     pub start_delay: Option<String>,
@@ -15,7 +14,8 @@ pub struct OptionsList {
     pub webhook_key: Option<String>,
     pub webhook_url: Option<String>,
     pub post_action: Option<String>,
-    pub log_excluded: bool,
+    pub log_all: bool,
+    pub monitor_all: bool,
 }
 
 pub fn get_opts(args: Vec<String>) -> OptionsList {
@@ -28,12 +28,6 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
         "connection-type",
         "One of local, socket, http, or ssl",
         "<CONNECTION_TYPE>",
-    );
-    opts.optopt(
-        "l",
-        "container-label",
-        "Container label to monitor (e.g. autoheal)",
-        "<CONTAINER_LABEL>",
     );
     opts.optopt(
         "s",
@@ -86,15 +80,20 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
     );
     opts.optopt("w", "webhook-url", "The webhook url", "<WEBHOOK_URL>");
     opts.optopt(
-        "",
+        "a",
         "post-action",
         "The absolute path to a script that should be executed after container restart",
         "<SCRIPT_PATH>",
     );
     opts.optflag(
-        "",
-        "log-excluded",
-        "Log unhealthy, but restart excluded containers (WARNING, this could be chatty)",
+        "m",
+        "monitor-all",
+        "Enable monitoring off all containers that have a healthcheck",
+    );
+    opts.optflag(
+        "l",
+        "log-all",
+        "Enable logging of unhealthy containers where restart is disabled (WARNING, this could be chatty)",
     );
     opts.optflag("h", "help", "Print help");
     opts.optflag("v", "version", "Print version information");
@@ -135,7 +134,6 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
 
     OptionsList {
         connection_type: matches.opt_str("c"),
-        container_label: matches.opt_str("l"),
         stop_timeout: matches.opt_str("s"),
         interval: matches.opt_str("i"),
         start_delay: matches.opt_str("d"),
@@ -146,7 +144,8 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
         apprise_url: matches.opt_str("a"),
         webhook_key: matches.opt_str("j"),
         webhook_url: matches.opt_str("w"),
-        post_action: matches.opt_str("post-action"),
-        log_excluded: matches.opt_present("log-excluded"),
+        post_action: matches.opt_str("a"),
+        log_all: matches.opt_present("l"),
+        monitor_all: matches.opt_present("m"),
     }
 }

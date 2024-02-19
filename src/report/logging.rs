@@ -17,8 +17,13 @@ pub fn print_version() {
     println!("Description: {}", DESCRIPTION);
     println!("Homepage: {}", HOMEPAGE);
     println!();
-    println!("This is free software; you are free to change and redistribute it.");
-    println!("There is NO WARRANTY, to the extent permitted by law.");
+    println!("Copyright (C) 2024");
+    println!("This program comes with ABSOLUTELY NO WARRANTY.");
+    println!(
+        "This is free software, and you are welcome to redistribute it under certain conditions."
+    );
+    println!("For details, please refer to the GNU General Public License:");
+    println!("https://www.gnu.org/licenses/gpl-3.0.html");
 }
 
 // Logging
