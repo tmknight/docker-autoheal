@@ -88,7 +88,7 @@ Options:
 ### Local
 
 ```bash
-/usr/local/bin/docker-autoheal --container-label all > /var/log/docker-autoheal.log &
+/usr/local/bin/docker-autoheal --monitor-all > /var/log/docker-autoheal.log &
 ```
 
 Will connect to the local Docker host and monitor all containers
@@ -102,12 +102,12 @@ docker run -d --read-only \
     --network=none \
     --restart=always \
     --env="AUTOHEAL_CONNECTION_TYPE=socket" \
-    --env="AUTOHEAL_CONTAINER_LABEL=autoheal" \
+    --env="AUTOHEAL_MONITOR_ALL=true" \
     --volume=/var/run/docker.sock:/var/run/docker.sock:ro \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal` as the user with the specified `uid:gid`
+Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor all containers as the user with the specified `uid:gid`
 
 ### HTTP
 
@@ -117,13 +117,12 @@ docker run -d --read-only \
     --name docker-autoheal \
     --restart=always \
     --env="AUTOHEAL_CONNECTION_TYPE=http" \
-    --env="AUTOHEAL_CONTAINER_LABEL=watch-me" \
     --env="AUTOHEAL_TCP_HOST=MYHOST" \
     --env="AUTOHEAL_TCP_PORT=2375" \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me` as the user with the specified `uid:gid`
+Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label `autoheal.monitor.enable=true` as the user with the specified `uid:gid`
 
 ### Logging
 
@@ -142,13 +141,11 @@ Example log output when docker-autoheal is in action
 
 ### Docker Labels
 
-a) Apply the label `autoheal=true` to your container to have it watched (only the label name is assessed, the value is not currently used)
-
-b) Set ENV `AUTOHEAL_CONTAINER_LABEL` to that label name (e.g. `AUTOHEAL_CONTAINER_LABEL=autoheal`)
+a) Apply the label `autoheal.monitor.enable=true` to your container to have it watched
 
 OR
 
-c) Set ENV `AUTOHEAL_CONTAINER_LABEL=all` to watch all running containers
+b) Set ENV `AUTOHEAL_MONITOR_ALL=true` (or apply `--monitor-all` to the binary) to watch all running containers
 
 ### SSL Connection Type
 
