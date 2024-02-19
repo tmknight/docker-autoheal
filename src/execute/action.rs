@@ -65,7 +65,7 @@ pub async fn execute_tasks(var: TaskVariablesList) {
     }
     // Send apprise
     if !apprise_url.is_empty() && (restart_enable || log_all) {
-        let payload = format!("{{\"title\":\"Docker-Autoheal\",\"body\":\"{}\"}}", &msg);
+        let payload = format!("{{\"title\":\"Docker-Autoheal\",\"body\":\"{}|{}\"}}", &msg1, &msg);
         notify_webhook(&apprise_url, &payload).await;
     }
     // Execute post-action if restart enabled
