@@ -32,9 +32,9 @@ There are several breaking changes; please read carefully
 ### Removed
 
 - Binary options
-  - -l, --container-label
+  - -l, --container-label (see --monitor-all and autoheal.monitor.enable)
 - Environment variables
-  - AUTOHEAL_CONTAINER_LABEL
+  - AUTOHEAL_CONTAINER_LABEL (see --monitor-all and autoheal.monitor.enable)
 
 ## 0.9.0
 
