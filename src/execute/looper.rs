@@ -1,5 +1,5 @@
 use crate::{
-    execute::action::remediate,
+    execute::action::execute_tasks,
     inquire::{
         inspect::{self, inspect_container},
         list::containers_list,
@@ -10,7 +10,7 @@ use crate::{
 use bollard::Docker;
 use std::time::Duration;
 
-pub struct RemediateVariablesList {
+pub struct TaskVariablesList {
     pub docker: Docker,
     pub name: String,
     pub id: String,
@@ -117,8 +117,8 @@ pub async fn start_loop(
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
                     if inspection.failed {
                         // Remediate
-                        let remediate_variables = {
-                            RemediateVariablesList {
+                        let task_variables = {
+                            TaskVariablesList {
                                 docker: docker_clone,
                                 name: name.to_string(),
                                 id,
@@ -132,7 +132,7 @@ pub async fn start_loop(
                                 log_all,
                             }
                         };
-                        remediate(remediate_variables).await;
+                        execute_tasks(task_variables).await
                     }
                 }
             });

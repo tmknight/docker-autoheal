@@ -1,12 +1,12 @@
 use crate::{
-    execute::{looper::RemediateVariablesList, postaction::execute_command},
+    execute::{looper::TaskVariablesList, postaction::execute_command},
     inquire::inspect,
     report::{logging::log_message, webhook::notify_webhook},
     ERROR, INFO, WARNING,
 };
 use bollard::container::RestartContainerOptions;
 
-pub async fn remediate(var: RemediateVariablesList) {
+pub async fn execute_tasks(var: TaskVariablesList) {
     // Prepare reusable objects
     let docker = var.docker;
     let name = var.name;
