@@ -7,6 +7,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.10.0
+
+There are several breaking changes; please read carefully
+
+### Added
+
+- Environment variables
+  - AUTOHEAL_MONITOR_ALL (TRUE/FALSE)
+- Container labels
+  - autoheal.monitor.enable (TRUE/FALSE) as override when AUTOHEAL_MONITOR_ALL set to TRUE
+
+### Changed
+
+- Binary options
+  - --log-exclude replaced by -l, --log-all
+  - --post-action replaced by -a, --post-action
+- Environment variables
+  - AUTOHEAL_LOG_EXCLUDED replaced by boolean AUTOHEAL_LOG_ALL
+- Container labels
+  - autoheal.restart.exclude replaced by boolean autoheal.restart.enable
+
+### Removed
+
+- Binary options
+  - -l, --container-label
+- Environment variables
+  - AUTOHEAL_CONTAINER_LABEL
+
 ## 0.9.0
 
 ### Added

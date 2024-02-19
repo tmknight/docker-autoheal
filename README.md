@@ -22,26 +22,27 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | Variable                     | Default                  | Description                                           |
 |:----------------------------:|:------------------------:|:-----------------------------------------------------:|
 | **AUTOHEAL_CONNECTION_TYPE** | local                    | This determines how `docker-autoheal` connects to Docker (One of: local, socket, http, ssl                                                       |
-| **AUTOHEAL_CONTAINER_LABEL** | autoheal                 | This is the container label that `docker-autoheal` will use as filter criteria for monitoring - or set to `all` to simply monitor all containers on the host        |
-| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)                                                    |
+| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)       |
 | **AUTOHEAL_INTERVAL**        | 5                        | Check container health every `n` seconds              |
 | **AUTOHEAL_START_DELAY**     | 0                        | Wait `n` seconds before first health check            |
-| **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments                                   |
-| **AUTOHEAL_LOG_EXCLUDED**    | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.exclude=TRUE`                                           |
+| **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments                                                 |
+| **AUTOHEAL_MONITOR_ALL**     | FALSE                    | Set to `TRUE` to simply monitor all containers on the host or leave as `FALSE` and control via `autoheal.monitor.enable` |
+| **AUTOHEAL_LOG_ALL**         | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.enable=FALSE`         |
 | **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)         | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                       | Time in `n` seconds before failing connection attempt |
-| **AUTOHEAL_PEM_PATH**        | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`                            |
-| **AUTOHEAL_APPRISE_URL**     |                          |URL to post messages to the apprise following actions on unhealthy container                                                 |
-| **AUTOHEAL_WEBHOOK_KEY**     |                          |KEY to post messages to the webhook following actions on unhealthy container                                                 |
-| **AUTOHEAL_WEBHOOK_URL**     |                          |URL to post messages to the webhook following actions on unhealthy container                                                 |
+| **AUTOHEAL_PEM_PATH**        | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`  |
+| **AUTOHEAL_APPRISE_URL**     |                          |URL to post messages to the apprise following actions on unhealthy container                                              |
+| **AUTOHEAL_WEBHOOK_KEY**     |                          |KEY to post messages to the webhook following actions on unhealthy container                                              |
+| **AUTOHEAL_WEBHOOK_URL**     |                          |URL to post messages to the webhook following actions on unhealthy container                                              |
 
 ### Optional Container Labels
 
-| Label | Description | Example |
-|:----------------------------:|:-------------------------------------------------------------------------:|:---:|
-| **autoheal.stop.timeout**    | Per container override (in seconds) of `AUTOHEAL_STOP_TIMEOUT` during restart | Some container routinely takes longer to cleanly exit         |
-| **autoheal.restart.exclude**    | Per container override (true/false) to `AUTOHEAL_CONTAINER_LABEL` | If you have a large number of containers that you wish to monitor and restart, apply this label as `TRUE` to the few that you do not wish to restart and set `AUTOHEAL_CONTAINER_LABEL` to `all`         |
+| Label                        | Default | Description                                                                                                                                |
+|:----------------------------:|:-------:|:------------------------------------------------------------------------------------------------------------------------------------------:|
+| **autoheal.stop.timeout**    |         | Per container override (in seconds) of `AUTOHEAL_STOP_TIMEOUT` during restart (e.g. Some container routinely takes longer to cleanly exit) |
+| **autoheal.monitor.enable**  | FALSE   | Per container override (true/false) to control if should be monitored (e.g. If you have a large number of containers that you wish to monitor and restart, apply this label as `FALSE` to the few that you do not wish to monitor and set `AUTOHEAL_MONITOR_ALL` to `TRUE`)                                                             |
+| **autoheal.restart.enable**  | TRUE    | Per container override (true/false) to control if should restart on unhealthy (e.g. If you have a large number of containers that you wish to monitor and restart, apply this label as `FALSE` to the few that you do not wish to restart and set `AUTOHEAL_MONITOR_ALL` to `TRUE`)                                                         |
 
 ### Binary Options
 
@@ -51,8 +52,6 @@ Used when executed in native OS (NOTE: The environment variables are also accept
 Options:
     -c, --connection-type <CONNECTION_TYPE>
                         One of local, socket, http, or ssl
-    -l, --container-label <CONTAINER_LABEL>
-                        Container label to monitor (e.g. autoheal)
     -s, --stop-timeout <STOP_TIMEOUT>
                         Time in seconds to wait for action to complete
     -i, --interval <INTERVAL>
@@ -75,11 +74,13 @@ Options:
                         The webhook json key string
     -w, --webhook-url <WEBHOOK_URL>
                         The webhook url
-        --post-action <SCRIPT_PATH>
-                        The fully qualified path to a script that should be
-                        executed after container restart
-        --log-excluded  Log unhealthy, but restart excluded containers
-                        (WARNING, this could be chatty)
+    -a, --post-action <SCRIPT_PATH>
+                        The absolute path to a script that should be executed
+                        after container restart
+    -m, --monitor-all   Enable monitoring off all containers that have a
+                        healthcheck
+    -l, --log-all       Enable logging of unhealthy containers where restart
+                        is disabled (WARNING, this could be chatty)
     -h, --help          Print help
     -v, --version       Print version information
 ```
@@ -179,8 +180,8 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 
 ### A Word of Caution about Excluding from Restart and Logging Exclusions
 
-- If you exclude containers from restart and set logging of excluded to `true` there will be a large number of log messages about that container if it becomes unhealthy
-- Additionally, if you have set a webhook or apprise in this scenario, those will be executed at the same interval as monitoring is set
+- Excluding a container from restarts and enabling logging for excluded containers will generate numerous log messages whenever that container becomes unhealthy
+- Additionally, if a webhook or apprise is also configured for those containers, they will be executed at each monitoring interval
 
 ## Credits
 

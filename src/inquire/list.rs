@@ -2,17 +2,11 @@ use crate::{report::logging::log_message, ERROR};
 use bollard::{container::ListContainersOptions, models::ContainerSummary, Docker};
 use std::collections::HashMap;
 
-pub async fn containers_list(
-    autoheal_container_label: &String,
-    docker: Docker,
-) -> Vec<ContainerSummary> {
+pub async fn containers_list(docker: Docker) -> Vec<ContainerSummary> {
     // Build container assessment criteria
     let mut filters = HashMap::new();
     filters.insert("health", vec!["unhealthy"]);
     filters.insert("status", vec!["running", "exited", "dead"]);
-    if autoheal_container_label != "all" {
-        filters.insert("label", vec![&autoheal_container_label]);
-    }
 
     // Gather all containers that are unhealthy
     let container_options = Some(ListContainersOptions {

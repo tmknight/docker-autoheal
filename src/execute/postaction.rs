@@ -2,7 +2,7 @@ use crate::{report::logging::log_message, ERROR, INFO};
 use std::fs;
 use std::process::Command;
 
-pub async fn execute_action(post_action: String, name: &str, id: String, timeout: String) {
+pub async fn execute_command(post_action: String, name: &str, id: String, timeout: String) {
     // Check if the script exists
     if fs::metadata(post_action.clone()).is_ok() {
         // Execute using Command

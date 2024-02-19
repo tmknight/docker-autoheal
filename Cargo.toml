@@ -1,6 +1,6 @@
 [package]
 name = "docker-autoheal"
-version = "0.9.0"
+version = "0.10.0"
 authors = ["Travis M Knight"]
 license = "GPL-3.0"
 description = "A cross-platform tool to monitor and remediate unhealthy Docker containers"
