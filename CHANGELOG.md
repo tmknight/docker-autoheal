@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## 0.10.0
 
-There are several breaking changes; please read carefully
+There are several breaking changes; please read carefully and refer to [README](https://github.com/tmknight/docker-autoheal/blob/main/README.md) for more details
 
 ### Added
 
