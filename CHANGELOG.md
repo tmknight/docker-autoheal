@@ -18,7 +18,8 @@ There are several breaking changes; please read carefully and refer to [README](
 - Container labels
   - autoheal.monitor.enable (TRUE/FALSE) to control monitoring of individual containers
     - Overrides AUTOHEAL_MONITOR_ALL
-
+- Returning last health 'ExitCode` and 'Output' to log (and webhook/apprise if configured) for unhealthy containers
+  
 ### Changed
 
 - Binary options
