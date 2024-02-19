@@ -16,7 +16,8 @@ There are several breaking changes; please read carefully
 - Environment variables
   - AUTOHEAL_MONITOR_ALL (TRUE/FALSE)
 - Container labels
-  - autoheal.monitor.enable (TRUE/FALSE) as override when AUTOHEAL_MONITOR_ALL set to TRUE
+  - autoheal.monitor.enable (TRUE/FALSE) to control monitoring of individual containers
+    - Overrides AUTOHEAL_MONITOR_ALL
 
 ### Changed
 
