@@ -13,8 +13,10 @@ There are several breaking changes; please read carefully and refer to [README](
 
 ### Added
 
+- Binary options
+  - -m, --monitor-all switch to control monitoring of all containers
 - Environment variables
-  - AUTOHEAL_MONITOR_ALL (TRUE/FALSE)
+  - AUTOHEAL_MONITOR_ALL (TRUE/FALSE) to control monitoring of all containers
 - Container labels
   - autoheal.monitor.enable (TRUE/FALSE) to control monitoring of individual containers
     - Overrides AUTOHEAL_MONITOR_ALL
