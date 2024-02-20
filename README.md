@@ -1,12 +1,10 @@
 # Docker-Autoheal
 
 [![GitHubRelease][GitHubReleaseBadge]][GitHubReleaseLink]
+[![GitHubAssetDl][GitHubAssetDlBadge]][GitHubAssetDlLink]
 [![DockerPublishing][DockerPublishingBadge]][DockerLink]
 [![DockerSize][DockerSizeBadge]][DockerLink]
 [![DockerPulls][DockerPullsBadge]][DockerLink]
-<!--
-[![GitHubAssetDl][GitHubAssetDlBadge]][GitHubAssetDlLink]
--->
 
 A cross-platform tool to monitor and remediate unhealthy Docker containers
 
@@ -187,11 +185,11 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 
 - [willfarrell](https://github.com/willfarrell)
 
-[GitHubReleaseBadge]: https://github.com/tmknight/docker-autoheal/actions/workflows/github-release.yml/badge.svg
+[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=LightGreen&label=generate%20release&cacheSeconds=86400
 [GitHubReleaseLink]: https://github.com/tmknight/docker-autoheal/releases
-[DockerPublishingBadge]: https://github.com/tmknight/docker-autoheal/actions/workflows/docker-publish.yml/badge.svg
-[DockerPullsBadge]: https://badgen.net/docker/pulls/tmknight88/docker-autoheal?icon=docker&label=Docker+Pulls&labelColor=black&color=green
-[DockerSizeBadge]: https://badgen.net/docker/size/tmknight88/docker-autoheal?icon=docker&label=Docker+Size&labelColor=black&color=green
+[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=LightGreen&label=publish%20image&cacheSeconds=86400
+[DockerPullsBadge]: https://img.shields.io/docker/pulls/tmknight88/docker-autoheal?style=flat&logo=docker&cacheSeconds=86400
+[DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?arch=amd64&style=flat&logo=docker&cacheSeconds=86400
 [DockerLink]: https://hub.docker.com/r/tmknight88/docker-autoheal
-[GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&logoColor=lightgray&label=GitHub%20Downloads&labelColor=Black&color=LIghtGreen&cacheSeconds=86400
+[GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=LightGreen&label=release%20downloads&cacheSeconds=86400
 [GithubAssetDlLink]: https://github.com/tmknight/docker-autoheal/releases
