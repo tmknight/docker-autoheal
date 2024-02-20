@@ -185,11 +185,11 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 
 - [willfarrell](https://github.com/willfarrell)
 
-[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=LightGreen&label=generate%20release&cacheSeconds=21600
+[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=darkgreen&label=generate%20release&cacheSeconds=21600
 [GitHubReleaseLink]: https://github.com/tmknight/docker-autoheal/releases
-[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=LightGreen&label=publish%20image&cacheSeconds=21600
+[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=darkgreen&label=publish%20image&cacheSeconds=21600
 [DockerPullsBadge]: https://img.shields.io/docker/pulls/tmknight88/docker-autoheal?style=flat&logo=docker&cacheSeconds=21600
 [DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?sort=date&arch=amd64&style=flat&logo=docker&cacheSeconds=21600
 [DockerLink]: https://hub.docker.com/r/tmknight88/docker-autoheal
-[GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=LightGreen&label=release%20downloads&cacheSeconds=21600
+[GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=darkgreen&label=release%20downloads&cacheSeconds=21600
 [GithubAssetDlLink]: https://github.com/tmknight/docker-autoheal/releases
