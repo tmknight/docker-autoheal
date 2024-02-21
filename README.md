@@ -51,39 +51,39 @@ Used when executed in native OS (NOTE: The environment variables are also accept
 
 ```bash
 Options:
+    -a, --apprise-url <APPRISE_URL>
+                        The apprise url
     -c, --connection-type <CONNECTION_TYPE>
                         One of local, socket, http, or ssl
-    -s, --stop-timeout <STOP_TIMEOUT>
-                        Time in seconds to wait for action to complete
-    -i, --interval <INTERVAL>
-                        Time in seconds to check health
     -d, --start-delay <START_DELAY>
                         Time in seconds to wait for first check
+    -h, --help          Print help
+    -i, --interval <INTERVAL>
+                        Time in seconds to check health
+    -j, --webhook-key <WEBHOOK_KEY>
+                        The webhook json key string
+    -k, --key-path <KEY_PATH>
+                        The fully qualified path to requisite ssl PEM files
+    -l, --log-all       Enable logging of unhealthy containers where restart
+                        is disabled (WARNING, this could be chatty)
+    -m, --monitor-all   Enable monitoring off all containers that have a
+                        healthcheck
     -n, --tcp-host <TCP_HOST>
                         The hostname or IP address of the Docker host (when -c
                         http or ssl)
     -p, --tcp-port <TCP_PORT>
                         The tcp port number of the Docker host (when -c http
                         or ssl)
+    -s, --stop-timeout <STOP_TIMEOUT>
+                        Time in seconds to wait for action to complete
     -t, --tcp-timeout <TCP_TIMEOUT>
                         Time in seconds to wait for connection to complete
-    -k, --key-path <KEY_PATH>
-                        The fully qualified path to requisite ssl PEM files
-    -a, --apprise-url <APPRISE_URL>
-                        The apprise url
-    -j, --webhook-key <WEBHOOK_KEY>
-                        The webhook json key string
     -w, --webhook-url <WEBHOOK_URL>
                         The webhook url
-    -a, --post-action <SCRIPT_PATH>
+    -P, --post-action <SCRIPT_PATH>
                         The absolute path to a script that should be executed
                         after container restart
-    -m, --monitor-all   Enable monitoring off all containers that have a
-                        healthcheck
-    -l, --log-all       Enable logging of unhealthy containers where restart
-                        is disabled (WARNING, this could be chatty)
-    -h, --help          Print help
-    -v, --version       Print version information
+    -V, --version       Print version information
 ```
 
 ### Local
