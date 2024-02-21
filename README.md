@@ -1,6 +1,7 @@
 # Docker-Autoheal
 
 [![GitHubRelease][GitHubReleaseBadge]][GitHubReleaseLink]
+[![GitHubAssetDl][GitHubAssetDlBadge]][GitHubAssetDlLink]
 [![DockerPublishing][DockerPublishingBadge]][DockerLink]
 [![DockerSize][DockerSizeBadge]][DockerLink]
 [![DockerPulls][DockerPullsBadge]][DockerLink]
@@ -50,45 +51,45 @@ Used when executed in native OS (NOTE: The environment variables are also accept
 
 ```bash
 Options:
+    -a, --apprise-url <APPRISE_URL>
+                        The apprise url
     -c, --connection-type <CONNECTION_TYPE>
                         One of local, socket, http, or ssl
-    -s, --stop-timeout <STOP_TIMEOUT>
-                        Time in seconds to wait for action to complete
-    -i, --interval <INTERVAL>
-                        Time in seconds to check health
     -d, --start-delay <START_DELAY>
                         Time in seconds to wait for first check
+    -h, --help          Print help
+    -i, --interval <INTERVAL>
+                        Time in seconds to check health
+    -j, --webhook-key <WEBHOOK_KEY>
+                        The webhook json key string
+    -k, --key-path <KEY_PATH>
+                        The fully qualified path to requisite ssl PEM files
+    -l, --log-all       Enable logging of unhealthy containers where restart
+                        is disabled (WARNING, this could be chatty)
+    -m, --monitor-all   Enable monitoring off all containers that have a
+                        healthcheck
     -n, --tcp-host <TCP_HOST>
                         The hostname or IP address of the Docker host (when -c
                         http or ssl)
     -p, --tcp-port <TCP_PORT>
                         The tcp port number of the Docker host (when -c http
                         or ssl)
+    -s, --stop-timeout <STOP_TIMEOUT>
+                        Time in seconds to wait for action to complete
     -t, --tcp-timeout <TCP_TIMEOUT>
                         Time in seconds to wait for connection to complete
-    -k, --key-path <KEY_PATH>
-                        The fully qualified path to requisite ssl PEM files
-    -a, --apprise-url <APPRISE_URL>
-                        The apprise url
-    -j, --webhook-key <WEBHOOK_KEY>
-                        The webhook json key string
     -w, --webhook-url <WEBHOOK_URL>
                         The webhook url
-    -a, --post-action <SCRIPT_PATH>
+    -P, --post-action <SCRIPT_PATH>
                         The absolute path to a script that should be executed
                         after container restart
-    -m, --monitor-all   Enable monitoring off all containers that have a
-                        healthcheck
-    -l, --log-all       Enable logging of unhealthy containers where restart
-                        is disabled (WARNING, this could be chatty)
-    -h, --help          Print help
-    -v, --version       Print version information
+    -V, --version       Print version information
 ```
 
 ### Local
 
 ```bash
-/usr/local/bin/docker-autoheal --container-label all > /var/log/docker-autoheal.log &
+/usr/local/bin/docker-autoheal --monitor-all > /var/log/docker-autoheal.log &
 ```
 
 Will connect to the local Docker host and monitor all containers
@@ -102,12 +103,12 @@ docker run -d --read-only \
     --network=none \
     --restart=always \
     --env="AUTOHEAL_CONNECTION_TYPE=socket" \
-    --env="AUTOHEAL_CONTAINER_LABEL=autoheal" \
+    --env="AUTOHEAL_MONITOR_ALL=true" \
     --volume=/var/run/docker.sock:/var/run/docker.sock:ro \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor only containers with a label named `autoheal` as the user with the specified `uid:gid`
+Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor all containers as the user with the specified `uid:gid`
 
 ### HTTP
 
@@ -117,13 +118,12 @@ docker run -d --read-only \
     --name docker-autoheal \
     --restart=always \
     --env="AUTOHEAL_CONNECTION_TYPE=http" \
-    --env="AUTOHEAL_CONTAINER_LABEL=watch-me" \
     --env="AUTOHEAL_TCP_HOST=MYHOST" \
     --env="AUTOHEAL_TCP_PORT=2375" \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label named `watch-me` as the user with the specified `uid:gid`
+Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label `autoheal.monitor.enable=true` as the user with the specified `uid:gid`
 
 ### Logging
 
@@ -142,13 +142,11 @@ Example log output when docker-autoheal is in action
 
 ### Docker Labels
 
-a) Apply the label `autoheal=true` to your container to have it watched (only the label name is assessed, the value is not currently used)
-
-b) Set ENV `AUTOHEAL_CONTAINER_LABEL` to that label name (e.g. `AUTOHEAL_CONTAINER_LABEL=autoheal`)
+a) Apply the label `autoheal.monitor.enable=true` to your container to have it watched
 
 OR
 
-c) Set ENV `AUTOHEAL_CONTAINER_LABEL=all` to watch all running containers
+b) Set ENV `AUTOHEAL_MONITOR_ALL=true` (or apply `--monitor-all` to the binary) to watch all running containers
 
 ### SSL Connection Type
 
@@ -187,9 +185,11 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 
 - [willfarrell](https://github.com/willfarrell)
 
-[GitHubReleaseBadge]: https://github.com/tmknight/docker-autoheal/actions/workflows/github-release.yml/badge.svg
+[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=347d39&label=generate%20release&cacheSeconds=21600
 [GitHubReleaseLink]: https://github.com/tmknight/docker-autoheal/releases
-[DockerPublishingBadge]: https://github.com/tmknight/docker-autoheal/actions/workflows/docker-publish.yml/badge.svg
-[DockerPullsBadge]: https://badgen.net/docker/pulls/tmknight88/docker-autoheal?icon=docker&label=Docker+Pulls&labelColor=black&color=green
-[DockerSizeBadge]: https://badgen.net/docker/size/tmknight88/docker-autoheal?icon=docker&label=Docker+Size&labelColor=black&color=green
+[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=347d39&label=publish%20image&cacheSeconds=21600
+[DockerPullsBadge]: https://img.shields.io/docker/pulls/tmknight88/docker-autoheal?style=flat&logo=docker&color=blue&cacheSeconds=21600
+[DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?sort=date&arch=amd64&style=flat&logo=docker&color=blue&cacheSeconds=21600
 [DockerLink]: https://hub.docker.com/r/tmknight88/docker-autoheal
+[GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=347d39&label=release%20downloads&cacheSeconds=21600
+[GithubAssetDlLink]: https://github.com/tmknight/docker-autoheal/releases

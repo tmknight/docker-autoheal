@@ -7,16 +7,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.10.1
+
+### Changed
+
+- Binary options
+  - -v, --version replaced by -V, --version to be in alignment with standard practices
+  - Alphabetized help output for easier reading (lowercase then uppercase)
+
+### Fixed
+
+- Binary options
+  - -a, --post-action replaced by -P, --post-action to resolve conflict with -a, --apprise-url
+
 ## 0.10.0
 
-There are several breaking changes; please read carefully
+There are several breaking changes; please read carefully and refer to [README](https://github.com/tmknight/docker-autoheal/blob/main/README.md) for more details
 
 ### Added
 
+- Binary options
+  - -m, --monitor-all switch to control monitoring of all containers
 - Environment variables
-  - AUTOHEAL_MONITOR_ALL (TRUE/FALSE)
+  - AUTOHEAL_MONITOR_ALL (TRUE/FALSE) to control monitoring of all containers
 - Container labels
-  - autoheal.monitor.enable (TRUE/FALSE) as override when AUTOHEAL_MONITOR_ALL set to TRUE
+  - autoheal.monitor.enable (TRUE/FALSE) to control monitoring of individual containers
+    - Overrides AUTOHEAL_MONITOR_ALL
+- Returning last health 'ExitCode` and 'Output' to log (and webhook/apprise if configured) for unhealthy containers
 
 ### Changed
 
@@ -31,9 +48,9 @@ There are several breaking changes; please read carefully
 ### Removed
 
 - Binary options
-  - -l, --container-label
+  - -l, --container-label (see --monitor-all and autoheal.monitor.enable)
 - Environment variables
-  - AUTOHEAL_CONTAINER_LABEL
+  - AUTOHEAL_CONTAINER_LABEL (see --monitor-all and autoheal.monitor.enable)
 
 ## 0.9.0
 
