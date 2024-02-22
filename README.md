@@ -22,7 +22,7 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 
 | Variable                     | Default                  | Description                                           |
 |:----------------------------:|:------------------------:|:-----------------------------------------------------:|
-| **AUTOHEAL_CONNECTION_TYPE** | local                    | This determines how `docker-autoheal` connects to Docker (One of: local, socket, http, ssl                                                       |
+| **AUTOHEAL_CONNECTION_TYPE** | local                    | This determines how `docker-autoheal` connects to Docker (One of: local, socket, http, ssl                               |
 | **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)       |
 | **AUTOHEAL_INTERVAL**        | 5                        | Check container health every `n` seconds              |
 | **AUTOHEAL_START_DELAY**     | 0                        | Wait `n` seconds before first health check            |
@@ -32,18 +32,18 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)         | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                       | Time in `n` seconds before failing connection attempt |
-| **AUTOHEAL_PEM_PATH**        | /opt/docker-autoheal/tls | Fully qualified path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`  |
-| **AUTOHEAL_APPRISE_URL**     |                          |URL to post messages to the apprise following actions on unhealthy container                                              |
-| **AUTOHEAL_WEBHOOK_KEY**     |                          |KEY to post messages to the webhook following actions on unhealthy container                                              |
-| **AUTOHEAL_WEBHOOK_URL**     |                          |URL to post messages to the webhook following actions on unhealthy container                                              |
+| **AUTOHEAL_PEM_PATH**        | /opt/docker-autoheal/tls | Absolute path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`  |
+| **AUTOHEAL_APPRISE_URL**     |                          | URL to post messages to the apprise following actions on unhealthy container                                             |
+| **AUTOHEAL_WEBHOOK_KEY**     |                          | KEY to post messages to the webhook following actions on unhealthy container                                             |
+| **AUTOHEAL_WEBHOOK_URL**     |                          | URL to post messages to the webhook following actions on unhealthy container                                             |
 
 ### Optional Container Labels
 
-| Label                        | Default | Description                                                                                                                                |
-|:----------------------------:|:-------:|:------------------------------------------------------------------------------------------------------------------------------------------:|
-| **autoheal.stop.timeout**    |         | Per container override (in seconds) of `AUTOHEAL_STOP_TIMEOUT` during restart (e.g. Some container routinely takes longer to cleanly exit) |
-| **autoheal.monitor.enable**  | FALSE   | Per container override (true/false) to control if should be monitored (e.g. If you have a large number of containers that you wish to monitor and restart, apply this label as `FALSE` to the few that you do not wish to monitor and set `AUTOHEAL_MONITOR_ALL` to `TRUE`)                                                             |
-| **autoheal.restart.enable**  | TRUE    | Per container override (true/false) to control if should restart on unhealthy (e.g. If you have a large number of containers that you wish to monitor and restart, apply this label as `FALSE` to the few that you do not wish to restart and set `AUTOHEAL_MONITOR_ALL` to `TRUE`)                                                         |
+| Label                        | Default | Description                                                                                                                                 |
+|:----------------------------:|:-------:|:-------------------------------------------------------------------------------------------------------------------------------------------:|
+| **autoheal.stop.timeout**    |         | Per container override (in seconds) of `AUTOHEAL_STOP_TIMEOUT` during restart (e.g. Some container routinely takes longer to cleanly exit)  |
+| **autoheal.monitor.enable**  | FALSE   | Per container override (true/false) to control if should be monitored (e.g. If you have a large number of containers that you wish to monitor and restart, apply this label as `FALSE` to the few that you do not wish to monitor and set `AUTOHEAL_MONITOR_ALL` to `TRUE`)                                                                                  |
+| **autoheal.restart.enable**  | TRUE    | Per container override (true/false) to control if should restart on unhealthy (e.g. If you have a large number of containers that you wish to monitor and restart, apply this label as `FALSE` to the few that you do not wish to restart and set `AUTOHEAL_MONITOR_ALL` to `TRUE`)                                                                       |
 
 ### Binary Options
 
@@ -63,7 +63,7 @@ Options:
     -j, --webhook-key <WEBHOOK_KEY>
                         The webhook json key string
     -k, --key-path <KEY_PATH>
-                        The fully qualified path to requisite ssl PEM files
+                        The absolute path to requisite ssl PEM files
     -l, --log-all       Enable logging of unhealthy containers where restart
                         is disabled (WARNING, this could be chatty)
     -m, --monitor-all   Enable monitoring off all containers that have a
@@ -185,11 +185,11 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 
 - [willfarrell](https://github.com/willfarrell)
 
-[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=347d39&label=generate%20release&cacheSeconds=21600
+[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=29c310&label=generate%20release&cacheSeconds=21600
 [GitHubReleaseLink]: https://github.com/tmknight/docker-autoheal/releases
-[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=347d39&label=publish%20image&cacheSeconds=21600
+[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=29c310&label=publish%20image&cacheSeconds=21600
 [DockerPullsBadge]: https://img.shields.io/docker/pulls/tmknight88/docker-autoheal?style=flat&logo=docker&color=blue&cacheSeconds=21600
 [DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?sort=date&arch=amd64&style=flat&logo=docker&color=blue&cacheSeconds=21600
 [DockerLink]: https://hub.docker.com/r/tmknight88/docker-autoheal
-[GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=347d39&label=release%20downloads&cacheSeconds=21600
+[GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=29c310&label=release%20downloads&cacheSeconds=21600
 [GithubAssetDlLink]: https://github.com/tmknight/docker-autoheal/releases
