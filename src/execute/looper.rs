@@ -11,6 +11,7 @@ use bollard::Docker;
 use std::time::Duration;
 
 pub struct TaskVariablesList {
+    pub hostname: String,
     pub docker: Docker,
     pub name: String,
     pub id: String,
@@ -28,6 +29,10 @@ pub async fn start_loop(
     var: LoopVariablesList,
     docker: Docker,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    // Get System Information
+    let sys_info = docker.info().await;
+    let hostname = sys_info.unwrap().name.unwrap_or("unknown".to_string());
+
     // Establish loop interval
     let mut interval = tokio::time::interval(Duration::from_secs(var.interval));
     loop {
@@ -38,6 +43,7 @@ pub async fn start_loop(
         // Iterate through suspected unhealthy
         for container in containers {
             // Prepare reusable objects
+            let hostname_clone = hostname.clone();
             let docker_clone = docker.clone();
             let apprise_url = var.apprise_url.clone();
             let webhook_key = var.webhook_key.clone();
@@ -119,6 +125,7 @@ pub async fn start_loop(
                         // Remediate
                         let task_variables = {
                             TaskVariablesList {
+                                hostname: hostname_clone,
                                 docker: docker_clone,
                                 name: name.to_string(),
                                 id,

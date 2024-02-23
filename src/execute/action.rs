@@ -8,6 +8,7 @@ use bollard::container::RestartContainerOptions;
 
 pub async fn execute_tasks(var: TaskVariablesList) {
     // Prepare reusable objects
+    let hostname = var.hostname;
     let docker = var.docker;
     let name = var.name;
     let id = var.id;
@@ -60,12 +61,18 @@ pub async fn execute_tasks(var: TaskVariablesList) {
 
     // Send webhook
     if !(webhook_url.is_empty() || webhook_key.is_empty()) && (restart_enable || log_all) {
-        let payload = format!("{{\"{}\":\"{}|{}\"}}", &webhook_key, &msg1, &msg);
+        let payload = format!(
+            "{{\"{}\":\"{}|{}|{}\"}}",
+            &webhook_key, &hostname, &msg1, &msg
+        );
         notify_webhook(&webhook_url, &payload).await;
     }
     // Send apprise
     if !apprise_url.is_empty() && (restart_enable || log_all) {
-        let payload = format!("{{\"title\":\"Docker-Autoheal\",\"body\":\"{}|{}\"}}", &msg1, &msg);
+        let payload = format!(
+            "{{\"title\":\"Docker-Autoheal\",\"body\":\"{}|{}|{}\"}}",
+            &hostname, &msg1, &msg
+        );
         notify_webhook(&apprise_url, &payload).await;
     }
     // Execute post-action if restart enabled
