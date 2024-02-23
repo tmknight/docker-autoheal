@@ -26,13 +26,13 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)       |
 | **AUTOHEAL_INTERVAL**        | 5                        | Check container health every `n` seconds              |
 | **AUTOHEAL_START_DELAY**     | 0                        | Wait `n` seconds before first health check            |
-| **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments                                                 |
+| **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments in that order                                             |
 | **AUTOHEAL_MONITOR_ALL**     | FALSE                    | Set to `TRUE` to simply monitor all containers on the host or leave as `FALSE` and control via `autoheal.monitor.enable` |
 | **AUTOHEAL_LOG_ALL**         | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.enable=FALSE`         |
 | **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)         | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                       | Time in `n` seconds before failing connection attempt |
-| **AUTOHEAL_PEM_PATH**        | /opt/docker-autoheal/tls | Absolute path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`  |
+| **AUTOHEAL_PEM_PATH**        | /opt/docker-autoheal/tls | Absolute path to requisite ssl certificate files (key.pem, cert.pem, ca.pem) when `AUTOHEAL_CONNECTION_TYPE=ssl`         |
 | **AUTOHEAL_APPRISE_URL**     |                          | URL to post messages to the apprise following actions on unhealthy container                                             |
 | **AUTOHEAL_WEBHOOK_KEY**     |                          | KEY to post messages to the webhook following actions on unhealthy container                                             |
 | **AUTOHEAL_WEBHOOK_URL**     |                          | URL to post messages to the webhook following actions on unhealthy container                                             |
@@ -175,6 +175,11 @@ If you need the `docker-autoheal` container timezone to match the local machine,
 ```bash
 docker run ... -v /etc/localtime:/etc/localtime:ro
 ```
+
+### Webhook/Apprise
+
+- The payload includes the following separated by `|`: Docker system hostname, the last health output, and the result of restart action
+
 
 ### A Word of Caution about Excluding from Restart and Logging Exclusions
 
