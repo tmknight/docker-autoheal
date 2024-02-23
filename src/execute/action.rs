@@ -35,12 +35,12 @@ pub async fn execute_tasks(var: TaskVariablesList) {
     // Build restart options
     let restart_options = Some(RestartContainerOptions { t: stop_timeout });
 
-    // Report container restart
-    let msg1 = format!(
+    // Report container restarting
+    let msg2 = format!(
         "[{}] Restarting container ({}) with {}s timeout",
         name, id, stop_timeout
     );
-    log_message(&msg1, WARNING).await;
+    log_message(&msg2, WARNING).await;
 
     // Restart unhealthy container
     let msg = match &docker.restart_container(&id, restart_options).await {
