@@ -8,6 +8,7 @@ use bollard::container::RestartContainerOptions;
 
 pub async fn execute_tasks(var: TaskVariablesList) {
     // Prepare reusable objects
+    let hostname = var.hostname;
     let docker = var.docker;
     let name = var.name;
     let id = var.id;
@@ -16,9 +17,8 @@ pub async fn execute_tasks(var: TaskVariablesList) {
     let webhook_key = var.webhook_key;
     let webhook_url = var.webhook_url;
     let post_action = var.post_action;
-    let stop_timeout = var.autoheal_stop_timeout;
-    let restart_enable = var.autoheal_restart_enable;
-    let log_all = var.log_all;
+    let stop_timeout = var.stop_timeout;
+    let restart_enable = var.restart_enable;
 
     // Report unhealthy container
     let msg0 = format!(
@@ -32,50 +32,56 @@ pub async fn execute_tasks(var: TaskVariablesList) {
     );
     log_message(&msg1, WARNING).await;
 
-    // Build restart options
-    let restart_options = Some(RestartContainerOptions { t: stop_timeout });
+    let mut msg = "".to_string();
+    if restart_enable {
+        // Build restart options
+        let restart_options = Some(RestartContainerOptions { t: stop_timeout });
 
-    // Report container restart
-    let msg1 = format!(
-        "[{}] Restarting container ({}) with {}s timeout",
-        name, id, stop_timeout
-    );
-    log_message(&msg1, WARNING).await;
+        // Report container restarting
+        let msg2 = format!(
+            "[{}] Restarting container ({}) with {}s timeout",
+            name, id, stop_timeout
+        );
+        log_message(&msg2, WARNING).await;
 
-    // Restart unhealthy container
-    let msg = match &docker.restart_container(&id, restart_options).await {
-        Ok(()) => {
-            // Log result
-            let msg0 = format!("[{}] Restart of container ({}) was successful", name, id);
-            log_message(&msg0, INFO).await;
-            msg0
+        // Restart unhealthy container
+        let target = match id.is_empty() {
+            true => name.clone(),
+            false => id.clone(),
+        };
+        msg = match &docker.restart_container(&target, restart_options).await {
+            Ok(()) => {
+                // Log result
+                let msg0 = format!("[{}] Restart of container ({}) was successful", name, id);
+                log_message(&msg0, INFO).await;
+                msg0
+            }
+            Err(e) => {
+                // Log result
+                let msg0 = format!("[{}] Restart of container ({}) failed: {}", name, id, e);
+                log_message(&msg0, ERROR).await;
+                msg0
+            }
+        };
+        // Execute post-action
+        if !post_action.is_empty() {
+            execute_command(post_action, &name, id.to_string(), stop_timeout.to_string()).await;
         }
-        Err(e) => {
-            // Log result
-            let msg0 = format!("[{}] Restart of container ({}) failed: {}", name, id, e);
-            log_message(&msg0, ERROR).await;
-            msg0
-        }
-    };
-
+    }
     // Send webhook
-    if !(webhook_url.is_empty() || webhook_key.is_empty()) && (restart_enable || log_all) {
-        let payload = format!("{{\"{}\":\"{}|{}\"}}", &webhook_key, &msg1, &msg);
+    if !(webhook_url.is_empty() || webhook_key.is_empty()) {
+        let payload = format!(
+            "{{\"{}\":\"{}|{}|{}\"}}",
+            &webhook_key, &hostname, &msg1, &msg
+        );
         notify_webhook(&webhook_url, &payload).await;
     }
     // Send apprise
-    if !apprise_url.is_empty() && (restart_enable || log_all) {
-        let payload = format!("{{\"title\":\"Docker-Autoheal\",\"body\":\"{}|{}\"}}", &msg1, &msg);
+    if !apprise_url.is_empty() {
+        let payload = format!(
+            "{{\"title\":\"Docker-Autoheal\",\"body\":\"{}|{}|{}\"}}",
+            &hostname, &msg1, &msg
+        );
         notify_webhook(&apprise_url, &payload).await;
-    }
-    // Execute post-action if restart enabled
-    match post_action.is_empty() {
-        false => {
-            if restart_enable {
-                execute_command(post_action, &name, id.to_string(), stop_timeout.to_string()).await;
-            }
-        }
-        // No action
-        true => {}
     }
 }
