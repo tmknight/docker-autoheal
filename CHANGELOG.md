@@ -7,9 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.11.1
+
+### Changed
+
+- Minor change to default notification message
+
 ## 0.11.0
 
-## Added
+### Added
 
 - Providing docker system hostname in webhook/apprise payload
 
