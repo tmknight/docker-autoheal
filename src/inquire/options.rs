@@ -52,7 +52,7 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
     opts.optopt(
         "k",
         "key-path",
-        "The fully qualified path to requisite ssl PEM files",
+        "The absolute path to requisite ssl PEM files",
         "<KEY_PATH>",
     );
     opts.optflag(

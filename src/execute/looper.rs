@@ -11,23 +11,27 @@ use bollard::Docker;
 use std::time::Duration;
 
 pub struct TaskVariablesList {
+    pub hostname: String,
     pub docker: Docker,
     pub name: String,
     pub id: String,
     pub inspection: inspect::Result,
-    pub autoheal_stop_timeout: isize,
+    pub stop_timeout: isize,
     pub apprise_url: String,
     pub webhook_key: String,
     pub webhook_url: String,
     pub post_action: String,
-    pub autoheal_restart_enable: bool,
-    pub log_all: bool,
+    pub restart_enable: bool,
 }
 
 pub async fn start_loop(
     var: LoopVariablesList,
     docker: Docker,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    // Get System Information
+    let sys_info = docker.info().await;
+    let hostname = sys_info.unwrap().name.unwrap_or("unknown".to_string());
+
     // Establish loop interval
     let mut interval = tokio::time::interval(Duration::from_secs(var.interval));
     loop {
@@ -38,6 +42,7 @@ pub async fn start_loop(
         // Iterate through suspected unhealthy
         for container in containers {
             // Prepare reusable objects
+            let hostname_clone = hostname.clone();
             let docker_clone = docker.clone();
             let apprise_url = var.apprise_url.clone();
             let webhook_key = var.webhook_key.clone();
@@ -104,32 +109,30 @@ pub async fn start_loop(
                         name, id
                     );
                     log_message(&msg0, ERROR).await;
-                } else if !autoheal_restart_enable {
-                    if log_all {
-                        let msg0 = format!(
+                } else if !autoheal_restart_enable && log_all {
+                    let msg0 = format!(
                         "[{}] Container ({}) is unhealthy, however restart is disabled on request",
                         name, id
                     );
-                        log_message(&msg0, WARNING).await;
-                    };
-                } else if autoheal_monitor_enable {
+                    log_message(&msg0, WARNING).await;
+                } else if autoheal_monitor_enable && (autoheal_restart_enable || log_all) {
                     // Determine failing streak of the unhealthy container
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
                     if inspection.failed {
                         // Remediate
                         let task_variables = {
                             TaskVariablesList {
+                                hostname: hostname_clone,
                                 docker: docker_clone,
                                 name: name.to_string(),
                                 id,
                                 inspection,
-                                autoheal_stop_timeout,
+                                stop_timeout: autoheal_stop_timeout,
                                 apprise_url,
                                 webhook_key,
                                 webhook_url,
                                 post_action,
-                                autoheal_restart_enable,
-                                log_all,
+                                restart_enable: autoheal_restart_enable,
                             }
                         };
                         execute_tasks(task_variables).await
