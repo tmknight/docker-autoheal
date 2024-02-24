@@ -16,13 +16,12 @@ pub struct TaskVariablesList {
     pub name: String,
     pub id: String,
     pub inspection: inspect::Result,
-    pub autoheal_stop_timeout: isize,
+    pub stop_timeout: isize,
     pub apprise_url: String,
     pub webhook_key: String,
     pub webhook_url: String,
     pub post_action: String,
-    pub autoheal_restart_enable: bool,
-    pub log_all: bool,
+    pub restart_enable: bool,
 }
 
 pub async fn start_loop(
@@ -110,15 +109,13 @@ pub async fn start_loop(
                         name, id
                     );
                     log_message(&msg0, ERROR).await;
-                } else if !autoheal_restart_enable {
-                    if log_all {
-                        let msg0 = format!(
+                } else if !autoheal_restart_enable && log_all {
+                    let msg0 = format!(
                         "[{}] Container ({}) is unhealthy, however restart is disabled on request",
                         name, id
                     );
-                        log_message(&msg0, WARNING).await;
-                    };
-                } else if autoheal_monitor_enable {
+                    log_message(&msg0, WARNING).await;
+                } else if autoheal_monitor_enable && (autoheal_restart_enable || log_all) {
                     // Determine failing streak of the unhealthy container
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
                     if inspection.failed {
@@ -130,13 +127,12 @@ pub async fn start_loop(
                                 name: name.to_string(),
                                 id,
                                 inspection,
-                                autoheal_stop_timeout,
+                                stop_timeout: autoheal_stop_timeout,
                                 apprise_url,
                                 webhook_key,
                                 webhook_url,
                                 post_action,
-                                autoheal_restart_enable,
-                                log_all,
+                                restart_enable: autoheal_restart_enable,
                             }
                         };
                         execute_tasks(task_variables).await
