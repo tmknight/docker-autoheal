@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## 0.11.0
 
-## Added
+### Added
 
 - Providing docker system hostname in webhook/apprise payload
 
