@@ -32,7 +32,7 @@ pub async fn execute_tasks(var: TaskVariablesList) {
     );
     log_message(&msg1, WARNING).await;
 
-    let mut msg = "".to_string();
+    let mut msg = format!("Restart enabled: {}", restart_enable);
     if restart_enable {
         // Build restart options
         let restart_options = Some(RestartContainerOptions { t: stop_timeout });
