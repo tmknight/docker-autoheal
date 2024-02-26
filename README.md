@@ -129,9 +129,11 @@ Will connect to the Docker host via hostname or IP and the specified port and mo
 
 ```bash
 2024-01-23 03:03:23-0500 [WARNING] [nordvpn] Container (886d37fd9f5c) is unhealthy with 3 failures
+2024-01-23 03:03:23-0500 [WARNING] [nordvpn] Container (886d37fd9f5c) last output: [4] Status: Unstable
 2024-01-23 03:03:23-0500 [WARNING] [nordvpn] Restarting container (886d37fd9f5c) with 10s timeout
 2024-01-23 03:03:34-0500 [   INFO] [nordvpn] Restart of container (886d37fd9f5c) was successful
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Container (74f74eb7b2d0) is unhealthy with 3 failures
+2024-01-23 03:04:48-0500 [WARNING] [privoxy] Container (74f74eb7b2d0) last output: [-1] Health check exceeded timeout (3s)
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Restarting container (74f74eb7b2d0) with 10s timeout
 2024-01-23 03:04:59-0500 [   INFO] [privoxy] Restart of container (74f74eb7b2d0) was successful
 ```
