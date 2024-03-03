@@ -188,14 +188,17 @@ dependencies = [
 
 [[package]]
 name = "docker-autoheal"
-version = "0.11.1"
+version = "0.12.0"
 dependencies = [
  "bollard",
  "chrono",
  "futures",
  "getopts",
+ "libc",
  "openssl",
  "reqwest",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
@@ -1065,9 +1068,9 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.110"
+version = "1.0.114"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6fbd975230bada99c8bb618e0c365c2eefa219158d5c6c29610fd09ff1833257"
+checksum = "c5f09b1bd632ef549eaa9f60a1f8de742bdbc698e6cee2095fc84dde5f549ae0"
 dependencies = [
  "itoa",
  "ryu",

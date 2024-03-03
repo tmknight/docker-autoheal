@@ -105,10 +105,11 @@ docker run -d --read-only \
     --env="AUTOHEAL_CONNECTION_TYPE=socket" \
     --env="AUTOHEAL_MONITOR_ALL=true" \
     --volume=/var/run/docker.sock:/var/run/docker.sock:ro \
+    --volume=/opt/docker-autoheal/log.json:/opt/docker-autoheal/log.json:rw \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor all containers as the user with the specified `uid:gid`
+Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine, monitor all containers, and write log data to `/opt/docker-autoheal/log.json` as the user with the specified `uid:gid`
 
 ### HTTP
 
@@ -120,10 +121,11 @@ docker run -d --read-only \
     --env="AUTOHEAL_CONNECTION_TYPE=http" \
     --env="AUTOHEAL_TCP_HOST=MYHOST" \
     --env="AUTOHEAL_TCP_PORT=2375" \
+    --volume=/opt/docker-autoheal/log.json:/opt/docker-autoheal/log.json:rw \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label `autoheal.monitor.enable=true` as the user with the specified `uid:gid`
+Will connect to the Docker host via hostname or IP and the specified port, monitor only containers with a label `autoheal.monitor.enable=true`, and write log data to `/opt/docker-autoheal/log.json` as the user with the specified `uid:gid`
 
 ### Logging
 
@@ -132,10 +134,12 @@ Will connect to the Docker host via hostname or IP and the specified port and mo
 2024-01-23 03:03:23-0500 [WARNING] [nordvpn] Container (886d37fd9f5c) last output: [4] Status: Unstable
 2024-01-23 03:03:23-0500 [WARNING] [nordvpn] Restarting container (886d37fd9f5c) with 10s timeout
 2024-01-23 03:03:34-0500 [   INFO] [nordvpn] Restart of container (886d37fd9f5c) was successful
+2024-01-23 03:03:34-0500 [   INFO] [nordvpn] Container (886d37fd9f5c) has been unhealthy 1 time
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Container (74f74eb7b2d0) is unhealthy with 3 failures
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Container (74f74eb7b2d0) last output: [-1] Health check exceeded timeout (3s)
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Restarting container (74f74eb7b2d0) with 10s timeout
 2024-01-23 03:04:59-0500 [   INFO] [privoxy] Restart of container (74f74eb7b2d0) was successful
+2024-01-23 03:04:59-0500 [   INFO] [privoxy] Container (74f74eb7b2d0) has been unhealthy 1 time
 ```
 
 Example log output when docker-autoheal is in action
@@ -181,7 +185,6 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 ### Webhook/Apprise
 
 - The payload includes the following separated by `|`: Docker system hostname, the last health output, and the result of restart action
-
 
 ### A Word of Caution about Excluding from Restart and Logging Exclusions
 

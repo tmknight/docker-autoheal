@@ -4,8 +4,11 @@ use crate::{
         inspect::{self, inspect_container},
         list::containers_list,
     },
-    report::logging::log_message,
-    LoopVariablesList, ERROR, WARNING,
+    report::{
+        logging::log_message,
+        record::{read_record, write_record, JsonRecords},
+    },
+    LoopVariablesList, ERROR, INFO, WARNING,
 };
 use bollard::Docker;
 use std::time::Duration;
@@ -50,6 +53,9 @@ pub async fn start_loop(
             let post_action = var.post_action.clone();
             let log_all = var.log_all;
             let monitor_all = var.monitor_all;
+            let log_ready = var.log_ready;
+            let mut msg: String = "".to_string();
+            let mut fail_reason: String = "".to_string();
 
             // Determine if stop override label
             let s = "autoheal.stop.timeout".to_string();
@@ -85,8 +91,8 @@ pub async fn start_loop(
                 let name_tmp = match &container.names {
                     Some(names) => &names[0],
                     None => {
-                        let msg0 = String::from("Could not reliably determine container name");
-                        log_message(&msg0, ERROR).await;
+                        msg = String::from("Could not reliably determine container name");
+                        log_message(&msg, ERROR).await;
                         ""
                     }
                 };
@@ -96,28 +102,29 @@ pub async fn start_loop(
                 let id = match container.id {
                     Some(id) => id.chars().take(12).collect(),
                     None => {
-                        let msg0 = String::from("Could not reliably determine container id");
-                        log_message(&msg0, ERROR).await;
+                        msg = String::from("Could not reliably determine container id");
+                        log_message(&msg, ERROR).await;
                         "".to_string()
                     }
                 };
 
                 // Have all tests passed for unhealthy container to be remediated
                 if name.is_empty() && id.is_empty() {
-                    let msg0 = format!(
+                    msg = format!(
                         "Could not reliably identify the container: name={}, id={}",
                         name, id
                     );
-                    log_message(&msg0, ERROR).await;
+                    log_message(&msg, ERROR).await;
                 } else if !autoheal_restart_enable && log_all {
-                    let msg0 = format!(
+                    msg = format!(
                         "[{}] Container ({}) is unhealthy, however restart is disabled on request",
                         name, id
                     );
-                    log_message(&msg0, WARNING).await;
+                    log_message(&msg, WARNING).await;
                 } else if autoheal_monitor_enable && (autoheal_restart_enable || log_all) {
                     // Determine failing streak of the unhealthy container
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
+                    fail_reason = inspection.failing_reason.clone();
                     if inspection.failed {
                         // Remediate
                         let task_variables = {
@@ -125,7 +132,7 @@ pub async fn start_loop(
                                 hostname: hostname_clone,
                                 docker: docker_clone,
                                 name: name.to_string(),
-                                id,
+                                id: id.clone(),
                                 inspection,
                                 stop_timeout: autoheal_stop_timeout,
                                 apprise_url,
@@ -135,7 +142,40 @@ pub async fn start_loop(
                                 restart_enable: autoheal_restart_enable,
                             }
                         };
-                        execute_tasks(task_variables).await
+                        msg = execute_tasks(task_variables).await
+                    }
+                }
+
+                if log_ready && !(msg.is_empty() && fail_reason.is_empty()) {
+                    let data: JsonRecords = {
+                        JsonRecords {
+                            date: chrono::Local::now()
+                                .format("%Y-%m-%d %H:%M:%S%z")
+                                .to_string(),
+                            name: name.to_string(),
+                            id: id.clone(),
+                            err: fail_reason,
+                            action: msg,
+                        }
+                    };
+                    write_record(data).await.ok();
+                    // Read from log.json
+                    match read_record().await {
+                        Ok(records) => {
+                            // Get unhealthy count for container
+                            let action_count = records.into_iter().filter(|r| r.id == id).count();
+                            // Report results
+                            let mut noun = "time";
+                            if action_count > 1 {
+                                noun = "times"
+                            }
+                            msg = format!(
+                                "[{}] Container ({}) has been unhealthy {} {}",
+                                name, id, action_count, noun
+                            );
+                            log_message(&msg, INFO).await;
+                        }
+                        Err(_e) => (),
                     }
                 }
             });

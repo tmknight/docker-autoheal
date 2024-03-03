@@ -6,7 +6,7 @@ use crate::{
 };
 use bollard::container::RestartContainerOptions;
 
-pub async fn execute_tasks(var: TaskVariablesList) {
+pub async fn execute_tasks(var: TaskVariablesList) -> String {
     // Prepare reusable objects
     let hostname = var.hostname;
     let docker = var.docker;
@@ -38,11 +38,11 @@ pub async fn execute_tasks(var: TaskVariablesList) {
         let restart_options = Some(RestartContainerOptions { t: stop_timeout });
 
         // Report container restarting
-        let msg2 = format!(
+        let msg0 = format!(
             "[{}] Restarting container ({}) with {}s timeout",
             name, id, stop_timeout
         );
-        log_message(&msg2, WARNING).await;
+        log_message(&msg0, WARNING).await;
 
         // Restart unhealthy container
         let target = match id.is_empty() {
@@ -63,6 +63,7 @@ pub async fn execute_tasks(var: TaskVariablesList) {
                 msg0
             }
         };
+
         // Execute post-action
         if !post_action.is_empty() {
             execute_command(post_action, &name, id.to_string(), stop_timeout.to_string()).await;
@@ -84,4 +85,5 @@ pub async fn execute_tasks(var: TaskVariablesList) {
         );
         notify_webhook(&apprise_url, &payload).await;
     }
+    msg
 }
