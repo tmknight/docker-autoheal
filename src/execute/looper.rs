@@ -166,7 +166,7 @@ pub async fn start_loop(
                             let action_count = records.into_iter().filter(|r| r.id == id).count();
                             // Report results
                             let mut noun = "time";
-                            if action_count >= 2  {
+                            if action_count > 1  {
                                 noun = "times"
                             }
                             msg = format!(
