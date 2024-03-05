@@ -29,6 +29,7 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments in that order                                             |
 | **AUTOHEAL_MONITOR_ALL**     | FALSE                    | Set to `TRUE` to simply monitor all containers on the host or leave as `FALSE` and control via `autoheal.monitor.enable` |
 | **AUTOHEAL_LOG_ALL**         | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.enable=FALSE`         |
+| **AUTOHEAL_VERBOSE**         | FALSE                    | Allow (`TRUE`/`FALSE`) external logging and reporting of historical data             |
 | **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)         | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                       | Time in `n` seconds before failing connection attempt |
@@ -186,7 +187,7 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 
 - The payload includes the following separated by `|`: Docker system hostname, the last health output, and the result of restart action
 
-### A Word of Caution about Excluding from Restart and Logging Exclusions
+### A Word of Caution about Excluding from Restart and Logging of those Exclusions
 
 - Excluding a container from restarts and enabling logging for excluded containers will generate numerous log messages whenever that container becomes unhealthy
 - Additionally, if a webhook or apprise is also configured for those containers, they will be executed at each monitoring interval

@@ -79,11 +79,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     .await;
 
     // Determine if log path is present and writeable
-    let c_path = CString::new(LOG_PATH).unwrap();
-    let log_ready = unsafe { access(c_path.as_ptr(), W_OK) == 0 };
-    if !log_ready {
-        let msg0 = String::from("Readonly filesystem; external logging is disabled");
-        log_message(&msg0, INFO).await;
+    let mut log_ready = false;
+    if var.verbose {
+        let c_path = CString::new(LOG_PATH).unwrap();
+        log_ready = unsafe { access(c_path.as_ptr(), W_OK) == 0 };
+        if !log_ready {
+            let msg0 = String::from("Readonly filesystem; external logging is disabled");
+            log_message(&msg0, INFO).await;
+        }
     }
 
     let loop_variables = {
