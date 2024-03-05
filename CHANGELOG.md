@@ -14,6 +14,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - External logging: Capture Date, container name, container id, last health message and last action to /opt/docker-autoheal/log.json
   - Requires the path to exist and that it is writable by the docker-autoheal user
 
+## 0.11.2
+
+### Security
+
+- Bump mio from 0.8.10 to 0.8.11
+  - Fix receiving IOCP events after deregistering a Windows named pipe (tokio-rs/mio#1760, backport pr: tokio-rs/mio#1761).
+
 ## 0.11.1
 
 ### Changed
