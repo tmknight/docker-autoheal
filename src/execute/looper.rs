@@ -6,7 +6,7 @@ use crate::{
     },
     report::{
         logging::log_message,
-        record::{read_record, write_record, JsonRecords},
+        record::{read_record, write_record, JsonRecord},
     },
     LoopVariablesList, ERROR, INFO, WARNING,
 };
@@ -147,8 +147,9 @@ pub async fn start_loop(
                 }
 
                 if log_ready && !(msg.is_empty() && fail_reason.is_empty()) {
-                    let data: JsonRecords = {
-                        JsonRecords {
+                    // Write to log.json
+                    let data: JsonRecord = {
+                        JsonRecord {
                             date: chrono::Local::now()
                                 .format("%Y-%m-%d %H:%M:%S%z")
                                 .to_string(),
@@ -166,7 +167,7 @@ pub async fn start_loop(
                             let action_count = records.into_iter().filter(|r| r.id == id).count();
                             // Report results
                             let mut noun = "time";
-                            if action_count > 1  {
+                            if action_count > 1 {
                                 noun = "times"
                             }
                             msg = format!(

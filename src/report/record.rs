@@ -4,7 +4,7 @@ use tokio::fs::File;
 use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader, Error};
 
 #[derive(Serialize, Deserialize)]
-pub struct JsonRecords {
+pub struct JsonRecord {
     pub date: String,
     pub name: String,
     pub id: String,
@@ -12,7 +12,7 @@ pub struct JsonRecords {
     pub action: String,
 }
 
-pub async fn read_record() -> Result<Vec<JsonRecords>, Error> {
+pub async fn read_record() -> Result<Vec<JsonRecord>, Error> {
     let log_file = LOG_PATH.to_owned() + LOG_FILE;
     // Open file
     let mut file = File::open(log_file).await?;
@@ -31,7 +31,7 @@ pub async fn read_record() -> Result<Vec<JsonRecords>, Error> {
     Ok(records)
 }
 
-pub async fn write_record(data: JsonRecords) -> Result<(), Error> {
+pub async fn write_record(data: JsonRecord) -> Result<(), Error> {
     let log_file = LOG_PATH.to_owned() + LOG_FILE;
     // Serialize the data to JSON
     let json_data = serde_json::to_string(&data)?;
