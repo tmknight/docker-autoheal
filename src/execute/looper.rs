@@ -8,7 +8,7 @@ use crate::{
         logging::log_message,
         record::{read_record, write_record, JsonRecord},
     },
-    LoopVariablesList, ERROR, INFO, WARNING,
+    LoopVariablesList, ERROR, INFO, LOG_FILE, LOG_PATH, WARNING,
 };
 use bollard::Docker;
 use std::time::Duration;
@@ -159,7 +159,14 @@ pub async fn start_loop(
                             action: msg,
                         }
                     };
-                    write_record(data).await.ok();
+                    match write_record(data).await {
+                        Ok(()) => (),
+                        Err(e) => {
+                            let msg0 =
+                                format!("Unable to write to log ({}{}): {}", LOG_PATH, LOG_FILE, e);
+                            log_message(&msg0, WARNING).await
+                        }
+                    }
                     // Read from log.json
                     match read_record().await {
                         Ok(records) => {
@@ -176,7 +183,13 @@ pub async fn start_loop(
                             );
                             log_message(&msg, INFO).await;
                         }
-                        Err(_e) => (),
+                        Err(e) => {
+                            let msg0 = format!(
+                                "Unable to read from log ({}{}): {}",
+                                LOG_PATH, LOG_FILE, e
+                            );
+                            log_message(&msg0, WARNING).await
+                        }
                     }
                 }
             });
