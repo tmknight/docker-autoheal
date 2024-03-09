@@ -22,14 +22,14 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 
 | Variable                     | Default                  | Description                                           |
 |:----------------------------:|:------------------------:|:-----------------------------------------------------:|
-| **AUTOHEAL_CONNECTION_TYPE** | local                    | This determines how `docker-autoheal` connects to Docker (One of: local, socket, http, ssl                               |
-| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)       |
+| **AUTOHEAL_CONNECTION_TYPE** | local                    | This determines how `docker-autoheal` connects to Docker (One of: local, socket, http, ssl                           |
+| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)  |
 | **AUTOHEAL_INTERVAL**        | 5                        | Check container health every `n` seconds              |
 | **AUTOHEAL_START_DELAY**     | 0                        | Wait `n` seconds before first health check            |
-| **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments in that order                                             |
+| **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments in that order                                                              |
 | **AUTOHEAL_MONITOR_ALL**     | FALSE                    | Set to `TRUE` to simply monitor all containers on the host or leave as `FALSE` and control via `autoheal.monitor.enable` |
-| **AUTOHEAL_LOG_ALL**         | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.enable=FALSE`         |
-| **AUTOHEAL_VERBOSE**         | FALSE                    | Allow (`TRUE`/`FALSE`) external logging and reporting of historical data             |
+| **AUTOHEAL_LOG_ALL**         | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.enable=FALSE`          |
+| **AUTOHEAL_HISTORY**         | FALSE                    | Allow (`TRUE`/`FALSE`) external persistent logging and reporting of historical data   |
 | **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)         | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                       | Time in `n` seconds before failing connection attempt |
@@ -81,6 +81,8 @@ Options:
                         Time in seconds to wait for connection to complete
     -w, --webhook-url <WEBHOOK_URL>
                         The webhook url
+    -H, --history       Enable external persistent logging and reporting of historical
+                        data
     -P, --post-action <SCRIPT_PATH>
                         The absolute path to a script that should be executed
                         after container restart
@@ -143,7 +145,29 @@ Will connect to the Docker host via hostname or IP and the specified port, monit
 2024-01-23 03:04:59-0500 [   INFO] [privoxy] Container (74f74eb7b2d0) has been unhealthy 1 time
 ```
 
-Example log output when docker-autoheal is in action
+Example output when docker-autoheal is in action
+
+### Persistent Logging
+
+Examples of working with log.json:
+
+```bash
+jq -s 'group_by(.name) | map({name: .[0].name, data: (group_by(.id) | map({id: .[0].id, data: .}))})' /opt/docker-autoheal/log.json
+```
+
+Group all entries by name and then group by container id
+
+```bash
+jq -s 'map(select(.name=="privoxy"))' /opt/docker-autoheal/log.json
+```
+
+Find all occurrences of 'privoxy'
+
+```bash
+jq -s 'map(select(.name=="privoxy")) | group_by(.name) | map({name: .[0].name, data: (group_by(.id) | map({id: .[0].id, data: .}))})' /opt/docker-autoheal/log.json
+```
+
+Find all occurrences of 'privoxy' and group by container id
 
 ## Other Info
 

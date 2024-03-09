@@ -14,8 +14,8 @@ pub struct OptionsList {
     pub tcp_port: Option<String>,
     pub stop_timeout: Option<String>,
     pub tcp_timeout: Option<String>,
-    pub verbose: bool,
     pub webhook_url: Option<String>,
+    pub history: bool,
     pub post_action: Option<String>,
 }
 
@@ -90,8 +90,8 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
         "Time in seconds to wait for connection to complete",
         "<TCP_TIMEOUT>",
     );
-    opts.optflag("v", "verbose", "Enable external logging and reporting of historical data");
     opts.optopt("w", "webhook-url", "The webhook url", "<WEBHOOK_URL>");
+    opts.optflag("H", "history", "Enable external logging and reporting of historical data");
     opts.optopt(
         "P",
         "post-action",
@@ -147,8 +147,8 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
         tcp_port: matches.opt_str("p"),
         stop_timeout: matches.opt_str("s"),
         tcp_timeout: matches.opt_str("t"),
-        verbose: matches.opt_present("v"),
         webhook_url: matches.opt_str("w"),
+        history: matches.opt_present("H"),
         post_action: matches.opt_str("P"),
     }
 }

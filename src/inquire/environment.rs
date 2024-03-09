@@ -17,7 +17,7 @@ pub struct VariablesList {
     pub post_action: String,
     pub log_all: bool,
     pub monitor_all: bool,
-    pub verbose: bool,
+    pub history: bool,
 }
 
 // Get environment variable
@@ -95,9 +95,9 @@ pub async fn get_var(opt: OptionsList) -> VariablesList {
     if opt.monitor_all {
         autoheal_monitor_all = true
     }
-    let mut autoheal_verbose = get_env("AUTOHEAL_VERBOSE", "false") == "true";
-    if opt.verbose {
-        autoheal_verbose = true
+    let mut autoheal_history = get_env("AUTOHEAL_HISTORY", "false") == "true";
+    if opt.history {
+        autoheal_history = true
     }
 
     // Autoheal tcp variables
@@ -181,6 +181,6 @@ pub async fn get_var(opt: OptionsList) -> VariablesList {
         post_action: autoheal_post_action,
         log_all: autoheal_log_all,
         monitor_all: autoheal_monitor_all,
-        verbose: autoheal_verbose,
+        history: autoheal_history,
     }
 }
