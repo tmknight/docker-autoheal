@@ -191,7 +191,7 @@ dependencies = [
 
 [[package]]
 name = "docker-autoheal"
-version = "0.12.0"
+version = "0.12.1"
 dependencies = [
  "bollard",
  "chrono",
