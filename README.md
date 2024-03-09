@@ -1,10 +1,10 @@
 # Docker-Autoheal
 
 [![GitHubRelease][GitHubReleaseBadge]][GitHubReleaseLink]
-<!-- [![GitHubAssetDl][GitHubAssetDlBadge]][GitHubAssetDlLink] -->
 [![DockerPublishing][DockerPublishingBadge]][DockerLink]
 [![DockerSize][DockerSizeBadge]][DockerLink]
 [![DockerPulls][DockerPullsBadge]][DockerLink]
+<!-- [![GitHubAssetDl][GitHubAssetDlBadge]][GitHubAssetDlLink] -->
 
 A cross-platform tool to monitor and remediate unhealthy Docker containers
 
