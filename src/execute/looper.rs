@@ -5,10 +5,10 @@ use crate::{
         list::containers_list,
     },
     report::{
-        logging::log_message,
-        record::{read_record, write_record, JsonRecord},
+        logging::{log_message, log_read, log_write},
+        record::JsonRecord,
     },
-    LoopVariablesList, ERROR, INFO, LOG_FILE, LOG_PATH, WARNING,
+    LoopVariablesList, ERROR, WARNING,
 };
 use bollard::Docker;
 use std::time::Duration;
@@ -159,38 +159,8 @@ pub async fn start_loop(
                             action: msg,
                         }
                     };
-                    match write_record(data).await {
-                        Ok(()) => (),
-                        Err(e) => {
-                            let msg0 =
-                                format!("Unable to write to log ({}{}): {}", LOG_PATH, LOG_FILE, e);
-                            log_message(&msg0, WARNING).await
-                        }
-                    }
-                    // Read from log.json
-                    match read_record().await {
-                        Ok(records) => {
-                            // Get unhealthy count for container
-                            let action_count = records.into_iter().filter(|r| r.id == id).count();
-                            // Report results
-                            let mut noun = "time";
-                            if action_count > 1 {
-                                noun = "times"
-                            }
-                            msg = format!(
-                                "[{}] Container ({}) has been unhealthy {} {}",
-                                name, id, action_count, noun
-                            );
-                            log_message(&msg, INFO).await;
-                        }
-                        Err(e) => {
-                            let msg0 = format!(
-                                "Unable to read from log ({}{}): {}",
-                                LOG_PATH, LOG_FILE, e
-                            );
-                            log_message(&msg0, WARNING).await
-                        }
-                    }
+                    log_write(data).await;
+                    log_read(name, id).await;
                 }
             });
             // Push handles for later consumption
