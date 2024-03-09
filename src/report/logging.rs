@@ -40,6 +40,7 @@ pub async fn log_message(msg: &str, lvl: i8) {
     writeln!(lock, "{} {} {}", date, level, msg).ok();
 }
 
+// Write to log.json
 pub async fn log_write(data: JsonRecord) {
     match write_record(data).await {
         Ok(()) => (),
@@ -50,8 +51,8 @@ pub async fn log_write(data: JsonRecord) {
     }
 }
 
+// Read from log.json
 pub async fn log_read(name: &str, id: String) {
-    // Read from log.json
     match read_record().await {
         Ok(records) => {
             // Get unhealthy count for container
