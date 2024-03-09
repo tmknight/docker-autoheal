@@ -84,7 +84,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         let c_path = CString::new(LOG_PATH).unwrap();
         log_ready = unsafe { access(c_path.as_ptr(), W_OK) == 0 };
         if !log_ready {
-            let msg0 = String::from("Readonly filesystem; external logging is disabled");
+            let msg0 = format!("Readonly filesystem ({}); external logging is disabled", LOG_PATH);
             log_message(&msg0, INFO).await;
         }
     }
