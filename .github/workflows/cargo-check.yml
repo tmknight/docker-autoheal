@@ -14,7 +14,7 @@ on:
   #     - '.LICENSE'
   #   branches: [main, develop]
   pull_request:
-    types: [opened]
+    types: [opened, reopened]
     branches: [main, develop]
 
 env:
