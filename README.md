@@ -1,7 +1,7 @@
 # Docker-Autoheal
 
 [![GitHubRelease][GitHubReleaseBadge]][GitHubReleaseLink]
-[![GitHubAssetDl][GitHubAssetDlBadge]][GitHubAssetDlLink]
+<!-- [![GitHubAssetDl][GitHubAssetDlBadge]][GitHubAssetDlLink] -->
 [![DockerPublishing][DockerPublishingBadge]][DockerLink]
 [![DockerSize][DockerSizeBadge]][DockerLink]
 [![DockerPulls][DockerPullsBadge]][DockerLink]
@@ -22,13 +22,14 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 
 | Variable                     | Default                  | Description                                           |
 |:----------------------------:|:------------------------:|:-----------------------------------------------------:|
-| **AUTOHEAL_CONNECTION_TYPE** | local                    | This determines how `docker-autoheal` connects to Docker (One of: local, socket, http, ssl                               |
-| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)       |
+| **AUTOHEAL_CONNECTION_TYPE** | local                    | This determines how `docker-autoheal` connects to Docker (One of: local, socket, http, ssl                           |
+| **AUTOHEAL_STOP_TIMEOUT**    | 10                       | Docker waits `n` seconds for a container to stop before killing it during restarts (override via label; see below)  |
 | **AUTOHEAL_INTERVAL**        | 5                        | Check container health every `n` seconds              |
 | **AUTOHEAL_START_DELAY**     | 0                        | Wait `n` seconds before first health check            |
-| **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments in that order                                             |
+| **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments in that order                                                              |
 | **AUTOHEAL_MONITOR_ALL**     | FALSE                    | Set to `TRUE` to simply monitor all containers on the host or leave as `FALSE` and control via `autoheal.monitor.enable` |
-| **AUTOHEAL_LOG_ALL**         | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.enable=FALSE`         |
+| **AUTOHEAL_LOG_ALL**         | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.enable=FALSE`          |
+| **AUTOHEAL_HISTORY**         | FALSE                    | Allow (`TRUE`/`FALSE`) external persistent logging and reporting of historical data   |
 | **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)         | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                       | Time in `n` seconds before failing connection attempt |
@@ -80,6 +81,8 @@ Options:
                         Time in seconds to wait for connection to complete
     -w, --webhook-url <WEBHOOK_URL>
                         The webhook url
+    -H, --history       Enable external persistent logging and reporting of historical
+                        data
     -P, --post-action <SCRIPT_PATH>
                         The absolute path to a script that should be executed
                         after container restart
@@ -105,10 +108,11 @@ docker run -d --read-only \
     --env="AUTOHEAL_CONNECTION_TYPE=socket" \
     --env="AUTOHEAL_MONITOR_ALL=true" \
     --volume=/var/run/docker.sock:/var/run/docker.sock:ro \
+    --volume=/opt/docker-autoheal/log.json:/opt/docker-autoheal/log.json:rw \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine and monitor all containers as the user with the specified `uid:gid`
+Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine, monitor all containers, and write log data to `/opt/docker-autoheal/log.json` as the user with the specified `uid:gid`
 
 ### HTTP
 
@@ -120,10 +124,11 @@ docker run -d --read-only \
     --env="AUTOHEAL_CONNECTION_TYPE=http" \
     --env="AUTOHEAL_TCP_HOST=MYHOST" \
     --env="AUTOHEAL_TCP_PORT=2375" \
+    --volume=/opt/docker-autoheal/log.json:/opt/docker-autoheal/log.json:rw \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via hostname or IP and the specified port and monitor only containers with a label `autoheal.monitor.enable=true` as the user with the specified `uid:gid`
+Will connect to the Docker host via hostname or IP and the specified port, monitor only containers with a label `autoheal.monitor.enable=true`, and write log data to `/opt/docker-autoheal/log.json` as the user with the specified `uid:gid`
 
 ### Logging
 
@@ -132,13 +137,37 @@ Will connect to the Docker host via hostname or IP and the specified port and mo
 2024-01-23 03:03:23-0500 [WARNING] [nordvpn] Container (886d37fd9f5c) last output: [4] Status: Unstable
 2024-01-23 03:03:23-0500 [WARNING] [nordvpn] Restarting container (886d37fd9f5c) with 10s timeout
 2024-01-23 03:03:34-0500 [   INFO] [nordvpn] Restart of container (886d37fd9f5c) was successful
+2024-01-23 03:03:34-0500 [   INFO] [nordvpn] Container (886d37fd9f5c) has been unhealthy 1 time
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Container (74f74eb7b2d0) is unhealthy with 3 failures
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Container (74f74eb7b2d0) last output: [-1] Health check exceeded timeout (3s)
 2024-01-23 03:04:48-0500 [WARNING] [privoxy] Restarting container (74f74eb7b2d0) with 10s timeout
 2024-01-23 03:04:59-0500 [   INFO] [privoxy] Restart of container (74f74eb7b2d0) was successful
+2024-01-23 03:04:59-0500 [   INFO] [privoxy] Container (74f74eb7b2d0) has been unhealthy 1 time
 ```
 
-Example log output when docker-autoheal is in action
+Example output when docker-autoheal is in action
+
+### Persistent Logging
+
+Examples of working with log.json:
+
+```bash
+jq -s 'group_by(.name) | map({name: .[0].name, data: (group_by(.id) | map({id: .[0].id, data: .}))})' /opt/docker-autoheal/log.json
+```
+
+Group all entries by name and then group by container id
+
+```bash
+jq -s 'map(select(.name=="privoxy"))' /opt/docker-autoheal/log.json
+```
+
+Find all occurrences of 'privoxy'
+
+```bash
+jq -s 'map(select(.name=="privoxy")) | group_by(.name) | map({name: .[0].name, data: (group_by(.id) | map({id: .[0].id, data: .}))})' /opt/docker-autoheal/log.json
+```
+
+Find all occurrences of 'privoxy' and group by container id
 
 ## Other Info
 
@@ -182,8 +211,7 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 
 - The payload includes the following separated by `|`: Docker system hostname, the last health output, and the result of restart action
 
-
-### A Word of Caution about Excluding from Restart and Logging Exclusions
+### A Word of Caution about Excluding from Restart and Logging of those Exclusions
 
 - Excluding a container from restarts and enabling logging for excluded containers will generate numerous log messages whenever that container becomes unhealthy
 - Additionally, if a webhook or apprise is also configured for those containers, they will be executed at each monitoring interval
@@ -198,5 +226,5 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 [DockerPullsBadge]: https://img.shields.io/docker/pulls/tmknight88/docker-autoheal?style=flat&logo=docker&color=blue&cacheSeconds=21600
 [DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?sort=date&arch=amd64&style=flat&logo=docker&color=blue&cacheSeconds=21600
 [DockerLink]: https://hub.docker.com/r/tmknight88/docker-autoheal
-[GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=32c855&label=release%20downloads&cacheSeconds=21600
-[GithubAssetDlLink]: https://github.com/tmknight/docker-autoheal/releases
+<!-- [GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=32c855&label=release%20downloads&cacheSeconds=21600
+[GithubAssetDlLink]: https://github.com/tmknight/docker-autoheal/releases -->

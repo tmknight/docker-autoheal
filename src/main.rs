@@ -1,5 +1,5 @@
-use std::time::Duration;
-
+use libc::{access, W_OK};
+use std::{ffi::CString, time::Duration};
 // Docker-Autoheal modules
 mod execute {
     pub mod action;
@@ -15,6 +15,7 @@ mod inquire {
 }
 mod report {
     pub mod logging;
+    pub mod record;
     pub mod webhook;
 }
 
@@ -31,6 +32,10 @@ const ERROR: i8 = 2;
 // Allowed connection types
 const ALLOWED_CONNECTION_TYPES: [&str; 4] = ["local", "socket", "http", "ssl"];
 
+// External logging
+const LOG_PATH: &str = "/opt/docker-autoheal/";
+const LOG_FILE: &str = "log.json";
+
 struct LoopVariablesList {
     stop_timeout: isize,
     interval: u64,
@@ -40,6 +45,7 @@ struct LoopVariablesList {
     post_action: String,
     log_all: bool,
     monitor_all: bool,
+    pub log_ready: bool,
 }
 
 #[tokio::main]
@@ -72,6 +78,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     )
     .await;
 
+    // Determine if log path is present and writeable
+    let mut log_ready = false;
+    if var.history {
+        let c_path = CString::new(LOG_PATH).unwrap();
+        log_ready = unsafe { access(c_path.as_ptr(), W_OK) == 0 };
+        if !log_ready {
+            let msg0 = format!(
+                "Readonly filesystem ({}); external logging is disabled",
+                LOG_PATH
+            );
+            log_message(&msg0, INFO).await;
+        }
+    }
+
     let loop_variables = {
         LoopVariablesList {
             stop_timeout: var.stop_timeout,
@@ -82,6 +102,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             post_action: var.post_action,
             log_all: var.log_all,
             monitor_all: var.monitor_all,
+            log_ready,
         }
     };
 
