@@ -7,6 +7,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.12.0
+
+### Added
+
+- External persistent logging: Capture Date, container name, container id, last health message and last action to /opt/docker-autoheal/log.json
+  - Requires the path to exist and that it is writable by the docker-autoheal user
+  - Controlled via (default: disabled):
+    - Binary option: -H, --history (switch)
+    - Environment variable: AUTOHEAL_HISTORY (TRUE/FALSE)
+
 ## 0.11.2
 
 ### Security

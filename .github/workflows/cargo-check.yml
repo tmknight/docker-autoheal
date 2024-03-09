@@ -2,18 +2,19 @@ name: "Cargo Check"
 
 on:
   workflow_dispatch:
-  push:
-    paths-ignore:
-      - '.github/**'
-      - 'examples/**'
-      - 'docker/**'
-      - 'test/**'
-      - '*.md'
-      - '.*'
-      - '*.lock'
-      - '.LICENSE'
-    branches: [main, develop]
+  # push:
+  #   paths-ignore:
+  #     - '.github/**'
+  #     - 'examples/**'
+  #     - 'docker/**'
+  #     - 'test/**'
+  #     - '*.md'
+  #     - '.*'
+  #     - '*.lock'
+  #     - '.LICENSE'
+  #   branches: [main, develop]
   pull_request:
+    types: [opened, reopened]
     branches: [main, develop]
 
 env:
