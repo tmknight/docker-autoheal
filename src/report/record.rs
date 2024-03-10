@@ -8,6 +8,7 @@ pub struct JsonRecord {
     pub date: String,
     pub name: String,
     pub id: String,
+    pub code: i64,
     pub err: String,
     pub action: String,
 }
