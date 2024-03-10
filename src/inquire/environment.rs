@@ -22,7 +22,7 @@ pub struct VariablesList {
 
 // Get environment variable
 fn get_env(key: &str, default: &str) -> String {
-    match std::env::var(key) {
+    match std::env::var(key.to_uppercase()) {
         Ok(val) => val.to_lowercase(),
         Err(_e) => default.to_string().to_lowercase(),
     }
@@ -95,7 +95,7 @@ pub async fn get_var(opt: OptionsList) -> VariablesList {
     if opt.monitor_all {
         autoheal_monitor_all = true
     }
-    let mut autoheal_log_persist = get_env("AUTOHEAL_log_persist", "false") == "true";
+    let mut autoheal_log_persist = get_env("AUTOHEAL_LOG_PERSIST", "false") == "true";
     if opt.log_persist {
         autoheal_log_persist = true
     }
