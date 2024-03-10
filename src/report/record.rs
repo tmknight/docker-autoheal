@@ -24,8 +24,10 @@ pub async fn read_record() -> Result<Vec<JsonRecord>, Error> {
     let mut lines = reader.lines();
     // Build array of results
     while let Ok(Some(line)) = lines.next_line().await {
-        let record = serde_json::from_str(&line).unwrap();
-        records.push(record);
+        match serde_json::from_str(&line) {
+            Ok(record) => records.push(record),
+            Err(e) => return Err(e.into()),
+        };
     }
     file.flush().await?;
     Ok(records)

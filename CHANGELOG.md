@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Adjustment to log output formatting for consistency
+- Additional error handling on read_record
 
 ## 0.12.0
 
