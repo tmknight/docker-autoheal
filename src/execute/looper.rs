@@ -118,7 +118,7 @@ pub async fn start_loop(
                     log_message(&msg, ERROR).await;
                 } else if !autoheal_restart_enable && log_all {
                     msg = format!(
-                        "[{}] Container ({}) is unhealthy, however restart is disabled on request",
+                        "[{} ({})] Container is unhealthy, however restart is disabled on request",
                         name, id
                     );
                     log_message(&msg, WARNING).await;

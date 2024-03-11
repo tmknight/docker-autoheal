@@ -17,24 +17,24 @@ pub async fn execute_command(post_action: String, name: &str, id: String, timeou
                 // Wait for the child process to finish
                 match child.wait() {
                     Ok(_s) => format!(
-                        "[{}] Container ({}) post-action ({}) was successful",
+                        "[{} ({})] Container post-action ({}) was successful",
                         name, id, post_action
                     ),
                     Err(e) => format!(
-                        "[{}] Container ({}) post-action ({}) failed to complete: {}",
+                        "[{} ({})] Container post-action ({}) failed to complete: {}",
                         name, id, post_action, e
                     ),
                 }
             }
             Err(e) => format!(
-                "[{}] Container ({}) post-action ({}) failed to start: {}",
+                "[{} ({})] Container post-action ({}) failed to start: {}",
                 name, id, post_action, e
             ),
         };
         log_message(&msg0, INFO).await;
     } else {
         let msg0 = format!(
-            "[{}] Container ({}) post-action ({}) not found",
+            "[{} ({})] Container post-action ({}) not found",
             name, id, post_action
         );
         log_message(&msg0, ERROR).await;
