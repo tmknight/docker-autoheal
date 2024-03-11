@@ -63,7 +63,7 @@ pub async fn log_read(name: &str, id: String) {
                 noun = "times"
             }
             let msg0 = format!(
-                "[{}] Container ({}) has been unhealthy {} {}",
+                "[{} ({})] Container has been unhealthy {} {}",
                 name, id, action_count, noun
             );
             log_message(&msg0, INFO).await;

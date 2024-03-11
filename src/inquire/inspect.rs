@@ -15,7 +15,7 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
         Err(_) => {
             // Log that we had an error
             let msg0 = format!(
-                "[{}] Could not reliably determine container ({}) information from inspection",
+                "[{} ({})] Could not reliably determine container information from inspection",
                 name, id
             );
             log_message(&msg0, ERROR).await;
@@ -33,7 +33,7 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
         None => {
             // Log that we had an error
             let msg0 = format!(
-                "[{}] Could not reliably determine container ({}) failing streak; default to 0",
+                "[{} ({})] Could not reliably determine container failing streak; default to 0",
                 name, id
             );
             log_message(&msg0, ERROR).await;
@@ -59,7 +59,7 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
         None => {
             // Log that we had an error
             let msg0 = format!(
-                "[{}] Could not reliably determine container ({}) failing reason",
+                "[{} ({})] Could not reliably determine container failing reason",
                 name, id
             );
             log_message(&msg0, ERROR).await;

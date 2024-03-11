@@ -22,12 +22,12 @@ pub async fn execute_tasks(var: TaskVariablesList) -> String {
 
     // Report unhealthy container
     let msg0 = format!(
-        "[{}] Container ({}) is unhealthy with {} failures",
+        "[{} ({})] Container is unhealthy with {} failures",
         name, id, inspection.failing_streak
     );
     log_message(&msg0, WARNING).await;
     let msg1 = format!(
-        "[{}] Container ({}) last output: [{}] {}",
+        "[{} ({})] Container last output: [{}] {}",
         name, id, inspection.exit_code, inspection.failing_reason
     );
     log_message(&msg1, WARNING).await;
@@ -39,7 +39,7 @@ pub async fn execute_tasks(var: TaskVariablesList) -> String {
 
         // Report container restarting
         let msg0 = format!(
-            "[{}] Restarting container ({}) with {}s timeout",
+            "[{} ({})] Container restarting with {}s timeout",
             name, id, stop_timeout
         );
         log_message(&msg0, WARNING).await;
@@ -52,13 +52,13 @@ pub async fn execute_tasks(var: TaskVariablesList) -> String {
         msg = match &docker.restart_container(&target, restart_options).await {
             Ok(()) => {
                 // Log result
-                let msg0 = format!("[{}] Restart of container ({}) was successful", name, id);
+                let msg0 = format!("[{} ({})] Container restart was successful", name, id);
                 log_message(&msg0, INFO).await;
                 msg0
             }
             Err(e) => {
                 // Log result
-                let msg0 = format!("[{}] Restart of container ({}) failed: {}", name, id, e);
+                let msg0 = format!("[{} ({})] Container restart failed: {}", name, id, e);
                 log_message(&msg0, ERROR).await;
                 msg0
             }

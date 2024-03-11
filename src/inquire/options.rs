@@ -15,7 +15,7 @@ pub struct OptionsList {
     pub stop_timeout: Option<String>,
     pub tcp_timeout: Option<String>,
     pub webhook_url: Option<String>,
-    pub history: bool,
+    pub log_persist: bool,
     pub post_action: Option<String>,
 }
 
@@ -91,7 +91,7 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
         "<TCP_TIMEOUT>",
     );
     opts.optopt("w", "webhook-url", "The webhook url", "<WEBHOOK_URL>");
-    opts.optflag("H", "history", "Enable external logging and reporting of historical data");
+    opts.optflag("L", "log-persist", "Enable external logging and reporting of historical data");
     opts.optopt(
         "P",
         "post-action",
@@ -148,7 +148,7 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
         stop_timeout: matches.opt_str("s"),
         tcp_timeout: matches.opt_str("t"),
         webhook_url: matches.opt_str("w"),
-        history: matches.opt_present("H"),
+        log_persist: matches.opt_present("L"),
         post_action: matches.opt_str("P"),
     }
 }
