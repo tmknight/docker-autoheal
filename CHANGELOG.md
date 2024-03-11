@@ -7,6 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.13.0
+
+### Changed
+
+- Breaking: Add state health exit code to persistent log
+  - This will invalidate any existing log.json and cause an error; removal of existing log.json is requisite
+- Breaking: Rename option and variable:
+  - Binary option: --history replaced by -L, --log-persist
+  - Environment variAble: AUTOHEAL_HISTORY replaced by AUTOHEAL_LOG_PERSIST
+- Adjustment to log output formatting for consistency
+- Additional error handling on read_record
+
 ## 0.12.0
 
 ### Added
@@ -16,6 +28,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   - Controlled via (default: disabled):
     - Binary option: -H, --history (switch)
     - Environment variable: AUTOHEAL_HISTORY (TRUE/FALSE)
+
+### Changed
+
+- Bump bollard to 0.16.0
 
 ## 0.11.2
 

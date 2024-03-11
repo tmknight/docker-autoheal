@@ -1,10 +1,10 @@
 # Docker-Autoheal
 
 [![GitHubRelease][GitHubReleaseBadge]][GitHubReleaseLink]
-<!-- [![GitHubAssetDl][GitHubAssetDlBadge]][GitHubAssetDlLink] -->
 [![DockerPublishing][DockerPublishingBadge]][DockerLink]
 [![DockerSize][DockerSizeBadge]][DockerLink]
 [![DockerPulls][DockerPullsBadge]][DockerLink]
+<!-- [![GitHubAssetDl][GitHubAssetDlBadge]][GitHubAssetDlLink] -->
 
 A cross-platform tool to monitor and remediate unhealthy Docker containers
 
@@ -29,7 +29,7 @@ The `docker-autoheal` binary may be executed in a native OS or from a Docker con
 | **AUTOHEAL_POST_ACTION**     |                          | The absolute path of an executable to be run after restart attempts; container `name`, `id` and `stop-timeout` are passed as arguments in that order                                                              |
 | **AUTOHEAL_MONITOR_ALL**     | FALSE                    | Set to `TRUE` to simply monitor all containers on the host or leave as `FALSE` and control via `autoheal.monitor.enable` |
 | **AUTOHEAL_LOG_ALL**         | FALSE                    | Allow (`TRUE`/`FALSE`) logging (and webhook/apprise if set) for containers with `autostart.restart.enable=FALSE`          |
-| **AUTOHEAL_HISTORY**         | FALSE                    | Allow (`TRUE`/`FALSE`) external persistent logging and reporting of historical data   |
+| **AUTOHEAL_LOG_PERSIST**     | FALSE                    | Allow (`TRUE`/`FALSE`) external persistent logging and reporting of historical data   |
 | **AUTOHEAL_TCP_HOST**        | localhost                | Address of Docker host                                |
 | **AUTOHEAL_TCP_PORT**        | 2375 (ssl: 2376)         | Port on which to connect to the Docker host           |
 | **AUTOHEAL_TCP_TIMEOUT**     | 10                       | Time in `n` seconds before failing connection attempt |
@@ -81,7 +81,7 @@ Options:
                         Time in seconds to wait for connection to complete
     -w, --webhook-url <WEBHOOK_URL>
                         The webhook url
-    -H, --history       Enable external persistent logging and reporting of historical
+    -L, --log-persist Enable external persistent logging and reporting of historical
                         data
     -P, --post-action <SCRIPT_PATH>
                         The absolute path to a script that should be executed
@@ -92,10 +92,10 @@ Options:
 ### Local
 
 ```bash
-/usr/local/bin/docker-autoheal --monitor-all > /var/log/docker-autoheal.log &
+/usr/local/bin/docker-autoheal --monitor-all --log_persist > /var/log/docker-autoheal.log &
 ```
 
-Will connect to the local Docker host and monitor all containers
+Will connect to the local Docker host, monitor all containers, and generate a persistent log at `/opt/docker-autoheal/log.json`
 
 ### Socket
 
@@ -107,12 +107,13 @@ docker run -d --read-only \
     --restart=always \
     --env="AUTOHEAL_CONNECTION_TYPE=socket" \
     --env="AUTOHEAL_MONITOR_ALL=true" \
+    --env="AUTOHEAL_LOG_PERSIST=true" \
     --volume=/var/run/docker.sock:/var/run/docker.sock:ro \
     --volume=/opt/docker-autoheal/log.json:/opt/docker-autoheal/log.json:rw \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine, monitor all containers, and write log data to `/opt/docker-autoheal/log.json` as the user with the specified `uid:gid`
+Will connect to the Docker host via unix socket location /var/run/docker.sock or Windows named pipe location //./pipe/docker_engine, monitor all containers, and write persistent log data to `/opt/docker-autoheal/log.json` as the user with the specified `uid:gid`
 
 ### HTTP
 
@@ -124,11 +125,12 @@ docker run -d --read-only \
     --env="AUTOHEAL_CONNECTION_TYPE=http" \
     --env="AUTOHEAL_TCP_HOST=MYHOST" \
     --env="AUTOHEAL_TCP_PORT=2375" \
+    --env="AUTOHEAL_LOG_PERSIST=true" \
     --volume=/opt/docker-autoheal/log.json:/opt/docker-autoheal/log.json:rw \
     tmknight88/docker-autoheal:latest
 ```
 
-Will connect to the Docker host via hostname or IP and the specified port, monitor only containers with a label `autoheal.monitor.enable=true`, and write log data to `/opt/docker-autoheal/log.json` as the user with the specified `uid:gid`
+Will connect to the Docker host via hostname or IP and the specified port, monitor only containers with a label `autoheal.monitor.enable=true`, and write persistent log data to `/opt/docker-autoheal/log.json` as the user with the specified `uid:gid`
 
 ### Logging
 

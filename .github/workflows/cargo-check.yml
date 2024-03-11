@@ -16,7 +16,7 @@ on:
   pull_request:
     types: [opened, reopened]
     branches: [main, develop]
-
+  
 env:
   CARGO_TERM_COLOR: always
 

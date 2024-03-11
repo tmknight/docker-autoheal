@@ -80,7 +80,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Determine if log path is present and writeable
     let mut log_ready = false;
-    if var.history {
+    if var.log_persist {
         let c_path = CString::new(LOG_PATH).unwrap();
         log_ready = unsafe { access(c_path.as_ptr(), W_OK) == 0 };
         if !log_ready {

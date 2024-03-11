@@ -56,6 +56,7 @@ pub async fn start_loop(
             let log_ready = var.log_ready;
             let mut msg: String = "".to_string();
             let mut fail_reason: String = "".to_string();
+            let mut exit_code: i64 = -99;
 
             // Determine if stop override label
             let s = "autoheal.stop.timeout".to_string();
@@ -117,7 +118,7 @@ pub async fn start_loop(
                     log_message(&msg, ERROR).await;
                 } else if !autoheal_restart_enable && log_all {
                     msg = format!(
-                        "[{}] Container ({}) is unhealthy, however restart is disabled on request",
+                        "[{} ({})] Container is unhealthy, however restart is disabled on request",
                         name, id
                     );
                     log_message(&msg, WARNING).await;
@@ -125,6 +126,7 @@ pub async fn start_loop(
                     // Determine failing streak of the unhealthy container
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
                     fail_reason = inspection.failing_reason.clone();
+                    exit_code = inspection.exit_code;
                     if inspection.failed {
                         // Remediate
                         let task_variables = {
@@ -155,6 +157,7 @@ pub async fn start_loop(
                                 .to_string(),
                             name: name.to_string(),
                             id: id.clone(),
+                            code: exit_code,
                             err: fail_reason,
                             action: msg,
                         }
