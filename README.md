@@ -216,17 +216,17 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 ### A Word of Caution about Excluding from Restart and Logging of those Exclusions
 
 - Excluding a container from restarts and enabling logging for excluded containers will generate numerous log messages whenever that container becomes unhealthy
-- Additionally, if a webhook or apprise is also configured for those containers, they will be executed at each monitoring interval
+- Additionally, if a webhook or apprise is also configured, they will be executed at each monitoring interval for those containers
 
 ## Credits
 
 - [willfarrell](https://github.com/willfarrell)
 
-[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=32c855&label=generate%20release&cacheSeconds=21600
+[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=32c855&label=generate%20release&cacheSeconds=7200
 [GitHubReleaseLink]: https://github.com/tmknight/docker-autoheal/releases
-[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=32c855&label=publish%20image&cacheSeconds=21600
-[DockerPullsBadge]: https://img.shields.io/docker/pulls/tmknight88/docker-autoheal?style=flat&logo=docker&color=blue&cacheSeconds=21600
-[DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?sort=date&arch=amd64&style=flat&logo=docker&color=blue&cacheSeconds=21600
+[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=32c855&label=publish%20image&cacheSeconds=7200
+[DockerPullsBadge]: https://img.shields.io/docker/pulls/tmknight88/docker-autoheal?style=flat&logo=docker&color=blue&cacheSeconds=7200
+[DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?sort=date&arch=amd64&style=flat&logo=docker&color=blue&cacheSeconds=7200
 [DockerLink]: https://hub.docker.com/r/tmknight88/docker-autoheal
-<!-- [GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=32c855&label=release%20downloads&cacheSeconds=21600
+<!-- [GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=32c855&label=release%20downloads&cacheSeconds=7200
 [GithubAssetDlLink]: https://github.com/tmknight/docker-autoheal/releases -->
