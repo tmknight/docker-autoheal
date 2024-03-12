@@ -37,7 +37,9 @@ pub async fn read_record() -> Result<Vec<JsonRecord>, Error> {
 pub async fn write_record(data: JsonRecord) -> Result<(), Error> {
     let log_file = LOG_PATH.to_owned() + LOG_FILE;
     // Serialize the data to JSON
-    let json_data = serde_json::to_string(&data)?;
+    let mut json_data = serde_json::to_string(&data)?;
+    // Append newline to the JSON data
+    json_data.push('\n');
     // Asynchronously open file for writing
     let mut file = File::options()
         .append(true)
@@ -46,7 +48,6 @@ pub async fn write_record(data: JsonRecord) -> Result<(), Error> {
         .await?;
     // Write the JSON data to file
     file.write_all(json_data.as_bytes()).await?;
-    file.write_all(b"\n").await?;
     file.flush().await?;
     Ok(())
 }
