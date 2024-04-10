@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.13.2
+
+### Security
+
+- Bump [h2](https://github.com/hyperium/h2) from 0.3.24 to 0.3.26
+
 ## 0.13.1
 
 ### Changed
