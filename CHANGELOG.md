@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Security
 
 - Bump [h2](https://github.com/hyperium/h2) from 0.3.24 to 0.3.26
+  - h2 servers vulnerable to degradation of service with CONTINUATION Flood
 
 ## 0.13.1
 
