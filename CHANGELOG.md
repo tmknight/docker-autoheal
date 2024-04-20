@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.13.3
+
+### Security
+
+- Bumps [rustls](https://github.com/rustls/rustls) from 0.22.2 to 0.22.4.
+  - Infinite loop in rustls::conn::ConnectionCommon::complete_io() with proper client input
+
 ## 0.13.2
 
 ### Security
