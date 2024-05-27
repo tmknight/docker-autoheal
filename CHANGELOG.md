@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Updated container assessment to exclude unhealthy containers that are purposely stopped
+- Ensure log length assessment does not underflow
 
 ### Security
 
