@@ -11,7 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Ensure log length assessment does not underflow
+- Ensure log length assessment does not underflow and compensate for empty log
+- Other code cleanup
 
 ### Security
 
