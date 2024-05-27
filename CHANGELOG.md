@@ -7,7 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## 0.13.3
+## 0.13.4
+
+### Fixed
+
+- Updated container assessment to exclude unhealthy containers that are purposely stopped
 
 ### Security
 
