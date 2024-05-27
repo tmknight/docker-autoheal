@@ -51,7 +51,7 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
         .and_then(|s| s.health.as_ref().and_then(|h| h.log.clone()))
     {
         Some(log) => {
-            let last = log.len() - 1;
+            let last = log.len().saturating_sub(1);
             let reason = log[last].clone().output.unwrap_or(default_reason);
             failing_reason = reason.clone();
             exit_code = log[last].clone().exit_code.unwrap_or(-1);
