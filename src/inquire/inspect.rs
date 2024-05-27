@@ -42,31 +42,24 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
         }
     };
     // Get last 'output' and 'exitcode' from state:health
-    let default_reason = String::from("unknown");
-    let mut failing_reason = default_reason.clone();
+    let mut failing_reason = "unknown".to_string();
     let mut exit_code: i64 = -1;
-    match container_inspect
-        .state
-        .as_ref()
-        .and_then(|s| s.health.as_ref().and_then(|h| h.log.clone()))
-    {
-        Some(log) => {
-            let last = log.len() - 1;
-            let reason = log[last].clone().output.unwrap_or(default_reason);
-            failing_reason = reason.clone();
-            exit_code = log[last].clone().exit_code.unwrap_or(-1);
+    if let Some(log) = container_inspect.state.as_ref().and_then(|s| s.health.as_ref().and_then(|h| h.log.clone())) {
+        if let Some(last) = log.last() {
+            failing_reason = last.output.clone().unwrap_or(failing_reason);
+            exit_code = last.exit_code.unwrap_or(exit_code);
+        } else {
+            failing_reason = "log is empty".to_string();
         }
-        None => {
-            // Log that we had an error
-            let msg0 = format!(
-                "[{} ({})] Could not reliably determine container failing reason",
-                name, id
-            );
-            log_message(&msg0, ERROR).await;
-        }
-    };
+    } else {
+        let msg0 = format!(
+            "[{} ({})] Could not reliably determine container failing reason",
+            name, id
+        );
+        log_message(&msg0, ERROR).await;
+    }
     Result {
-        failed: !matches!(failing_streak, 0),
+        failed: failing_streak != 0,
         failing_streak,
         failing_reason,
         exit_code,

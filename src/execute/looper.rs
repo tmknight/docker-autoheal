@@ -125,7 +125,7 @@ pub async fn start_loop(
                 } else if autoheal_monitor_enable && (autoheal_restart_enable || log_all) {
                     // Determine failing streak of the unhealthy container
                     let inspection = inspect_container(docker_clone.clone(), name, &id).await;
-                    fail_reason = inspection.failing_reason.clone();
+                    fail_reason.clone_from(&inspection.failing_reason);
                     exit_code = inspection.exit_code;
                     if inspection.failed {
                         // Remediate

@@ -6,7 +6,7 @@ pub async fn containers_list(docker: Docker) -> Vec<ContainerSummary> {
     // Build container assessment criteria
     let mut filters = HashMap::new();
     filters.insert("health", vec!["unhealthy"]);
-    filters.insert("status", vec!["running", "exited", "dead"]);
+    filters.insert("status", vec!["running", "dead"]);
 
     // Gather all containers that are unhealthy
     let container_options = Some(ListContainersOptions {
