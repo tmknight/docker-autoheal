@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.13.5
+
+### Security
+- Bump openssl from 0.10.63 to 0.10.66
+  - Fixed invariant violation in MemBio::get_buf with empty results
+
 ## 0.13.4
 
 ### Fixed
