@@ -10,13 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## 0.13.6
 
 ### Changed
-- Bump
-  - bollard from 0.16.0 to 0.17.0
-  - tokio from 1.35.1 to 1.39.2
+
+- Bump bollard from 0.16.0 to 0.17.0 (which includes bumping various build dependencies)
 
 ## 0.13.5
 
 ### Security
+
 - Bump openssl from 0.10.63 to 0.10.66
   - Fixed invariant violation in MemBio::get_buf with empty results
 
