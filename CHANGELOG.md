@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## 0.13.6
 
 ### Changed
-- Bump bollard from 0.16.1 to 0.17.0
+- Bump bollard from 0.16.0 to 0.17.0
 
 ## 0.13.5
 
