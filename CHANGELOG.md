@@ -7,6 +7,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.13.7
+
+### Changed
+
+- Bump bollard from 0.17.0 to 0.17.1 (which includes bumping various build dependencies)
+- Remove static Cargo.lock to allow for more seamless automated updates (let Cargo.toml guide updates)
+
 ## 0.13.6
 
 ### Changed
