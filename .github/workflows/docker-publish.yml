@@ -87,9 +87,10 @@ jobs:
           tags: |
             type=ref,event=branch,enable=${{ github.ref_name != 'main' }}
             type=ref,event=tag
-            type=raw,enable=${{ !startsWith(github.ref_name, 'dev') }},value=latest
+            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev') }},value=latest
             type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev') }},priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
-
+            type=raw,enable=${{ github.event_name == 'schedule' ) }},value=nightly
+            
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
