@@ -91,7 +91,11 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
         "<TCP_TIMEOUT>",
     );
     opts.optopt("w", "webhook-url", "The webhook url", "<WEBHOOK_URL>");
-    opts.optflag("L", "log-persist", "Enable external logging and reporting of historical data");
+    opts.optflag(
+        "L",
+        "log-persist",
+        "Enable external logging and reporting of historical data",
+    );
     opts.optopt(
         "P",
         "post-action",
@@ -119,20 +123,17 @@ pub fn get_opts(args: Vec<String>) -> OptionsList {
     }
 
     // Ensure acceptable connection type arguments
-    match matches.opt_str("c").is_some() {
-        true => {
-            let opt_connection_type = matches.opt_str("c").unwrap();
-            match ALLOWED_CONNECTION_TYPES.contains(&opt_connection_type.as_str()) {
-                true => {}
-                false => {
-                    println!("Unexpected connection-type: {}", opt_connection_type);
-                    println!("{}", opts.usage(&program));
-                    std::process::exit(1);
-                }
+    if matches.opt_str("c").is_some() {
+        let opt_connection_type = matches.opt_str("c").unwrap();
+        match ALLOWED_CONNECTION_TYPES.contains(&opt_connection_type.as_str()) {
+            true => {}
+            false => {
+                println!("Unexpected connection-type: {}", opt_connection_type);
+                println!("{}", opts.usage(&program));
+                std::process::exit(1);
             }
         }
-        false => {}
-    };
+    }
 
     OptionsList {
         apprise_url: matches.opt_str("a"),
