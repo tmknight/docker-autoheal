@@ -24,6 +24,8 @@ env:
   CONTEXT: .
   DISTRO: alpine
   RELEASE: stable
+  BUILD_ARGS: |
+    "EVENT_NAME=${{ github.event_name }}"
 
 jobs:
   get-version:
@@ -100,9 +102,7 @@ jobs:
           context: ${{ env.CONTEXT }}
           platforms: linux/amd64,linux/arm64
           file: docker/${{ env.DISTRO }}/${{ env.RELEASE }}/${{ env.IMAGE }}.dockerfile
-          # build-args: ${{ env.BUILD_ARGS }}
+          build-args: ${{ env.BUILD_ARGS }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # cache-from: type=gha
-          # cache-to: type=gha,mode=max
