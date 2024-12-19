@@ -21,7 +21,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  cargo-actions:
     name: Cargo Check
     runs-on: ubuntu-latest
 
