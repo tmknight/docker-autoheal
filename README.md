@@ -222,9 +222,13 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 
 - [willfarrell](https://github.com/willfarrell)
 
-[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=32c855&label=generate%20release&cacheSeconds=9000
+<!-- [GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=32c855&label=generate%20release&cacheSeconds=9000
+-->
+[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&label=generate%20release&cacheSeconds=9000
 [GitHubReleaseLink]: https://github.com/tmknight/docker-autoheal/releases
-[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=32c855&label=publish%20image&cacheSeconds=9000
+<!-- [DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=32c855&label=publish%20image&cacheSeconds=9000
+-->
+[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&label=publish%20image&cacheSeconds=9000
 [DockerPullsBadge]: https://img.shields.io/docker/pulls/tmknight88/docker-autoheal?style=flat&logo=docker&color=blue&cacheSeconds=9000
 [DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?sort=date&arch=amd64&style=flat&logo=docker&color=blue&cacheSeconds=9000
 [DockerLink]: https://hub.docker.com/r/tmknight88/docker-autoheal
