@@ -1,4 +1,4 @@
-FROM rust:alpine AS build
+FROM rust:1.83.0-alpine AS build
 
 WORKDIR /
 
