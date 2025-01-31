@@ -6,7 +6,8 @@ USER root
 ARG TARGETARCH \
   EVENT_NAME
 
-RUN apk add \
+RUN apk update \
+  && apk add \
   curl \
   protoc \
   musl-dev \
