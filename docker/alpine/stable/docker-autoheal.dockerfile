@@ -1,6 +1,7 @@
 FROM chainguard/rust:latest-dev AS build
 
 WORKDIR /
+USER root
 
 ARG TARGETARCH \
   EVENT_NAME
