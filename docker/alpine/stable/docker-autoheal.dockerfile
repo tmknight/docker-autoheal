@@ -1,4 +1,4 @@
-FROM chainguard/rust:latest-dev AS build
+FROM rust:alpine AS build
 
 WORKDIR /
 USER root
@@ -8,12 +8,13 @@ ARG TARGETARCH \
 
 RUN apk update \
   && apk add \
+  build-base \
   curl \
-  protoc \
-  musl-dev \
   gzip \
+  musl-dev \
+  openssl-dev \
   perl \
-  build-base
+  protoc
 
 RUN [ "${TARGETARCH}" = "arm64" ] && ARCH=aarch64 || ARCH=x86_64 \
   && TARGET=${ARCH}-unknown-linux-musl \
