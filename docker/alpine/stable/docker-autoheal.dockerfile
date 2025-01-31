@@ -1,4 +1,4 @@
-FROM rust:1.83-alpine3.20 AS build
+FROM chainguard/rust:latest-dev AS build
 
 WORKDIR /
 
