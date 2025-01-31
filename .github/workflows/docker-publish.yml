@@ -85,8 +85,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE }}
+            name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},enable=true
+            name=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE }},enable=${{ github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' }}
           tags: |
             type=ref,event=branch,enable=${{ github.ref_name != 'main' }}
             type=ref,event=tag
