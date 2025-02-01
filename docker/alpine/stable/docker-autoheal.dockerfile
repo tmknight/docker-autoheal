@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
   curl \
   gzip \
   musl-dev \
+  musl-tools \
   libssl-dev \
   perl \
   protobuf-compiler
