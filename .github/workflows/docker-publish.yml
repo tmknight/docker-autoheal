@@ -54,7 +54,7 @@ jobs:
         with:
           platforms: |
             linux/amd64
-            ${{ (github.event_name != 'schedule' && github.event_name != 'workflow_dispatch') && 'linux/arm64' || '' }}
+            ${{ github.event_name != 'schedule' && 'linux/arm64' || '' }}
 
       # Workaround: https://github.com/docker/build-push-action/issues/461
       - name: Setup Docker buildx
@@ -89,10 +89,10 @@ jobs:
             name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},enable=true
             name=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE }},enable=${{ github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' }}
           tags: |
-            type=ref,event=branch,enable=${{ github.ref_name != 'main' || github.event_name == 'workflow_dispatch' }}
+            type=ref,event=branch,enable=${{ github.ref_name != 'main' }}
             type=ref,event=tag
-            type=raw,enable=${{ github.event_name != 'schedule' && github.event_name != 'workflow_dispatch' && !startsWith(github.ref_name, 'dev') }},value=latest
-            type=raw,enable=${{ github.event_name != 'schedule' && github.event_name != 'workflow_dispatch' && !startsWith(github.ref_name, 'dev') }},priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
+            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev') }},value=latest
+            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev') }},priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
             type=raw,enable=${{ github.event_name == 'schedule' }},value=nightly
 
       # Build and push Docker image with Buildx (don't push on PR)
@@ -106,13 +106,13 @@ jobs:
           context: ${{ env.CONTEXT }}
           platforms: |
             linux/amd64
-            ${{ (github.event_name != 'schedule' && github.event_name != 'workflow_dispatch') && 'linux/arm64' || '' }}
+            ${{ github.event_name != 'schedule' && 'linux/arm64' || '' }}
           file: docker/${{ env.DISTRO }}/${{ env.RELEASE }}/${{ env.IMAGE }}.dockerfile
           build-args: ${{ env.BUILD_ARGS }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
           # cache-to: ''
           # cache-to: ${{ github.event_name != 'workflow_dispatch' && 'type=gha,mode=max' || '' }}
