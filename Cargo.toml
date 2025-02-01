@@ -27,7 +27,7 @@ openssl = { version = "0.10.*", features = ["vendored"] }
 openssl = { version = "<0.10.69", features = ["vendored"] }
 
 [target.aarch64-unknown-linux-gnu.dependencies]
-openssl = { version = "<0.10.69", features = ["vendored"] }
+openssl = { version = "0.10.*", features = ["vendored"] }
 
 [[bin]]
 name = "docker-autoheal"
