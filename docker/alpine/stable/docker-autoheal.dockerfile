@@ -1,4 +1,4 @@
-FROM rust:alpine AS build
+FROM rust:latest AS build
 
 WORKDIR /
 USER root
