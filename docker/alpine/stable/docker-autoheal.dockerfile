@@ -6,15 +6,24 @@ USER root
 ARG TARGETARCH \
   EVENT_NAME
 
-RUN apk update \
-  && apk add \
-  build-base \
+# RUN apk update \
+#   && apk add \
+#   build-base \
+#   curl \
+#   gzip \
+#   musl-dev \
+#   openssl-dev \
+#   perl \
+#  protoc
+
+apt-get update && apt-get install -y \
+  build-essential \
   curl \
   gzip \
   musl-dev \
-  openssl-dev \
+  libssl-dev \
   perl \
-  protoc
+  protobuf-compiler
 
 RUN [ "${TARGETARCH}" = "arm64" ] && ARCH=aarch64 || ARCH=x86_64 \
   && TARGET=${ARCH}-unknown-linux-musl \
