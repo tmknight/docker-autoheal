@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN [ "${TARGETARCH}" = "arm64" ] && ARCH=aarch64 || ARCH=x86_64 \
   && TARGET=${ARCH}-unknown-linux-musl \
+  && rustup target add ${TARGET} \
   && if [ "${EVENT_NAME}" = "schedule" ] || [ "${EVENT_NAME}" = "workflow_dispatch" ]; then \
     cargo install --git https://github.com/tmknight/docker-autoheal --branch main --target ${TARGET} && \
     mv /usr/local/cargo/bin/docker-autoheal /; \
