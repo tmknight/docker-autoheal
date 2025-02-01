@@ -99,8 +99,8 @@ jobs:
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v5
-        continue-on-error: true
-        timeout-minutes: 360
+        # continue-on-error: true
+        # timeout-minutes: 360
         with:
           context: ${{ env.CONTEXT }}
           platforms: linux/amd64,linux/arm64
@@ -110,4 +110,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
-          cache-to: ${{ github.event_name != 'workflow_dispatch' && 'type=gha,mode=max' || '' }}
+          cache-to: ''
+          # cache-to: ${{ github.event_name != 'workflow_dispatch' && 'type=gha,mode=max' || '' }}
