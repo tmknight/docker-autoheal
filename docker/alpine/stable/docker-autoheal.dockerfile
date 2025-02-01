@@ -1,4 +1,4 @@
-FROM rust:latest AS build
+FROM rust:alpine AS build
 
 WORKDIR /
 USER root
@@ -7,25 +7,26 @@ ARG TARGETARCH \
   EVENT_NAME
 
 ## When using rust:alpine AS build
-# RUN apk update \
-#   && apk add \
-#   build-base \
-#   curl \
-#   gzip \
-#   musl-dev \
-#   openssl-dev \
-#   perl \
-#  protoc
-
-RUN apt-get update && apt-get install -y \
-  build-essential \
+RUN apk update \
+  && apk add \
+  build-base \
   curl \
   gzip \
   musl-dev \
-  musl-tools \
-  libssl-dev \
+  openssl-dev \
   perl \
-  protobuf-compiler
+  protoc
+
+## When using rust:latest AS build
+# RUN apt-get update && apt-get install -y \
+#   build-essential \
+#   curl \
+#   gzip \
+#   musl-dev \
+#   musl-tools \
+#   libssl-dev \
+#   perl \
+#   protobuf-compiler
 
 RUN [ "${TARGETARCH}" = "arm64" ] && ARCH=aarch64 || ARCH=x86_64 \
   && TARGET=${ARCH}-unknown-linux-musl \
