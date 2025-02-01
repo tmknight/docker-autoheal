@@ -105,7 +105,7 @@ jobs:
           context: ${{ env.CONTEXT }}
           platforms: |
             linux/amd64
-            ${{ (github.event_name != 'schedule' && github.event_name != 'workflow_dispatch') && 'linux/arm64' }}
+            ${{ (github.event_name != 'schedule' && github.event_name != 'workflow_dispatch') && 'linux/arm64' || '' }}
           file: docker/${{ env.DISTRO }}/${{ env.RELEASE }}/${{ env.IMAGE }}.dockerfile
           build-args: ${{ env.BUILD_ARGS }}
           push: ${{ github.event_name != 'pull_request' }}
