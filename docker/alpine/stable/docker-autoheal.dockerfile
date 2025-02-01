@@ -6,6 +6,7 @@ USER root
 ARG TARGETARCH \
   EVENT_NAME
 
+## When using rust:alpine AS build
 # RUN apk update \
 #   && apk add \
 #   build-base \
