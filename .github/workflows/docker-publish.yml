@@ -52,6 +52,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
+          cache-image: false
           platforms: |
             linux/amd64
             linux/arm64
