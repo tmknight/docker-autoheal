@@ -44,10 +44,18 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
     // Get last 'output' and 'exitcode' from state:health
     let mut failing_reason = "unknown".to_string();
     let mut exit_code: i64 = -1;
-    if let Some(log) = container_inspect.state.as_ref().and_then(|s| s.health.as_ref().and_then(|h| h.log.clone())) {
+    
+    if let Some(log) = container_inspect
+        .state
+        .as_ref()
+        .and_then(|s| s.health.as_ref().and_then(|h| h.log.as_ref()))
+    {
         if let Some(last) = log.last() {
-            failing_reason = last.output.clone().unwrap_or(failing_reason);
-            exit_code = last.exit_code.unwrap_or(exit_code);
+            failing_reason = last.output.as_deref().unwrap_or("unknown")
+                .chars()
+                .flat_map(char::escape_default)
+                .collect();
+            exit_code = last.exit_code.unwrap_or(-1);
         } else {
             failing_reason = "log is empty".to_string();
         }
@@ -57,7 +65,7 @@ pub async fn inspect_container(docker: Docker, name: &str, id: &str) -> Result {
             name, id
         );
         log_message(&msg0, ERROR).await;
-    }
+    }    
     Result {
         failed: failing_streak != 0,
         failing_streak,
