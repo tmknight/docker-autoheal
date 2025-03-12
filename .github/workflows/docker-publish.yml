@@ -26,6 +26,7 @@ env:
   RELEASE: stable
   BUILD_ARGS: |
     "EVENT_NAME=${{ github.event_name }}"
+    "BRANCH=${{ github.ref_name }}"
 
 jobs:
   get-version:
