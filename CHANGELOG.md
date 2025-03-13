@@ -12,7 +12,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Refine collection of environment variables
-- Bumpe `reqwest` to 0.12.x
+- Normalize failing_reason
+- Log URL when webhook apprise utilized
+- Bump rust to 1.85
+- Bump `reqwest` to 0.12.x
 
 ## 0.13.8
 

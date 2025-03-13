@@ -7,7 +7,7 @@ description = "A cross-platform tool to monitor and remediate unhealthy Docker c
 readme = "README.md"
 homepage = "https://github.com/tmknight/docker-autoheal"
 edition = "2021"
-rust-version = "1.74"
+rust-version = "1.85"
 
 [dependencies]
 bollard = { version = "0.*", features = ["ssl"] }
