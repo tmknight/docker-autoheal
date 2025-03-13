@@ -34,7 +34,7 @@ RUN apk update && apk add \
 #   && TARGET=${ARCH}-unknown-linux-musl \
 #   && rustup target add ${TARGET} \
 #   && if [ "${EVENT_NAME}" = "schedule" ] && [ "${ARCH}" = "x86_64" ]; then \
-#     cargo install --git https://github.com/tmknight/docker-autoheal --branch main --target ${TARGET} && \
+#     cargo install --git https://github.com/tmknight/docker-autoheal --branch "${BRANCH}" --target ${TARGET} && \
 #     mv /usr/local/cargo/bin/docker-autoheal /; \
 #   else \
 #     curl -sLO https://github.com/tmknight/docker-autoheal/releases/latest/download/docker-autoheal-${TARGET}.tar.gz && \
@@ -47,7 +47,7 @@ RUN [ "${TARGETARCH}" = "arm64" ] && ARCH=aarch64 || ARCH=x86_64 \
   && TARGET=${ARCH}-unknown-linux-musl \
   && rustup target add ${TARGET} \
   && if [ "${EVENT_NAME}" = "schedule" ]; then \
-    cargo install --git https://github.com/tmknight/docker-autoheal --branch ${BRANCH} --target ${TARGET} && \
+    cargo install --git https://github.com/tmknight/docker-autoheal --branch "${BRANCH}" --target ${TARGET} && \
     mv /usr/local/cargo/bin/docker-autoheal /; \
   else \
     curl -sLO https://github.com/tmknight/docker-autoheal/releases/latest/download/docker-autoheal-${TARGET}.tar.gz && \
