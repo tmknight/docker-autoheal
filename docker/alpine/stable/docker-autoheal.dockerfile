@@ -46,7 +46,7 @@ RUN apk update && apk add \
 RUN [ "${TARGETARCH}" = "arm64" ] && ARCH=aarch64 || ARCH=x86_64 \
   && TARGET=${ARCH}-unknown-linux-musl \
   && rustup target add ${TARGET} \
-  && if [ "${EVENT_NAME}" = "schedule" ]; then \
+  && if [ "${EVENT_NAME}" = "schedule" ] || [ "${BRANCH}" != "main" ]; then \
     cargo install --git https://github.com/tmknight/docker-autoheal --branch "${BRANCH}" --target ${TARGET} && \
     mv /usr/local/cargo/bin/docker-autoheal /; \
   else \
