@@ -39,7 +39,7 @@ jobs:
           # (optional) Path to changelog.
           changelog: CHANGELOG.md
           branch: "main"
-          ref: refs/tags/${{ needs.get-version.outputs.pkg-version }}
+          ref: "refs/tags/${{ needs.get-version.outputs.pkg-version }}"
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: true
 
