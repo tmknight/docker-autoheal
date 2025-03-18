@@ -22,9 +22,11 @@ pub struct VariablesList {
 
 // Get environment variable
 fn get_env(key: &str, default: &str) -> String {
-    match std::env::var(key.to_uppercase()) {
-        Ok(val) => val.to_lowercase(),
-        Err(_e) => default.to_string().to_lowercase(),
+    let env_var = std::env::var(key.to_uppercase()).unwrap_or(default.to_string());
+    if key.contains("WEBHOOK") || key.contains("APPRISE") {
+        env_var
+    } else {
+        env_var.to_lowercase()
     }
 }
 

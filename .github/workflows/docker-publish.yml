@@ -27,7 +27,7 @@ env:
   BUILD_ARGS: |
     "EVENT_NAME=${{ github.event_name }}"
     "BRANCH=${{ github.ref_name }}"
-
+    
 jobs:
   get-version:
     uses: ./.github/workflows/get-version.yml
