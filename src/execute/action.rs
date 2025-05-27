@@ -5,6 +5,7 @@ use crate::{
     ERROR, INFO, WARNING,
 };
 use bollard::container::RestartContainerOptions;
+use serde_json::json;
 
 pub async fn execute_tasks(var: TaskVariablesList) -> String {
     // Prepare reusable objects
@@ -71,18 +72,17 @@ pub async fn execute_tasks(var: TaskVariablesList) -> String {
     }
     // Send webhook
     if !(webhook_url.is_empty() || webhook_key.is_empty()) {
-        let payload = format!(
-            "{{\"{}\":\"{}|{}|{}\"}}",
-            &webhook_key, &hostname, &msg1, &msg
-        );
+        let payload = json!({
+            webhook_key: format!("{}|{}|{}", hostname, msg1, msg)
+        }).to_string();
         notify_webhook(&webhook_url, &payload).await;
     }
     // Send apprise
     if !apprise_url.is_empty() {
-        let payload = format!(
-            "{{\"title\":\"Docker-Autoheal\",\"body\":\"{}|{}|{}\"}}",
-            &hostname, &msg1, &msg
-        );
+        let payload = json!({
+            "title": "Docker-Autoheal",
+            "body": format!("{}|{}|{}", hostname, msg1, msg)
+        }).to_string();
         notify_webhook(&apprise_url, &payload).await;
     }
     msg
