@@ -7,6 +7,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## 0.13.10
+
+### Fixed
+
+- Refine json to handle malformed input
+
+## Changed
+
+- Bump `bollard` to 0.19.0
+  - Refactor:
+    - deprecated struct `bollard::container::RestartContainerOptions` => bollard::query_parameters::RestartContainerOptions
+    - deprecated struct `bollard::container::ListContainersOptions` => bollard::query_parameters::ListContainersOptions 
+  
 ## 0.13.9
 
 ### Changed
