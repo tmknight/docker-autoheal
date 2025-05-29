@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Refine json to handle malformed input
+- Refine webhook/apprise json to handle malformed input
 
 ## 0.13.9
 
