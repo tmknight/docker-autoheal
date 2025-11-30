@@ -225,15 +225,15 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 
 <!-- [GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&color=32c855&label=generate%20release&cacheSeconds=9000
 -->
-[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat&logo=github&label=generate%20release&cacheSeconds=9000
+[GitHubReleaseBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/github-release.yml?branch=main&style=flat-square&logo=github&label=generate%20release&cacheSeconds=9000
 [GitHubReleaseLink]: https://github.com/tmknight/docker-autoheal/releases
 <!-- [DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&color=32c855&label=publish%20image&cacheSeconds=9000
 -->
-[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat&logo=github&label=publish%20image&cacheSeconds=9000
-[DockerPullsBadge]: https://img.shields.io/docker/pulls/tmknight88/docker-autoheal?style=flat&logo=docker&color=blue&cacheSeconds=9000
-[DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?sort=date&arch=amd64&style=flat&logo=docker&color=blue&cacheSeconds=9000
+[DockerPublishingBadge]: https://img.shields.io/github/actions/workflow/status/tmknight/docker-autoheal/docker-publish.yml?branch=main&style=flat-square&logo=github&label=publish%20image&cacheSeconds=9000
+[DockerPullsBadge]: https://img.shields.io/docker/pulls/tmknight88/docker-autoheal?style=flat-square&logo=docker&color=blue&cacheSeconds=9000
+[DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?sort=date&arch=amd64&style=flat-square&logo=docker&color=blue&cacheSeconds=9000
 [DockerLink]: https://hub.docker.com/r/tmknight88/docker-autoheal
-[GithubDLBadge]: https://img.shields.io/badge/dynamic/json?style=flat&logo=github&color=blue&url=https%3A%2F%2Fipitio.github.io%2Fbackage%2Ftmknight%2Fdocker-autoheal%2Fdocker-autoheal.json&query=%24.downloads&label=ghcr%20pulls&cacheSeconds=14400
+[GithubDLBadge]: https://img.shields.io/badge/dynamic/json?style=flat-square&logo=github&color=blue&url=https%3A%2F%2Fipitio.github.io%2Fbackage%2Ftmknight%2Fdocker-autoheal%2Fdocker-autoheal.json&query=%24.downloads&label=ghcr%20pulls&cacheSeconds=14400
 [GithubDLLink]: https://github.com/tmkight/docker-autoheal/pkgs/container/docker-auoheal
 <!-- [GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=32c855&label=release%20downloads&cacheSeconds=7200
 [GithubAssetDlLink]: https://github.com/tmknight/docker-autoheal/releases -->
