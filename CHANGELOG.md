@@ -1,11 +1,25 @@
 # Changelog
 
 All notable changes to docker-autoheal are documented in this file.
-The sections should follow the order `Security`, `Added`, `Changed`, `Fixed`, and `Removed`.
+The sections should follow the order `Security`, `Added`, `Changed`, `Fixed`, `Deprecated`, and `Removed`.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
+
+### Changed
+
+- Upgrade to `Bollard` 0.19.x
+
+## 0.13.11
+
+### Security
+
+- Update base docker image to address vulnerabilities
+
+### Changed
+
+- Bump `rust` to 1.92.0
 
 ## 0.13.10
 
