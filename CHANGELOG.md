@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Changed
 
 - Bump `rust` to 1.92.0
+- Bump dependancies as available/required
 
 ## 0.13.10
 
