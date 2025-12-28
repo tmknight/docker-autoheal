@@ -10,6 +10,7 @@ pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 pub const LICENSE: &str = env!("CARGO_PKG_LICENSE");
 pub const DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
 pub const HOMEPAGE: &str = env!("CARGO_PKG_HOMEPAGE");
+pub const YEAR: &str = env!("CARGO_PKG_YEAR");
 
 pub fn print_version() {
     println!("Name: {}", NAME);
@@ -19,7 +20,7 @@ pub fn print_version() {
     println!("Description: {}", DESCRIPTION);
     println!("Homepage: {}", HOMEPAGE);
     println!();
-    println!("Copyright (C) 2024");
+    println!("Copyright (C) {}", YEAR);
     println!("This program comes with ABSOLUTELY NO WARRANTY.");
     println!(
         "This is free software, and you are welcome to redistribute it under certain conditions."
