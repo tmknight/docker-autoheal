@@ -1,5 +1,5 @@
 use super::record::{read_record, write_record, JsonRecord};
-use crate::{INFO, LOG_FILE, LOG_PATH, WARNING};
+use crate::{INFO, LOG_FILE, LOG_PATH, WARNING, YEAR};
 use chrono::Local;
 use std::io::{stdout, Write};
 
@@ -10,7 +10,6 @@ pub const AUTHORS: &str = env!("CARGO_PKG_AUTHORS");
 pub const LICENSE: &str = env!("CARGO_PKG_LICENSE");
 pub const DESCRIPTION: &str = env!("CARGO_PKG_DESCRIPTION");
 pub const HOMEPAGE: &str = env!("CARGO_PKG_HOMEPAGE");
-pub const YEAR: &str = env!("CARGO_PKG_YEAR");
 
 pub fn print_version() {
     println!("Name: {}", NAME);
