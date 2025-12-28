@@ -24,6 +24,9 @@ use execute::{connect::connect_docker, looper::start_loop};
 use inquire::{environment::get_var, options::get_opts};
 use report::logging::log_message;
 
+// Current year
+const YEAR: i32 = 2026;
+
 // Error level constants
 const INFO: i8 = 0;
 const WARNING: i8 = 1;

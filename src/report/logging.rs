@@ -1,5 +1,5 @@
 use super::record::{read_record, write_record, JsonRecord};
-use crate::{INFO, LOG_FILE, LOG_PATH, WARNING};
+use crate::{INFO, LOG_FILE, LOG_PATH, WARNING, YEAR};
 use chrono::Local;
 use std::io::{stdout, Write};
 
@@ -19,7 +19,7 @@ pub fn print_version() {
     println!("Description: {}", DESCRIPTION);
     println!("Homepage: {}", HOMEPAGE);
     println!();
-    println!("Copyright (C) 2024");
+    println!("Copyright (C) {}", YEAR);
     println!("This program comes with ABSOLUTELY NO WARRANTY.");
     println!(
         "This is free software, and you are welcome to redistribute it under certain conditions."
