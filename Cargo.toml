@@ -9,9 +9,6 @@ homepage = "https://github.com/tmknight/docker-autoheal"
 edition = "2021"
 rust-version = "1.92"
 
-[package.metadata]
-year = "2026"
-
 [dependencies]
 bollard = { version = "0.18.*", features = ["ssl"] }
 chrono = "0.4.*"
