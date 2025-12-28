@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Changed
 
 - Upgrade to `Bollard` 0.19.x
+- Remediate exited containers that should be running
 
 ## 0.13.11
 
