@@ -234,6 +234,6 @@ docker run ... -v /etc/localtime:/etc/localtime:ro
 [DockerSizeBadge]: https://img.shields.io/docker/image-size/tmknight88/docker-autoheal?sort=date&arch=amd64&style=flat-square&logo=docker&color=blue&cacheSeconds=14400
 [DockerLink]: https://hub.docker.com/r/tmknight88/docker-autoheal
 [GithubDLBadge]: https://img.shields.io/badge/dynamic/json?style=flat-square&logo=github&color=blue&url=https%3A%2F%2Fipitio.github.io%2Fbackage%2Ftmknight%2Fdocker-autoheal%2Fdocker-autoheal.json&query=%24.downloads&label=ghcr%20pulls&cacheSeconds=14400
-[GithubDLLink]: https://github.com/tmkight/docker-autoheal/pkgs/container/docker-auoheal
+[GithubDLLink]: https://github.com/tmkight/docker-autoheal/pkgs/container/docker-autoheal
 <!-- [GithubAssetDlBadge]: https://img.shields.io/github/downloads/tmknight/docker-autoheal/total?style=flat&logo=github&color=32c855&label=release%20downloads&cacheSeconds=14400
 [GithubAssetDlLink]: https://github.com/tmknight/docker-autoheal/releases -->
