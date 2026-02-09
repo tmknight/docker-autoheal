@@ -6,7 +6,7 @@ license = "GPL-3.0"
 description = "A cross-platform tool to monitor and remediate unhealthy Docker containers"
 readme = "README.md"
 homepage = "https://github.com/tmknight/docker-autoheal"
-edition = "2021"
+edition = "2024"
 rust-version = "1.93"
 
 [dependencies]
