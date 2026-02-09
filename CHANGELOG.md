@@ -12,11 +12,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - Upgrade to `Bollard` current release (several breaking changes ahead)
 - Remediate exited containers that should be running
 
-## 0.13.12
+## 0.14.0
 
 ### Security
 
 - Update base docker image to address vulnerabilities
+
+### Changed
+
+- Bump `rust` release to 1.93.0
+- Bump `rust` edition to 2024
+- Bump dependancies as available/required
 
 ## 0.13.11
 
