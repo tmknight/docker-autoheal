@@ -1,0 +1,44 @@
+name: Bump Version
+
+on:
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          # This token is required to commit changes back to the repository
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current version
+        id: get_version
+        run: |
+          # Extracts the version from Cargo.toml and sets it as an output
+          VERSION=$(grep '^version = ' Cargo.toml | sed -E 's/version = "([^"]+)"/\1/')
+          echo "Current version: $VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Bump patch version
+        id: bump_version
+        run: |
+          # Increments the patch number of the version string
+          NEW_VERSION=$(echo "${{ steps.get_version.outputs.version }}" | awk -F. -v OFS=. '{$3++;print}')
+          echo "New version: $NEW_VERSION"
+          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Update Cargo.toml
+        run: |
+          # Replaces the old version string with the new one in Cargo.toml
+          sed -i 's/^version = ".*"/version = "${{ steps.bump_version.outputs.new_version }}"/' Cargo.toml
+
+      - name: Commit, Tag, and Push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add Cargo.toml
+          git commit -m "chore: Bump version to ${{ steps.bump_version.outputs.new_version }}"
+          git tag -a "v${{ steps.bump_version.outputs.new_version }}" -m "Version ${{ steps.bump_version.outputs.new_version }}"
+          git push --follow-tags
