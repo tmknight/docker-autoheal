@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Changed
 
-- Bump `rust` to 1.95.0
+- Bump `rust` to 1.94.0
 - Bump dependencies as available/required
 
 ## 0.13.12
