@@ -31,7 +31,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Create draft release"
         uses: "taiki-e/create-gh-release-action@v1"
@@ -65,7 +65,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Upload assets"
         uses: "taiki-e/upload-rust-binary-action@v1"
@@ -85,7 +85,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: "Release draft"
         run: gh release edit ${{ needs.get-version.outputs.pkg-version }} --draft=false
