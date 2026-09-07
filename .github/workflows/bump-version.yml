@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   workflow_call:
   schedule:
-    - cron: '05 05 1 * *'
+    - cron: "05 05 1 * *"
 
 jobs:
   bump-version:
