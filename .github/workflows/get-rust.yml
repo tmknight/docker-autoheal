@@ -1,0 +1,50 @@
+name: Get Latest Rust Major.Minor Version
+
+on:
+  workflow_dispatch: # or push/pull_request/schedule as needed
+  workflow_call:
+    outputs:
+      rust_version:
+        description: "Latest Rust major.minor version (e.g. 1.98)"
+        value: ${{ jobs.get_rust_version.outputs.rust_version }}
+
+jobs:
+  get_rust_version:
+    runs-on: ubuntu-latest
+    outputs:
+      rust_version: ${{ steps.parse_version.outputs.rust_version }}
+
+    steps:
+      - name: Fetch latest rust-lang/rust release
+        id: fetch_release
+        run: |
+          RESPONSE=$(curl -sL \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "https://api.github.com/repos/rust-lang/rust/releases/latest")
+
+          TAG_NAME=$(echo "$RESPONSE" | jq -r '.tag_name')
+          echo "tag_name=$TAG_NAME" >> "$GITHUB_OUTPUT"
+          echo "Latest rust tag: $TAG_NAME"
+
+      - name: Parse Major.Minor version
+        id: parse_version
+        run: |
+          TAG="${{ steps.fetch_release.outputs.tag_name }}"
+
+          # Strip optional leading 'v' or 'rust-' prefixes if present
+          TAG_CLEAN="${TAG#v}"
+          TAG_CLEAN="${TAG_CLEAN#rust-}"
+
+          # Extract Major.Minor from versions like:
+          #   1.82.0
+          #   1.82.0-beta.1
+          #   1.82.0-nightly-2024-10-10
+          RUST_VERSION=$(echo "$TAG_CLEAN" | sed -E 's/^([0-9]+\.[0-9]+)\..*/\1/')
+
+          echo "Rust Major.Minor version: $RUST_VERSION"
+          echo "rust_version=$RUST_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Show resolved version
+        run: |
+          echo "Using Rust version: ${{ steps.parse_version.outputs.rust_version }}"
