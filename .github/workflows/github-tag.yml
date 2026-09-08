@@ -16,6 +16,7 @@ env:
 
 jobs:
   bump-version:
+    if: github.event_name == 'schedule'
     uses: ./.github/workflows/bump-version.yml
 
   get-version:
@@ -26,9 +27,11 @@ jobs:
     runs-on: "ubuntu-latest"
     needs: [bump-version, get-version]
     if: |
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
-      (github.event_name == 'workflow_dispatch') ||
-      (needs.bump-version.outputs.proceed == 'true')
+      always() && (
+        (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+        (github.event_name == 'workflow_dispatch') ||
+        (needs.bump-version.outputs.proceed == 'true' && github.event_name == 'schedule')
+      )
     steps:
       - name: "Check out the repo"
         uses: actions/checkout@v7
