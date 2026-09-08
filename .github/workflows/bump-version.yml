@@ -45,11 +45,12 @@ jobs:
           sed -i 's/^version = ".*"/version = "${{ steps.bump_version.outputs.new_version }}"/' Cargo.toml
           sed -i 's/^rust-version = ".*"/rust-version = "${{ needs.get-rust.outputs.rust_version }}"/' Cargo.toml
 
-      - name: Commit, Tag, and Push changes
+      - name: Commit and Push changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add Cargo.toml
           git commit -m "chore: Bump version to ${{ steps.bump_version.outputs.new_version }}"
-          git tag -a "v${{ steps.bump_version.outputs.new_version }}" -m "Version ${{ steps.bump_version.outputs.new_version }}"
-          git push --follow-tags
+          git push
+          # git tag -a "v${{ steps.bump_version.outputs.new_version }}" -m "Version ${{ steps.bump_version.outputs.new_version }}"
+          # git push --follow-tags
