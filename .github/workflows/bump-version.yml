@@ -10,8 +10,12 @@ on:
     - cron: "05 05 1 * *"
 
 jobs:
+  get-rust:
+    uses: ./.github/workflows/get-rust.yml
+
   bump-version:
     runs-on: ubuntu-latest
+    needs: get-rust
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -39,6 +43,7 @@ jobs:
         run: |
           # Replaces the old version string with the new one in Cargo.toml
           sed -i 's/^version = ".*"/version = "${{ steps.bump_version.outputs.new_version }}"/' Cargo.toml
+          sed -i 's/^rust-version = ".*"/rust-version = "${{ needs.get-rust.outputs.rust_version }}"/' Cargo.toml
 
       - name: Commit, Tag, and Push changes
         run: |

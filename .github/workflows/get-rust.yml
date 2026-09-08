@@ -1,4 +1,4 @@
-name: Get Latest Rust Major.Minor Version
+name: Get latest Rust Version
 
 on:
   workflow_dispatch: # or push/pull_request/schedule as needed
