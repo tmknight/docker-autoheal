@@ -6,8 +6,10 @@ permissions:
 on:
   workflow_dispatch:
   workflow_call:
-  schedule:
-    - cron: "05 05 * * *"
+    outputs:
+      proceed:
+        description: "Get day of month"
+        value: ${{ jobs.get-DOM.outputs.proceed }}
 
 env:
   DOM: 01

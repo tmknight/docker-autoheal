@@ -8,21 +8,27 @@ on:
   pull_request:
     types: [closed]
     branches: [main]
-  workflow_run:
-    workflows: ["Bump Version"]
-    types: [completed]
-    
+  schedule:
+    - cron: "05 05 * * *"
+
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  proceed:
+    uses: ./.github/workflows/bump-version.yml
+
   get-version:
     uses: ./.github/workflows/get-version.yml
 
   create-tag:
     name: "Create tag"
     runs-on: "ubuntu-latest"
-    needs: get-version
+    needs: [proceed, get-version]
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      (github.event_name == 'workflow_dispatch') ||
+      (needs.proceed.outputs.proceed == 'true')
     steps:
       - name: "Check out the repo"
         uses: actions/checkout@v7
