@@ -10,7 +10,7 @@ on:
     types: [completed]
     branches: [main]
   schedule:
-    - cron: '40 05 * * *'
+    - cron: "40 05 * * *"
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -27,7 +27,7 @@ env:
   BUILD_ARGS: |
     "EVENT_NAME=${{ github.event_name }}"
     "BRANCH=${{ github.ref_name }}"
-    
+
 jobs:
   get-version:
     uses: ./.github/workflows/get-version.yml

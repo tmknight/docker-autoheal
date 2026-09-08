@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
   workflow_call:
     outputs:
-        pkg-version:
-            description: "Get release version"
-            value: ${{ jobs.get-version.outputs.pkg-version }}
+      pkg-version:
+        description: "Get release version"
+        value: ${{ jobs.get-version.outputs.pkg-version }}
 
 jobs:
   get-version:

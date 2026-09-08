@@ -11,7 +11,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - Upgrade to `Bollard` current release (several breaking changes ahead)
 
+## 0.14.0
+
+### Added
+
+- Automation to keep rust dependencies and docker base image up-to-date
+
+### Changed
+
+- Bump `rust` to 1.98
+- Bump dependencies as available/required
+
 ## 0.13.13
+
+### Security
+
+- Update docker base image to address vulnerabilities
+
+### Changed
+
+- Bump `rust` to 1.94.0
+- Bump dependencies as available/required
+
+## 0.14.0
 
 ### Security
 
@@ -19,14 +41,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Changed
 
-- Bump `rust` to 1.94.0
+- Bump `rust` release to 1.93.0
+- Bump `rust` edition to 2024
 - Bump dependencies as available/required
-
-## 0.13.12
-
-### Security
-
-- Update base docker image to address vulnerabilities
 
 ## 0.13.11
 
