@@ -15,7 +15,7 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  proceed:
+  bump-version:
     uses: ./.github/workflows/bump-version.yml
 
   get-version:
@@ -24,11 +24,11 @@ jobs:
   create-tag:
     name: "Create tag"
     runs-on: "ubuntu-latest"
-    needs: [proceed, get-version]
+    needs: [bump-version, get-version]
     if: |
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       (github.event_name == 'workflow_dispatch') ||
-      (needs.proceed.outputs.proceed == 'true')
+      (needs.bump-version.outputs.proceed == 'true')
     steps:
       - name: "Check out the repo"
         uses: actions/checkout@v7
