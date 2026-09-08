@@ -7,15 +7,35 @@ on:
   workflow_dispatch:
   workflow_call:
   schedule:
-    - cron: "05 05 1 * *"
+    - cron: "05 05 * * *"
+
+env:
+  DOM: 01
 
 jobs:
   get-rust:
     uses: ./.github/workflows/get-rust.yml
 
-  bump-version:
+  get-DOM:
     runs-on: ubuntu-latest
-    needs: get-rust
+    outputs:
+      proceed: ${{ steps.get_date.outputs.proceed }}
+    steps:
+      - name: Get day of the month
+        id: get_date
+        run: |
+          MONTH_DAY=$(date +'%d')
+          if [ "$MONTH_DAY" = "${{ env.DOM }}" ]; then
+            PROCEED=true
+          else
+            PROCEED=false
+          fi
+          echo "proceed=$PROCEED" >> "$GITHUB_OUTPUT"
+
+  bump-app-version:
+    runs-on: ubuntu-latest
+    needs: get-DOM
+    if: ${{ needs.get-DOM.outputs.proceed == 'true' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -31,7 +51,7 @@ jobs:
           echo "Current version: $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Bump patch version
+      - name: Bump app version
         id: bump_version
         run: |
           # Increments the patch number of the version string
@@ -39,18 +59,38 @@ jobs:
           echo "New version: $NEW_VERSION"
           echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
-      - name: Update Cargo.toml
+      - name: Update Cargo.toml with patch version monthly
         run: |
           # Replaces the old version string with the new one in Cargo.toml
           sed -i 's/^version = ".*"/version = "${{ steps.bump_version.outputs.new_version }}"/' Cargo.toml
-          sed -i 's/^rust-version = ".*"/rust-version = "${{ needs.get-rust.outputs.rust_version }}"/' Cargo.toml
 
-      - name: Commit and Push changes
+      - name: Commit and Push app changes
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add Cargo.toml
-          git commit -m "chore: Bump version to ${{ steps.bump_version.outputs.new_version }}"
+          git commit -m "chore: Bump app version to ${{ steps.bump_version.outputs.new_version }}"
           git push
-          # git tag -a "v${{ steps.bump_version.outputs.new_version }}" -m "Version ${{ steps.bump_version.outputs.new_version }}"
-          # git push --follow-tags
+
+  bump-rust-version:
+    runs-on: ubuntu-latest
+    needs: get-rust
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+        with:
+          # This token is required to commit changes back to the repository
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Cargo.toml with rust version nightly
+        run: |
+          # Replaces the old version string with the new one in Cargo.toml
+          sed -i 's/^rust-version = ".*"/rust-version = "${{ needs.get-rust.outputs.rust_version }}"/' Cargo.toml
+
+      - name: Commit and Push rust changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add Cargo.toml
+          git commit -m "chore: Bump rust version to ${{ needs.get-rust.outputs.rust_version }}"
+          git push
