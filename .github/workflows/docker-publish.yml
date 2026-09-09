@@ -9,8 +9,8 @@ on:
     workflows: ["Github Release"]
     types: [completed]
     branches: [main]
-  schedule:
-    - cron: "40 05 * * *"
+  # schedule:
+  #   - cron: "40 05 * * *"
 
 env:
   # Use docker.io for Docker Hub if empty
