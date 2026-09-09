@@ -1,0 +1,33 @@
+name: Get Day of Month
+
+permissions:
+  contents: "read"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    outputs:
+      proceed:
+        description: "DOM match; proceed with activity"
+        value: ${{ jobs.get-DOM.outputs.proceed }}
+
+env:
+  DOM: 01
+
+jobs:
+  get-DOM:
+    runs-on: ubuntu-latest
+    outputs:
+      proceed: ${{ steps.get_date.outputs.proceed }}
+    steps:
+      - name: Get day of the month
+        id: get_date
+        run: |
+          MONTH_DAY=$(date +'%d')
+          if [ "$MONTH_DAY" = "${{ env.DOM }}" ]; then
+            PROCEED=true
+          else
+            PROCEED=false
+          fi
+          echo "DOM=${{ env.DOM }}; MONTH_DAY=$MONTH_DAY; proceed=$PROCEED"
+          echo "proceed=$PROCEED" >> "$GITHUB_OUTPUT"
