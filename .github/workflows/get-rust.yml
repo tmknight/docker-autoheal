@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       rust_version: ${{ steps.parse_version.outputs.rust_version }}
-
     steps:
       - name: Fetch latest rust-lang/rust release
         id: fetch_release
@@ -47,4 +46,4 @@ jobs:
 
       - name: Show resolved version
         run: |
-          echo "Using Rust version: ${{ steps.parse_version.outputs.rust_version }}"
+          echo "Latest Rust version: ${{ steps.parse_version.outputs.rust_version }}"
