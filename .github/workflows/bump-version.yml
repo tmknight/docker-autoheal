@@ -5,7 +5,19 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      proceed:
+        description: 'True/False'
+        default: 'false'
+        required: false
+        type: string
   workflow_call:
+    inputs:
+      proceed:
+        description: 'True/False'
+        default: 'false'
+        required: false
+        type: string
 
 jobs:
   get-version:
@@ -14,13 +26,10 @@ jobs:
   get-rust:
     uses: ./.github/workflows/get-rust.yml
 
-  get-DOM:
-    uses: ./.github/workflows/get-DOM.yml
-
   bump-app-version:
     runs-on: ubuntu-latest
-    needs: [get-version, get-DOM]
-    if: ${{ needs.get-DOM.outputs.proceed == 'true' }}
+    needs: [get-version]
+    if: ${{ inputs.proceed == 'true' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v7

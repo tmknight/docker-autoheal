@@ -1,8 +1,5 @@
 name: Get Day of Month
 
-permissions:
-  contents: "read"
-
 on:
   workflow_dispatch:
   workflow_call:

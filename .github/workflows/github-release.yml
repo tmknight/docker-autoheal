@@ -4,10 +4,8 @@ permissions:
   contents: "write"
 
 on:
-  workflow_run:
-    workflows: ["Github Tag"]
-    types: [completed]
-    branches: [main]
+  workflow_dispatch:
+  workflow_call:
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -25,14 +23,10 @@ jobs:
   get-version:
     uses: ./.github/workflows/get-version.yml
 
-  get-DOM:
-    uses: ./.github/workflows/get-DOM.yml
-
   create-release:
     name: "Create release"
-    needs: [get-version, get-DOM]
+    needs: [get-version]
     runs-on: "ubuntu-latest"
-    if: ${{ github.event.workflow_run.conclusion == 'success' && needs.get-DOM.outputs.proceed == 'true' }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v7
@@ -49,8 +43,7 @@ jobs:
 
   upload-assets:
     name: "Upload assets"
-    needs: [get-version, create-release, get-DOM]
-    if: ${{ github.event.workflow_run.conclusion == 'success' && needs.get-DOM.outputs.proceed == 'true' }}
+    needs: [get-version, create-release]
     strategy:
       matrix:
         include:
@@ -62,8 +55,6 @@ jobs:
             os: "ubuntu-latest"
           - target: "aarch64-unknown-linux-musl"
             os: "ubuntu-latest"
-          # - target: "aarch64-unknown-openbsd"
-          #   os: "ubuntu-latest"
     runs-on: ${{ matrix.os }}
     steps:
       - name: "Checkout repository"
@@ -80,8 +71,7 @@ jobs:
 
   publish-release:
     name: "Publish release"
-    needs: [get-version,upload-assets,get-DOM]
-    if: ${{ github.event.workflow_run.conclusion == 'success' && needs.get-DOM.outputs.proceed == 'true' }}
+    needs: [get-version,upload-assets]
     runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository"

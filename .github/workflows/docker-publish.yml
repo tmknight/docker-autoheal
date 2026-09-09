@@ -5,12 +5,19 @@ permissions:
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Github Release"]
-    types: [completed]
-    branches: [main]
-  # schedule:
-  #   - cron: "40 05 * * *"
+    inputs:
+      latest:
+        description: 'True/False'
+        default: 'false'
+        required: false
+        type: string
+  workflow_call:
+    inputs:
+      latest:
+        description: 'True/False'
+        default: 'false'
+        required: false
+        type: string
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -32,13 +39,9 @@ jobs:
   get-version:
     uses: ./.github/workflows/get-version.yml
 
-  get-DOM:
-    uses: ./.github/workflows/get-DOM.yml
-
   push-to-registry:
     name: "Publish Docker image"
-    needs: [get-version, get-DOM]
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+    needs: [get-version]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -95,9 +98,9 @@ jobs:
           tags: |
             type=ref,event=branch,enable=${{ github.ref_name != 'main' }}
             type=ref,event=tag
-            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev') && needs.get-DOM.outputs.proceed == 'true' }},value=latest
-            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev')  && needs.get-DOM.outputs.proceed == 'true' }},priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
-            type=raw,enable=${{ github.event_name == 'schedule' || (github.event.workflow_run.conclusion == 'success' && needs.get-DOM.outputs.proceed != 'true') }},value=nightly
+            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev') && inputs.latest == 'true' }},value=latest
+            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev')  && inputs.latest == 'true' }},priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
+            type=raw,enable=${{ github.event_name == 'schedule' || inputs.latest != 'true' }},value=nightly
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action

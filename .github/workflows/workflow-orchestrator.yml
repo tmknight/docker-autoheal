@@ -1,0 +1,51 @@
+name: "Workflow Orchestrator"
+
+permissions:
+  contents: "write"
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [closed]
+    branches: [main]
+  schedule:
+    - cron: "05 05 * * *"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  get-DOM:
+    uses: ./.github/workflows/get-DOM.yml
+
+  bump-version:
+    uses: ./.github/workflows/bump-version.yml
+    needs: [get-DOM]
+    if: github.event_name == 'schedule'
+    with:
+      proceed: "${{ needs.get-DOM.outputs.proceed }}"
+
+  create-tag:
+    uses: ./.github/workflows/github-tag.yml
+    needs: [get-DOM]
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      (github.event_name == 'workflow_dispatch') ||
+      (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
+
+  create-release:
+    uses: ./.github/workflows/github-release.yml
+    needs: [get-DOM]
+    if: |
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      (github.event_name == 'workflow_dispatch') ||
+      (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
+
+  docker-publish:
+    uses: ./.github/workflows/docker-publish.yml
+    needs: [get-DOM]
+    with:
+      latest: |
+        ${{ ((github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+        github.event_name == 'workflow_dispatch' ||
+        (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')) && 'true' || 'false' }}
