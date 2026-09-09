@@ -15,6 +15,9 @@ env:
   DOM: 01
 
 jobs:
+  get-version:
+    uses: ./.github/workflows/get-version.yml
+
   get-rust:
     uses: ./.github/workflows/get-rust.yml
 
@@ -32,11 +35,12 @@ jobs:
           else
             PROCEED=false
           fi
+          echo "DOM=${{ env.DOM }}; MONTH_DAY=$MONTH_DAY; proceed=$PROCEED"
           echo "proceed=$PROCEED" >> "$GITHUB_OUTPUT"
 
   bump-app-version:
     runs-on: ubuntu-latest
-    needs: get-DOM
+    needs: [get-version, get-DOM]
     if: ${{ needs.get-DOM.outputs.proceed == 'true' }}
     steps:
       - name: Check out code
@@ -45,19 +49,11 @@ jobs:
           # This token is required to commit changes back to the repository
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Get current version
-        id: get_version
-        run: |
-          # Extracts the version from Cargo.toml and sets it as an output
-          VERSION=$(grep '^version = ' Cargo.toml | sed -E 's/version = "([^"]+)"/\1/')
-          echo "Current version: $VERSION"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-
       - name: Bump app version
         id: bump_version
         run: |
           # Increments the patch number of the version string
-          NEW_VERSION=$(echo "${{ steps.get_version.outputs.version }}" | awk -F. -v OFS=. '{$3++;print}')
+          NEW_VERSION=$(echo "${{ needs.get-version.outputs.pkg-version }}" | awk -F. -v OFS=. '{$3++;print}')
           echo "New version: $NEW_VERSION"
           echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
@@ -76,7 +72,8 @@ jobs:
 
   bump-rust-version:
     runs-on: ubuntu-latest
-    needs: get-rust
+    needs: [get-rust, get-version]
+    if: needs.get-rust.outputs.rust_version != needs.get-version.outputs.rust-version
     steps:
       - name: Check out code
         uses: actions/checkout@v7
