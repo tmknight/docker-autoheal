@@ -6,10 +6,6 @@ permissions:
 on:
   workflow_dispatch:
   workflow_call:
-    outputs:
-      proceed:
-        description: "Proceed with version bump"
-        value: ${{ jobs.get-DOM.outputs.proceed }}
 
 jobs:
   get-version:
