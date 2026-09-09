@@ -32,12 +32,12 @@ jobs:
   get-version:
     uses: ./.github/workflows/get-version.yml
 
-  bump-version:
-    uses: ./.github/workflows/bump-version.yml
+  get-DOM:
+    uses: ./.github/workflows/get-DOM.yml
 
   push-to-registry:
     name: "Publish Docker image"
-    needs: [get-version, bump-version]
+    needs: [get-version, get-DOM]
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
     runs-on: ubuntu-latest
     permissions:
@@ -95,9 +95,9 @@ jobs:
           tags: |
             type=ref,event=branch,enable=${{ github.ref_name != 'main' }}
             type=ref,event=tag
-            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev') && needs.bump-version.outputs.proceed == 'true' }},value=latest
-            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev')  && needs.bump-version.outputs.proceed == 'true' }},priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
-            type=raw,enable=${{ github.event_name == 'schedule' || (github.event.workflow_run.conclusion == 'success' && needs.bump-version.outputs.proceed != 'true') }},value=nightly
+            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev') && needs.get-DOM.outputs.proceed == 'true' }},value=latest
+            type=raw,enable=${{ github.event_name != 'schedule' && !startsWith(github.ref_name, 'dev')  && needs.get-DOM.outputs.proceed == 'true' }},priority=1000,value=${{ needs.get-version.outputs.pkg-version }}
+            type=raw,enable=${{ github.event_name == 'schedule' || (github.event.workflow_run.conclusion == 'success' && needs.get-DOM.outputs.proceed != 'true') }},value=nightly
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action

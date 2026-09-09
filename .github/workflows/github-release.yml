@@ -25,11 +25,14 @@ jobs:
   get-version:
     uses: ./.github/workflows/get-version.yml
 
+  get-DOM:
+    uses: ./.github/workflows/get-DOM.yml
+
   create-release:
     name: "Create release"
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    needs: "get-version"
+    needs: [get-version, get-DOM]
     runs-on: "ubuntu-latest"
+    if: ${{ github.event.workflow_run.conclusion == 'success' && needs.get-DOM.outputs.proceed == 'true' }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v7
@@ -46,10 +49,8 @@ jobs:
 
   upload-assets:
     name: "Upload assets"
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    needs:
-      - "get-version"
-      - "create-release"
+    needs: [get-version, create-release, get-DOM]
+    if: ${{ github.event.workflow_run.conclusion == 'success' && needs.get-DOM.outputs.proceed == 'true' }}
     strategy:
       matrix:
         include:
@@ -79,10 +80,8 @@ jobs:
 
   publish-release:
     name: "Publish release"
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    needs:
-      - "get-version"
-      - "upload-assets"
+    needs: [get-version,upload-assets,get-DOM]
+    if: ${{ github.event.workflow_run.conclusion == 'success' && needs.get-DOM.outputs.proceed == 'true' }}
     runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository"

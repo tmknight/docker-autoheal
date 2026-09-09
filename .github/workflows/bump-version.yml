@@ -8,11 +8,8 @@ on:
   workflow_call:
     outputs:
       proceed:
-        description: "Get day of month"
+        description: "Proceed with version bump"
         value: ${{ jobs.get-DOM.outputs.proceed }}
-
-env:
-  DOM: 01
 
 jobs:
   get-version:
@@ -22,21 +19,7 @@ jobs:
     uses: ./.github/workflows/get-rust.yml
 
   get-DOM:
-    runs-on: ubuntu-latest
-    outputs:
-      proceed: ${{ steps.get_date.outputs.proceed }}
-    steps:
-      - name: Get day of the month
-        id: get_date
-        run: |
-          MONTH_DAY=$(date +'%d')
-          if [ "$MONTH_DAY" = "${{ env.DOM }}" ]; then
-            PROCEED=true
-          else
-            PROCEED=false
-          fi
-          echo "DOM=${{ env.DOM }}; MONTH_DAY=$MONTH_DAY; proceed=$PROCEED"
-          echo "proceed=$PROCEED" >> "$GITHUB_OUTPUT"
+    uses: ./.github/workflows/get-DOM.yml
 
   bump-app-version:
     runs-on: ubuntu-latest
