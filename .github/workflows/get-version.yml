@@ -1,4 +1,4 @@
-name: "Release Version"
+name: "Cargo Versions"
 
 permissions:
   contents: "read"
@@ -10,13 +10,16 @@ on:
       pkg-version:
         description: "Get release version"
         value: ${{ jobs.get-version.outputs.pkg-version }}
+      rust-version:
+        description: "Get release version"
+        value: ${{ jobs.rust-version.outputs.rust-version }}
 
 jobs:
   get-version:
     name: "Get release version"
     runs-on: "ubuntu-latest"
     outputs:
-      pkg-version: ${{ steps.pkg-version.outputs.PKG_VERSION }}
+      pkg-version: ${{ steps.pkg-version.outputs.pkg-version }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v7
@@ -27,4 +30,25 @@ jobs:
         id: "pkg-version"
         shell: "bash"
         run: |
-          echo PKG_VERSION=$(awk -F ' = ' '$1 ~ /^version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml) >> $GITHUB_OUTPUT
+          PKG_VERSION=$(awk -F ' = ' '$1 ~ /^version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml)
+          echo "Cargo pkg-version=$PKG_VERSION"
+          echo pkg-version=$PKG_VERSION >> $GITHUB_OUTPUT
+
+  rust-version:
+    name: "Get rust version"
+    runs-on: "ubuntu-latest"
+    outputs:
+      rust-version: ${{ steps.rust-version.outputs.rust-version }}
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Get rust version"
+        id: "rust-version"
+        shell: "bash"
+        run: |
+          RUST_VERSION=$(awk -F ' = ' '$1 ~ /^rust-version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml)
+          echo "Cargo rust-version=$RUST_VERSION"
+          echo rust-version=$RUST_VERSION >> $GITHUB_OUTPUT
