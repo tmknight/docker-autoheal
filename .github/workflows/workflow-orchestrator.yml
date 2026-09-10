@@ -39,7 +39,7 @@ jobs:
     uses: ./.github/workflows/github-release.yml
     if: |
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
-      (github.event_name == 'workflow_dispatch' && needs.create-tag.outputs.latest == 'true') ||
+      (github.event_name == 'workflow_dispatch' && needs.create-tag.outputs.proceed == 'true') ||
       (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
     permissions:
       contents: write
