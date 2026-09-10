@@ -53,5 +53,6 @@ jobs:
         github.event_name == 'workflow_dispatch' ||
         (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')) && 'true' || 'false' }}
     permissions:
+      contents: write
       packages: write
       id-token: write
