@@ -6,6 +6,10 @@ permissions:
 on:
   workflow_dispatch:
   workflow_call:
+    outputs:
+      proceed:
+        description: "New tag created; proceed with activity"
+        value: ${{ (jobs.get-version.outputs.pkg-version != jobs.get-tag.outputs.current_tag) && 'true' || 'false' }}
 
 env:
   CARGO_TERM_COLOR: always
@@ -34,7 +38,6 @@ jobs:
           CURRENT_TAG=$(git describe --tags --abbrev=0)
           echo "current_tag=$CURRENT_TAG"
           echo "current_tag=$CURRENT_TAG" >> "$GITHUB_OUTPUT"
-
 
   create-tag:
     name: "Create tag"
