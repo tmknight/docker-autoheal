@@ -1,10 +1,5 @@
 name: "Workflow Orchestrator"
 
-permissions:
-  contents: write
-  packages: write
-  id-token: write
-  
 on:
   workflow_dispatch:
   pull_request:
@@ -21,33 +16,42 @@ jobs:
     uses: ./.github/workflows/get-DOM.yml
 
   bump-version:
-    uses: ./.github/workflows/bump-version.yml
     needs: [get-DOM]
-    if: github.event_name == 'schedule'
+    uses: ./.github/workflows/bump-version.yml
     with:
-      proceed: "${{ needs.get-DOM.outputs.proceed }}"
+      proceed: ${{ needs.get-DOM.outputs.proceed }}
+    # if: github.event_name == 'schedule'
+    permissions:
+      contents: write
 
   create-tag:
+    needs: [get-DOM, bump-version]
     uses: ./.github/workflows/github-tag.yml
-    needs: [get-DOM]
     if: |
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       (github.event_name == 'workflow_dispatch') ||
       (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
+    permissions:
+      contents: write
 
   create-release:
+    needs: [get-DOM, create-tag]
     uses: ./.github/workflows/github-release.yml
-    needs: [get-DOM]
     if: |
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       (github.event_name == 'workflow_dispatch') ||
       (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
+    permissions:
+      contents: write
 
   docker-publish:
+    needs: [get-DOM, create-release]
     uses: ./.github/workflows/docker-publish.yml
-    needs: [get-DOM]
     with:
       latest: |
         ${{ ((github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
         github.event_name == 'workflow_dispatch' ||
         (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')) && 'true' || 'false' }}
+    permissions:
+      packages: write
+      id-token: write
