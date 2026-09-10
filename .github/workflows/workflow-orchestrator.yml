@@ -37,6 +37,8 @@ jobs:
   create-release:
     needs: [get-DOM, create-tag]
     uses: ./.github/workflows/github-release.yml
+    with:
+      latest: ${{ needs.create-tag.outputs.proceed }}    
     if: |
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       (github.event_name == 'workflow_dispatch' && needs.create-tag.outputs.proceed == 'true') ||
