@@ -80,7 +80,7 @@ jobs:
 
       - name: Log into Docker Hub
         id: docker-hub
-        if: ${{ (github.event_name == 'pull_request' && github.event.pull_request.merged == true && github.ref_name == 'main') || github.event_name == 'schedule' }}
+        if: ${{ github.ref_name == 'main' && ((github.event_name == 'pull_request' && github.event.pull_request.merged == true) || github.event_name == 'schedule') }}
         uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -94,7 +94,7 @@ jobs:
         with:
           images: |
             name=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }},enable=true
-            name=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE }},enable=${{ github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' }}
+            name=${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE }},enable=${{ github.ref_name == 'main' && ((github.event_name == 'pull_request' && github.event.pull_request.merged == true) || github.event_name == 'schedule') }}
           tags: |
             type=ref,event=branch,enable=${{ github.ref_name != 'main' }}
             type=ref,event=tag
