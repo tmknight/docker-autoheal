@@ -14,10 +14,32 @@ jobs:
   get-version:
     uses: ./.github/workflows/get-version.yml
 
+  get-tag:
+    name: "Get tag"
+    runs-on: "ubuntu-latest"
+    needs: [get-version]
+    outputs:
+      current_tag: ${{ steps.get_tag.outputs.current_tag }}
+    steps:
+      - name: "Check out the repo"
+        uses: actions/checkout@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Get current tag"
+        id: "get_tag"
+        shell: "bash"
+        run: |
+          CURRENT_TAG=$(git describe --tags --abbrev=0)
+          echo "current_tag=$CURRENT_TAG"
+          echo "current_tag=$CURRENT_TAG" >> "$GITHUB_OUTPUT"
+
+
   create-tag:
     name: "Create tag"
     runs-on: "ubuntu-latest"
-    needs: [get-version]
+    needs: [get-version, get-tag]
+    if: ${{ needs.get-version.outputs.pkg-version != needs.get-tag.outputs.current_tag }}
     steps:
       - name: "Check out the repo"
         uses: actions/checkout@v7
