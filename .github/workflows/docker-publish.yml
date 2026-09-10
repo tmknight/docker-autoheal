@@ -116,7 +116,7 @@ jobs:
             linux/arm64
           file: docker/${{ env.DISTRO }}/${{ env.RELEASE }}/${{ env.IMAGE }}.dockerfile
           build-args: ${{ env.BUILD_ARGS }}
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=A cross-platform tool to monitor and remediate unhealthy Docker containers
