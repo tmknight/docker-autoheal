@@ -9,7 +9,7 @@ on:
     outputs:
       proceed:
         description: "New tag created; proceed with activity"
-        value: ${{ (jobs.get-version.outputs.pkg-version != jobs.get-tag.outputs.current_tag) && 'true' || 'false' }}
+        value: ${{ jobs.create-tag.outputs.proceed == 'true' && 'true' || 'false' }}
 
 env:
   CARGO_TERM_COLOR: always
@@ -44,6 +44,8 @@ jobs:
     runs-on: "ubuntu-latest"
     needs: [get-version, get-tag]
     if: ${{ needs.get-version.outputs.pkg-version != needs.get-tag.outputs.current_tag && github.ref_name == 'main' }}
+    outputs:
+      proceed: ${{ steps.set_tag.outputs.proceed }}
     steps:
       - name: "Check out the repo"
         uses: actions/checkout@v7
@@ -55,3 +57,4 @@ jobs:
         shell: "bash"
         run: |
           git tag ${{ needs.get-version.outputs.pkg-version }} && git push --tags
+          echo "proceed=true" >> "$GITHUB_OUTPUT"
