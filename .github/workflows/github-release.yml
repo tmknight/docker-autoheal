@@ -5,7 +5,20 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      latest:
+        description: 'True/False'
+        default: 'false'
+        required: false
+        type: string
   workflow_call:
+    inputs:
+      latest:
+        description: 'True/False'
+        default: 'false'
+        required: false
+        type: string
+
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -27,6 +40,7 @@ jobs:
     name: "Create release"
     needs: [get-version]
     runs-on: "ubuntu-latest"
+    if: inputs.latest == 'true'
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v7
@@ -56,6 +70,7 @@ jobs:
           - target: "aarch64-unknown-linux-musl"
             os: "ubuntu-latest"
     runs-on: ${{ matrix.os }}
+    if: inputs.latest == 'true'
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v7
@@ -73,6 +88,7 @@ jobs:
     name: "Publish release"
     needs: [get-version,upload-assets]
     runs-on: "ubuntu-latest"
+    if: inputs.latest == 'true'
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v7
