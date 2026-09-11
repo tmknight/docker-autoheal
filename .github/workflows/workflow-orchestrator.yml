@@ -6,8 +6,7 @@ on:
     types: [closed]
     branches: [main]
   schedule:
-    # - cron: "05 05 * * *"
-    - cron: "30 08 * * *"
+    - cron: "05 05 * * *"
       timezone: 'America/New_York'
 
 env:
