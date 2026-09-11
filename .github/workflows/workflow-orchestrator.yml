@@ -6,7 +6,9 @@ on:
     types: [closed]
     branches: [main]
   schedule:
-    - cron: "05 05 * * *"
+    # - cron: "05 05 * * *"
+    - cron: "30 08 * * *"
+      timezone: 'America/New_York'
 
 env:
   CARGO_TERM_COLOR: always
