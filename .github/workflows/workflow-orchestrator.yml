@@ -20,7 +20,7 @@ jobs:
     uses: ./.github/workflows/bump-version.yml
     with:
       proceed: ${{ needs.get-DOM.outputs.proceed }}
-    if: github.event_name == 'schedule'
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
 
