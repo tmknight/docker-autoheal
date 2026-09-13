@@ -18,6 +18,11 @@ on:
         default: 'false'
         required: false
         type: string
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
 
 env:
   # Use docker.io for Docker Hub if empty
