@@ -34,6 +34,7 @@ jobs:
       (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
     permissions:
       contents: write
+    secrets: inherit
 
   create-release:
     needs: [get-DOM, create-tag]
@@ -46,6 +47,7 @@ jobs:
       (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
     permissions:
       contents: write
+    secrets: inherit
 
   docker-publish:
     needs: [get-DOM, create-release]
