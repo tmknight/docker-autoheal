@@ -23,6 +23,7 @@ jobs:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
+    secrets: inherit
 
   create-tag:
     needs: [get-DOM, bump-version]
