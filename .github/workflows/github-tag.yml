@@ -15,13 +15,13 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  get-version:
-    uses: ./.github/workflows/get-version.yml
+  bump-version:
+    uses: ./.github/workflows/bump-version.yml
 
   get-tag:
     name: "Get tag"
     runs-on: "ubuntu-latest"
-    needs: [get-version]
+    needs: [bump-version]
     outputs:
       current_tag: ${{ steps.get_tag.outputs.current_tag }}
     steps:
@@ -42,8 +42,8 @@ jobs:
   create-tag:
     name: "Create tag"
     runs-on: "ubuntu-latest"
-    needs: [get-version, get-tag]
-    if: ${{ needs.get-version.outputs.pkg-version != needs.get-tag.outputs.current_tag && github.ref_name == 'main' }}
+    needs: [bump-version, get-tag]
+    if: ${{ needs.bump-version.outputs.new-version != needs.get-tag.outputs.current_tag && github.ref_name == 'main' }}
     outputs:
       proceed: ${{ steps.set_tag.outputs.proceed }}
     steps:
@@ -56,5 +56,5 @@ jobs:
         id: "set_tag"
         shell: "bash"
         run: |
-          git tag ${{ needs.get-version.outputs.pkg-version }} && git push --tags
+          git tag ${{ needs.bump-version.outputs.new-version }} && git push --tags
           echo "proceed=true" >> "$GITHUB_OUTPUT"
