@@ -9,7 +9,7 @@ on:
         value: ${{ jobs.get-DOM.outputs.proceed }}
 
 env:
-  DOM: '01'
+  DOM: '01|02|03'
 
 jobs:
   get-DOM:
@@ -21,9 +21,10 @@ jobs:
         id: get_date
         run: |
           MONTH_DAY=$(date +'%d')
-          case "$MONTH_DAY" in
-            01|02|03) PROCEED=true ;;
-            *)     PROCEED=false ;;
-          esac
+          if [[ "|$DOM|" == *"|$MONTH_DAY|"* ]]; then
+            PROCEED=true
+          else
+            PROCEED=false
+          fi
           echo "DOM=${{ env.DOM }}; MONTH_DAY=$MONTH_DAY; proceed=$PROCEED"
           echo "proceed=$PROCEED" >> "$GITHUB_OUTPUT"
