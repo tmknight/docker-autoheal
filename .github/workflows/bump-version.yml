@@ -19,6 +19,10 @@ on:
         default: 'false'
         required: false
         type: string
+    outputs:
+      new-version:
+        description: "Get new release"
+        value: ${{ jobs.bump-app-version.outputs.new-version }}
 
 jobs:
   get-version:
@@ -31,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: [get-version]
     if: ${{ inputs.proceed == 'true' }}
+    outputs:
+      new-version: ${{ steps.bump_version.outputs.new_version }}
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -47,7 +53,7 @@ jobs:
           # Increments the patch number of the version string
           NEW_VERSION=$(echo "${{ needs.get-version.outputs.pkg-version }}" | awk -F. -v OFS=. '{$3++;print}')
           echo "New version: $NEW_VERSION"
-          echo "new_version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
+          echo "new-version=$NEW_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Update Cargo.toml with patch version monthly
         run: |
