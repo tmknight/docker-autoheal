@@ -15,18 +15,18 @@ jobs:
   get-DOM:
     uses: ./.github/workflows/get-DOM.yml
 
-  bump-version:
-    needs: [get-DOM]
-    uses: ./.github/workflows/bump-version.yml
-    with:
-      proceed: ${{ needs.get-DOM.outputs.proceed }}
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    permissions:
-      contents: write
-    secrets: inherit
+#  bump-version:
+#    needs: [get-DOM]
+#    uses: ./.github/workflows/bump-version.yml
+#    with:
+#      proceed: ${{ needs.get-DOM.outputs.proceed }}
+#    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+#    permissions:
+#      contents: write
+#    secrets: inherit
 
   create-tag:
-    needs: [get-DOM, bump-version]
+    needs: [get-DOM]
     uses: ./.github/workflows/github-tag.yml
     if: |
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
