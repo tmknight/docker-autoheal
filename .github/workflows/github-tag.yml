@@ -5,7 +5,21 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      proceed:
+        description: 'True/False'
+        default: 'false'
+        required: false
+        type: string
+        
   workflow_call:
+    inputs:
+      proceed:
+        description: 'True/False'
+        default: 'false'
+        required: false
+        type: string
+        
     outputs:
       proceed:
         description: "New tag created; proceed with activity"
@@ -17,6 +31,8 @@ env:
 jobs:
   bump-version:
     uses: ./.github/workflows/bump-version.yml
+    with:
+      proceed: ${{ inputs.proceed }}
 
   get-tag:
     name: "Get tag"
