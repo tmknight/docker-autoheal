@@ -9,7 +9,7 @@ on:
         value: ${{ jobs.get-DOM.outputs.proceed }}
 
 env:
-  DOM: '03'
+  DOM: '04'
 
 jobs:
   get-DOM:
