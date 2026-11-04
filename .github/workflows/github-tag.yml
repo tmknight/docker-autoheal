@@ -75,5 +75,7 @@ jobs:
         id: "set_tag"
         shell: "bash"
         run: |
-          git tag ${{ needs.bump-version.outputs.new-version }} && git push --tags
+          NEW_TAG=${{ needs.bump-version.outputs.new-version }}
+          echo "Creating new tag $NEW_TAG"
+          git tag $NEW_TAG && git push --tags
           echo "proceed=true" >> "$GITHUB_OUTPUT"
