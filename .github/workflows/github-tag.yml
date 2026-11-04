@@ -33,7 +33,10 @@ jobs:
     uses: ./.github/workflows/bump-version.yml
     with:
       proceed: ${{ inputs.proceed }}
-
+    permissions:
+      contents: write
+    secrets: inherit
+    
   get-tag:
     name: "Get tag"
     runs-on: "ubuntu-latest"
