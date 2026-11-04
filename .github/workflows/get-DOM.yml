@@ -9,8 +9,9 @@ on:
         value: ${{ jobs.get-DOM.outputs.proceed }}
 
 env:
-  DOM: '04|05'
-
+  # DOM: '04|05'
+  DOM: '05'
+  
 jobs:
   get-DOM:
     runs-on: ubuntu-latest
