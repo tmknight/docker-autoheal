@@ -10,7 +10,7 @@ on:
 
 env:
   # DOM: '04|05'
-  DOM: '05'
+  DOM: '01'
   
 jobs:
   get-DOM:
