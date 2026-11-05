@@ -11,6 +11,7 @@ on:
         default: 'false'
         required: false
         type: string
+
   workflow_call:
     inputs:
       proceed:
@@ -35,7 +36,10 @@ jobs:
         uses: actions/checkout@v7
         with:
           # This token is required to commit changes back to the repository
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # token: ${{ secrets.GITHUB_TOKEN }}
+          ssh-key: ${{ secrets.GHA_DEPLOY }}
+          ref: main
+          persist-credentials: true
 
       - name: Bump app version
         id: bump_version
@@ -67,7 +71,10 @@ jobs:
         uses: actions/checkout@v7
         with:
           # This token is required to commit changes back to the repository
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # token: ${{ secrets.GITHUB_TOKEN }}
+          ssh-key: ${{ secrets.GHA_DEPLOY }}
+          ref: main
+          persist-credentials: true
 
       - name: Update Cargo.toml with rust version nightly
         run: |
