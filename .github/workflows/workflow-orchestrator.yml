@@ -15,41 +15,36 @@ jobs:
   get-DOM:
     uses: ./.github/workflows/get-DOM.yml
 
-#  bump-version:
-#    needs: [get-DOM]
-#    uses: ./.github/workflows/bump-version.yml
-#    with:
-#      proceed: ${{ needs.get-DOM.outputs.proceed }}
-#    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-#    permissions:
-#      contents: write
-#    secrets: inherit
-
-  create-tag:
+  bump-version:
     needs: [get-DOM]
-    uses: ./.github/workflows/github-tag.yml
+    uses: ./.github/workflows/bump-version.yml
     with:
       proceed: ${{ needs.get-DOM.outputs.proceed }}
+    # if: github.event_name == 'schedule'
+    permissions:
+      contents: write
+
+  create-tag:
+    needs: [get-DOM, bump-version]
+    uses: ./.github/workflows/github-tag.yml
     if: |
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       (github.event_name == 'workflow_dispatch') ||
       (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
     permissions:
       contents: write
-    secrets: inherit
 
   create-release:
     needs: [get-DOM, create-tag]
     uses: ./.github/workflows/github-release.yml
     with:
-      latest: ${{ needs.create-tag.outputs.proceed }}
+      latest: ${{ needs.create-tag.outputs.proceed }}    
     if: |
       (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       (github.event_name == 'workflow_dispatch' && needs.create-tag.outputs.proceed == 'true') ||
       (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
     permissions:
       contents: write
-    secrets: inherit
 
   docker-publish:
     needs: [get-DOM, create-release]
@@ -59,9 +54,7 @@ jobs:
         ${{ ((github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
         github.event_name == 'workflow_dispatch' ||
         (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')) && 'true' || 'false' }}
-    if: ${{ !cancelled() && !failure() }}
     permissions:
       contents: write
       packages: write
       id-token: write
-    secrets: inherit
