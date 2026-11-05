@@ -1,15 +1,10 @@
 name: "Github Tag"
 
-permissions:
-  contents: "write"
-
 on:
   workflow_dispatch:
-  workflow_call:
-    outputs:
-      proceed:
-        description: "New tag created; proceed with activity"
-        value: ${{ jobs.create-tag.outputs.proceed == 'true' && 'true' || 'false' }}
+  pull_request:
+    types: [closed]
+    branches: [main]
 
 env:
   CARGO_TERM_COLOR: always
@@ -18,43 +13,17 @@ jobs:
   get-version:
     uses: ./.github/workflows/get-version.yml
 
-  get-tag:
-    name: "Get tag"
-    runs-on: "ubuntu-latest"
-    needs: [get-version]
-    outputs:
-      current_tag: ${{ steps.get_tag.outputs.current_tag }}
-    steps:
-      - name: "Check out the repo"
-        uses: actions/checkout@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-
-      - name: "Get current tag"
-        id: "get_tag"
-        shell: "bash"
-        run: |
-          CURRENT_TAG=$(git describe --tags --abbrev=0)
-          echo "current_tag=$CURRENT_TAG"
-          echo "current_tag=$CURRENT_TAG" >> "$GITHUB_OUTPUT"
-
   create-tag:
     name: "Create tag"
     runs-on: "ubuntu-latest"
-    needs: [get-version, get-tag]
-    if: ${{ needs.get-version.outputs.pkg-version != needs.get-tag.outputs.current_tag && github.ref_name == 'main' }}
-    outputs:
-      proceed: ${{ steps.set_tag.outputs.proceed }}
+    needs: get-version
     steps:
       - name: "Check out the repo"
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Set Tag"
-        id: "set_tag"
         shell: "bash"
         run: |
           git tag ${{ needs.get-version.outputs.pkg-version }} && git push --tags
-          echo "proceed=true" >> "$GITHUB_OUTPUT"

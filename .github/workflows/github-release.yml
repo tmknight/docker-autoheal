@@ -4,21 +4,9 @@ permissions:
   contents: "write"
 
 on:
-  workflow_dispatch:
-    inputs:
-      latest:
-        description: 'True/False'
-        default: 'false'
-        required: false
-        type: string
-  workflow_call:
-    inputs:
-      latest:
-        description: 'True/False'
-        default: 'false'
-        required: false
-        type: string
-
+  workflow_run:
+    workflows: ["Github Tag"]
+    types: [completed]
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -38,12 +26,12 @@ jobs:
 
   create-release:
     name: "Create release"
-    needs: [get-version]
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: "get-version"
     runs-on: "ubuntu-latest"
-    if: inputs.latest == 'true'
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: "Create draft release"
         uses: "taiki-e/create-gh-release-action@v1"
@@ -57,7 +45,10 @@ jobs:
 
   upload-assets:
     name: "Upload assets"
-    needs: [get-version, create-release]
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs:
+     - "get-version"
+     - "create-release"
     strategy:
       matrix:
         include:
@@ -69,11 +60,12 @@ jobs:
             os: "ubuntu-latest"
           - target: "aarch64-unknown-linux-musl"
             os: "ubuntu-latest"
+          # - target: "aarch64-unknown-openbsd"
+          #   os: "ubuntu-latest"
     runs-on: ${{ matrix.os }}
-    if: inputs.latest == 'true'
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: "Upload assets"
         uses: "taiki-e/upload-rust-binary-action@v1"
@@ -86,12 +78,14 @@ jobs:
 
   publish-release:
     name: "Publish release"
-    needs: [get-version,upload-assets]
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    needs: 
+      - "get-version"
+      - "upload-assets"
     runs-on: "ubuntu-latest"
-    if: inputs.latest == 'true'
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: "Release draft"
         run: gh release edit ${{ needs.get-version.outputs.pkg-version }} --draft=false
