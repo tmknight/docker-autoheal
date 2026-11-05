@@ -23,6 +23,7 @@ jobs:
     # if: github.event_name == 'schedule'
     permissions:
       contents: write
+    secrets: inherit
 
   create-tag:
     needs: [get-DOM, bump-version]
@@ -33,6 +34,7 @@ jobs:
       (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
     permissions:
       contents: write
+    secrets: inherit
 
   create-release:
     needs: [get-DOM, create-tag]
@@ -45,6 +47,7 @@ jobs:
       (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
     permissions:
       contents: write
+    secrets: inherit
 
   docker-publish:
     needs: [get-DOM, create-release]
@@ -58,3 +61,4 @@ jobs:
       contents: write
       packages: write
       id-token: write
+    secrets: inherit
