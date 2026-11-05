@@ -11,6 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 - Upgrade to `Bollard` current release (several breaking changes ahead)
 
+## 0.14.1
+
+### Changed
+
+- Bump `rust` to 1.99
+- Bump dependencies as available/required
+
 ## 0.14.0
 
 ### Added
