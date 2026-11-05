@@ -29,9 +29,10 @@ jobs:
     needs: [get-DOM, bump-version]
     uses: ./.github/workflows/github-tag.yml
     if: |
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      ((github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
       (github.event_name == 'workflow_dispatch') ||
-      (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
+      (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')) &&
+      (!cancelled() && !failure())
     permissions:
       contents: write
     secrets: inherit
@@ -42,9 +43,10 @@ jobs:
     with:
       latest: ${{ needs.create-tag.outputs.proceed }}
     if: |
-      (github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
-      (github.event_name == 'workflow_dispatch' && needs.create-tag.outputs.proceed == 'true') ||
-      (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')
+      ((github.event_name == 'pull_request' && github.event.pull_request.merged == true) ||
+      (github.event_name == 'workflow_dispatch') ||
+      (needs.get-DOM.outputs.proceed == 'true' && github.event_name == 'schedule')) &&
+      (!cancelled() && !failure())
     permissions:
       contents: write
     secrets: inherit
